@@ -21,7 +21,7 @@ window.RAECAE_PRODUCTS = [
     confidence: 98.6,
     passport: "RC-2026-0147",
     material: "Box calf leather, gold-plated hardware",
-    serial: "Blind stamp ⬜B — 1998, craftsman ID verified",
+    serial: "Blind stamp B in square — 1998, craftsman ID verified",
     tags: ["quiet luxury", "heritage", "investment piece", "top handle", "timeless"],
     story:
       "Stamped in a Paris atelier in 1998, this Kelly has spent two decades learning the shape of one woman's mornings. The box calf has taken on the deep, mirror-like patina that cannot be manufactured — only lived. It arrives at RAÉCAE ready for its second chapter.",

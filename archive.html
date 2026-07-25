@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Archive — RAÉCAE</title>
+  <meta name="description" content="The RAÉCAE vault, open — a curated collection of authenticated luxury fashion. Every piece verified by AI and expert hands, carrying a digital passport and a story of its own.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230a0a0b'/%3E%3Ctext x='16' y='22' text-anchor='middle' font-family='Georgia' font-size='18' fill='%23c9a227'%3ER%3C/text%3E%3C/svg%3E">
+  <style>
+    /* ---------- Archive page styles ---------- */
+
+    /* Hero figures */
+    .vault-line { display: flex; flex-wrap: wrap; gap: 1.4rem 0; margin-top: 2.8rem; }
+    .vault-fig {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      padding-right: clamp(1.4rem, 3vw, 2.6rem);
+      margin-right: clamp(1.4rem, 3vw, 2.6rem);
+      border-right: 1px solid var(--line-strong);
+    }
+    .vault-fig:last-child { border-right: 0; margin-right: 0; padding-right: 0; }
+    .fig-num {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: clamp(1.9rem, 3vw, 2.4rem);
+      line-height: 1;
+      color: var(--ivory);
+    }
+    .fig-num .text-gold { font-size: 0.65em; }
+
+    /* Filter toolbar */
+    .archive-toolbar {
+      position: sticky;
+      top: var(--nav-h, 4.8rem);
+      z-index: 60;
+      background: rgba(10, 10, 11, 0.9);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-block: 1px solid var(--line);
+      padding-block: 0.95rem;
+    }
+    .toolbar-stack { display: flex; flex-direction: column; gap: 0.85rem; }
+    .filter-pills { display: flex; flex-wrap: wrap; gap: 0.55rem; }
+    .pill {
+      border: 1px solid var(--line-strong);
+      border-radius: 999px;
+      padding: 0.42rem 1.05rem;
+      font-size: 0.62rem;
+      font-weight: 400;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--ivory-dim);
+      white-space: nowrap;
+      transition: color 0.3s, border-color 0.3s, background 0.3s;
+    }
+    .pill:hover { color: var(--ivory); border-color: rgba(243, 237, 228, 0.4); }
+    .pill.active {
+      color: var(--gold-soft);
+      border-color: rgba(201, 162, 39, 0.55);
+      background: rgba(201, 162, 39, 0.08);
+    }
+    .toolbar-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.8rem 1.5rem;
+      flex-wrap: wrap;
+    }
+    .toolbar-controls { display: flex; align-items: center; gap: 0.7rem; flex-wrap: wrap; }
+    .field--compact {
+      width: auto;
+      background-color: transparent;
+      padding: 0.5rem 2.4rem 0.5rem 1rem;
+      font-size: 0.66rem;
+      font-weight: 400;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--ivory-dim);
+    }
+    @media (max-width: 760px) {
+      .filter-pills {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        margin-inline: calc(var(--gutter) * -1);
+        padding-inline: var(--gutter);
+      }
+      .filter-pills::-webkit-scrollbar { display: none; }
+      .toolbar-controls {
+        width: 100%;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.6rem;
+      }
+      .field--compact { width: 100%; font-size: 0.62rem; letter-spacing: 0.1em; padding-right: 2rem; }
+    }
+    @media (max-width: 640px) {
+      .vault-line { gap: 1.2rem 2.4rem; }
+      .vault-fig { border-right: 0; margin-right: 0; padding-right: 0; }
+    }
+
+    /* Empty state */
+    .vault-empty { text-align: center; padding-block: clamp(3.5rem, 8vw, 6.5rem); }
+    .vault-empty .display { max-width: 26ch; margin-inline: auto; }
+  </style>
+</head>
+<body data-page="archive">
+
+  <div id="nav-root"></div>
+
+  <!-- ============ PAGE HERO ============ -->
+  <section class="page-hero">
+    <div class="hero-bg"></div>
+    <div class="wrap">
+      <p class="kicker reveal">The Archive</p>
+      <h1 class="display display-xl mt-3 reveal" style="--d:.1s; max-width: 14ch;">
+        The vault, <span class="italic text-gold">open</span>.
+      </h1>
+      <p class="lede mt-4 reveal" style="--d:.2s">
+        A curated collection of luxury pieces, each examined by computer vision and
+        expert hands before it enters the vault — and each leaving with a digital
+        passport and a story of its own.
+      </p>
+      <div class="vault-line reveal" style="--d:.3s">
+        <div class="vault-fig">
+          <span class="fig-num" id="fig-pieces">12</span>
+          <span class="small-label">Pieces in the vault</span>
+        </div>
+        <div class="vault-fig">
+          <span class="fig-num" id="fig-maisons">11</span>
+          <span class="small-label">Maisons</span>
+        </div>
+        <div class="vault-fig">
+          <span class="fig-num">100<span class="text-gold">%</span></span>
+          <span class="small-label">Carry a passport</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FILTER TOOLBAR ============ -->
+  <div class="archive-toolbar">
+    <div class="wrap">
+      <div class="toolbar-stack">
+        <div class="filter-pills" id="pill-row" role="group" aria-label="Filter by category"></div>
+        <div class="toolbar-row">
+          <span class="small-label" id="result-count" aria-live="polite"></span>
+          <div class="toolbar-controls">
+            <select class="field field--compact" id="era-select" aria-label="Filter by era"></select>
+            <select class="field field--compact" id="sort-select" aria-label="Sort pieces">
+              <option value="latest">Latest arrivals</option>
+              <option value="price-asc">Price: Low to High</option>
+              <option value="price-desc">Price: High to Low</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ COLLECTION ============ -->
+  <section class="section section--tight" id="collection">
+    <div class="wrap">
+      <div class="product-grid" id="archive-grid"></div>
+      <div class="vault-empty" id="vault-empty" hidden>
+        <p class="display display-sm italic">The vault holds nothing matching this — yet.</p>
+        <p class="text-faint mt-2" style="font-size:.9rem;">
+          Pieces enter the archive weekly, each one authenticated before it appears.
+        </p>
+        <button class="btn mt-5" id="reset-filters" type="button">Reset the Filters</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CLOSING STRIP ============ -->
+  <section class="section section--tight section--coal">
+    <div class="wrap wrap--narrow center">
+      <p class="kicker kicker--plain reveal">The Next Chapter</p>
+      <h2 class="display display-md mt-3 reveal" style="--d:.08s">
+        Own something with a <span class="italic text-gold">story</span>.
+      </h2>
+      <p class="lede mt-3 reveal" style="--d:.16s">
+        Consign a piece and the maison will authenticate it, photograph it and write
+        its story — or ask the stylist to find the piece whose story fits yours.
+      </p>
+      <div class="mt-5 reveal" style="--d:.24s; display:flex; gap:1rem; justify-content:center; flex-wrap:wrap;">
+        <a href="sell.html" class="btn btn--gold">Sell a Piece <span class="arrow">→</span></a>
+        <a href="stylist.html" class="btn">Consult the Stylist</a>
+      </div>
+    </div>
+  </section>
+
+  <div id="footer-root"></div>
+
+  <script src="js/art.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    (function () {
+      /* ---------- Nav height → sticky toolbar offset ---------- */
+      function setNavH() {
+        var nav = document.getElementById("site-nav");
+        if (nav) document.documentElement.style.setProperty("--nav-h", nav.offsetHeight + "px");
+      }
+      setNavH();
+      window.addEventListener("resize", setNavH);
+
+      var PRODUCTS = window.RAECAE_PRODUCTS;
+      var CATEGORIES = window.RAECAE_CATEGORIES;
+      var ERAS = window.RAECAE_ERAS;
+
+      /* ---------- Live hero figures ---------- */
+      var maisons = [];
+      PRODUCTS.forEach(function (p) {
+        if (maisons.indexOf(p.brand) === -1) maisons.push(p.brand);
+      });
+      document.getElementById("fig-pieces").textContent = PRODUCTS.length;
+      document.getElementById("fig-maisons").textContent = maisons.length;
+
+      /* ---------- State + deep links (?category=Bags, ?era=Vintage) ---------- */
+      var state = { category: "All", era: "All", sort: "latest" };
+
+      var params = new URLSearchParams(window.location.search);
+      var qCat = params.get("category");
+      if (qCat) {
+        var mc = CATEGORIES.filter(function (c) {
+          return c.toLowerCase() === qCat.trim().toLowerCase();
+        })[0];
+        if (mc) state.category = mc;
+      }
+      var qEra = params.get("era");
+      if (qEra) {
+        var me = ERAS.filter(function (e) {
+          return e.toLowerCase() === qEra.trim().toLowerCase();
+        })[0];
+        if (me) state.era = me;
+      }
+
+      /* ---------- Controls ---------- */
+      var pillRow = document.getElementById("pill-row");
+      var eraSelect = document.getElementById("era-select");
+      var sortSelect = document.getElementById("sort-select");
+      var countEl = document.getElementById("result-count");
+      var grid = document.getElementById("archive-grid");
+      var emptyEl = document.getElementById("vault-empty");
+
+      pillRow.innerHTML = CATEGORIES.map(function (c) {
+        return '<button type="button" class="pill" data-cat="' + c + '" aria-pressed="false">' + c + "</button>";
+      }).join("");
+      pillRow.addEventListener("click", function (e) {
+        var b = e.target.closest(".pill");
+        if (!b) return;
+        state.category = b.getAttribute("data-cat");
+        render();
+      });
+
+      eraSelect.innerHTML = ERAS.map(function (e) {
+        return '<option value="' + e + '">' + (e === "All" ? "All eras" : e) + "</option>";
+      }).join("");
+      eraSelect.addEventListener("change", function () {
+        state.era = eraSelect.value;
+        render();
+      });
+      sortSelect.addEventListener("change", function () {
+        state.sort = sortSelect.value;
+        render();
+      });
+      document.getElementById("reset-filters").addEventListener("click", function () {
+        state = { category: "All", era: "All", sort: "latest" };
+        render();
+      });
+
+      function syncControls() {
+        pillRow.querySelectorAll(".pill").forEach(function (b) {
+          var on = b.getAttribute("data-cat") === state.category;
+          b.classList.toggle("active", on);
+          b.setAttribute("aria-pressed", on ? "true" : "false");
+        });
+        eraSelect.value = state.era;
+        sortSelect.value = state.sort;
+      }
+
+      /* ---------- Render ---------- */
+      function render() {
+        syncControls();
+
+        var items = PRODUCTS.filter(function (p) {
+          return (state.category === "All" || p.category === state.category) &&
+                 (state.era === "All" || p.era === state.era);
+        });
+        if (state.sort === "price-asc") {
+          items = items.slice().sort(function (a, b) { return a.price - b.price; });
+        } else if (state.sort === "price-desc") {
+          items = items.slice().sort(function (a, b) { return b.price - a.price; });
+        }
+
+        countEl.innerHTML =
+          '<span class="text-gold">' + items.length + "</span> " +
+          (items.length === 1 ? "piece" : "pieces");
+
+        grid.innerHTML = items.map(function (p, i) {
+          return window.renderProductCard(p, { delay: Math.min(i * 0.05, 0.4) });
+        }).join("");
+        /* Injected reveals never enter the observer — force the initial
+           styles with a reflow, then reveal for a staggered fade-in. */
+        void grid.offsetWidth;
+        grid.querySelectorAll(".reveal").forEach(function (el) {
+          el.classList.add("visible");
+        });
+
+        emptyEl.hidden = items.length !== 0;
+      }
+      render();
+    })();
+  </script>
+</body>
+</html>

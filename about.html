@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Maison — RAÉCAE</title>
+  <meta name="description" content="The RAÉCAE maison — the philosophy, the vision and the road ahead for the intelligent fashion archive of the region, from Amman to the Gulf to Europe.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230a0a0b'/%3E%3Ctext x='16' y='22' text-anchor='middle' font-family='Georgia' font-size='18' fill='%23c9a227'%3ER%3C/text%3E%3C/svg%3E">
+  <style>
+    /* ---------- Maison page styles ---------- */
+
+    /* Guard: in main.css the mobile `.nav-cta { display:none }` rule is
+       overridden by the later `.btn { display:inline-flex }` rule, which
+       pushes the menu toggle off-screen on small viewports. Page-scoped fix. */
+    @media (max-width: 900px) { .nav .nav-cta { display: none; } }
+
+    /* Palette swatches */
+    .palette-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: clamp(0.9rem, 1.6vw, 1.4rem);
+    }
+    @media (max-width: 1000px) { .palette-grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 560px) { .palette-grid { grid-template-columns: repeat(2, 1fr); } }
+    .swatch {
+      background: var(--coal-2);
+      border: 1px solid var(--line);
+      transition: border-color 0.5s var(--ease), transform 0.5s var(--ease);
+    }
+    .swatch:hover { border-color: var(--line-strong); transform: translateY(-4px); }
+    .swatch-chip {
+      height: clamp(5.5rem, 9vw, 8rem);
+      border-bottom: 1px solid var(--line);
+    }
+    .swatch-cap { padding: 0.95rem 1.05rem 1.1rem; }
+    .swatch-cap .small-label { display: block; color: var(--ivory-dim); }
+    .swatch-hex {
+      display: block;
+      margin-top: 0.35rem;
+      font-family: var(--serif);
+      font-style: italic;
+      font-size: 0.88rem;
+      letter-spacing: 0.06em;
+      color: var(--ivory-faint);
+    }
+
+    /* Today / Tomorrow columns */
+    .vision-cols {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(2rem, 4.5vw, 4.5rem);
+    }
+    @media (max-width: 800px) { .vision-cols { grid-template-columns: 1fr; } }
+    .vision-col { border-top: 1px solid var(--line); padding-top: 1.8rem; position: relative; }
+    .vision-col::before {
+      content: "";
+      position: absolute;
+      top: -1px; left: 0;
+      width: 2.4rem; height: 1px;
+      background: var(--gold);
+    }
+    .vision-when { color: var(--gold-soft); }
+    .vision-col p:not(.small-label) { color: var(--ivory-dim); font-size: 0.95rem; }
+
+    /* Future capabilities — quiet list cards */
+    .cap {
+      display: flex;
+      align-items: baseline;
+      gap: 1.1rem;
+      background: var(--coal-2);
+      border: 1px solid var(--line);
+      padding: 1.5rem 1.6rem;
+      transition: border-color 0.5s var(--ease), background 0.5s var(--ease);
+    }
+    .cap:hover { border-color: rgba(201, 162, 39, 0.3); background: var(--coal-3); }
+    .cap .num-index { flex: none; }
+    .cap h3 {
+      font-family: var(--serif);
+      font-size: 1.24rem;
+      font-weight: 400;
+      line-height: 1.3;
+    }
+    .cap p { font-size: 0.8rem; color: var(--ivory-faint); margin-top: 0.4rem; line-height: 1.55; }
+
+    /* Route line: Amman → Gulf → Europe */
+    .route {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 1.4rem clamp(1.2rem, 3.5vw, 2.8rem);
+      text-align: center;
+    }
+    .route-stop .small-label { display: block; margin-top: 0.5rem; }
+    .route-sep {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      color: var(--gold);
+      font-family: var(--serif);
+      font-size: 1.35rem;
+      line-height: 1;
+    }
+    .route-sep::before {
+      content: "";
+      width: clamp(1.6rem, 5vw, 4rem);
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(201, 162, 39, 0.55));
+    }
+    .route-sep::after { content: "→"; }
+    @media (max-width: 560px) {
+      .route { flex-direction: column; gap: 1rem; }
+      .route-sep::before { display: none; }
+      .route-sep::after { content: "↓"; }
+    }
+
+    /* Contact */
+    .contact-mail {
+      display: inline-block;
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: clamp(1.6rem, 3.4vw, 2.6rem);
+      line-height: 1.2;
+      color: var(--gold-soft);
+      border-bottom: 1px solid rgba(201, 162, 39, 0.35);
+      padding-bottom: 0.15rem;
+      transition: color 0.3s, border-color 0.3s;
+      overflow-wrap: anywhere;
+    }
+    .contact-mail:hover { color: var(--gold); border-color: var(--gold); }
+    .contact-form { max-width: 30rem; margin-inline: auto; }
+  </style>
+</head>
+<body data-page="about">
+
+  <div id="nav-root"></div>
+
+  <!-- ============ PAGE HERO — MANIFESTO ============ -->
+  <section class="page-hero">
+    <div class="hero-bg"></div>
+    <div class="wrap">
+      <p class="kicker reveal">The Maison</p>
+      <h1 class="display display-xl mt-3 reveal" style="--d:.1s; max-width: 18ch;">
+        We are not selling secondhand clothes.
+      </h1>
+      <p class="display display-lg italic text-gold mt-3 reveal" style="--d:.2s; max-width: 24ch;">
+        We are selling confidence, trust, exclusivity — and stories.
+      </p>
+      <p class="lede mt-4 reveal" style="--d:.3s">
+        RAÉCAE was founded on a conviction: that luxury in this region deserves an
+        institution of its own — one that treats every piece as evidence of a life,
+        verifies it beyond question, and passes it forward with its story intact.
+      </p>
+    </div>
+  </section>
+
+  <hr class="hairline">
+
+  <!-- ============ THE HOUSE ============ -->
+  <section class="section">
+    <div class="wrap">
+      <div class="grid-2" style="gap: clamp(2.5rem, 5vw, 5rem); align-items: start;">
+        <div>
+          <p class="kicker reveal">The House</p>
+          <h2 class="display display-lg mt-3 reveal" style="--d:.08s">A maison,<br>not a marketplace.</h2>
+          <p class="text-dim mt-4 reveal" style="--d:.16s">
+            RAÉCAE is the intelligent fashion archive of the region — a house where luxury
+            resale is practised the way couture is: with patience, provenance and a point
+            of view. We are what happens when a luxury fashion house meets advanced
+            technology, and neither is asked to compromise.
+          </p>
+          <p class="text-dim mt-3 reveal" style="--d:.22s">
+            Most platforms are built around transactions. Ours is built around three quieter
+            things — trust, discovery and emotion. Trust, because nothing enters the vault
+            unverified. Discovery, because an archive should be wandered, not scrolled.
+            Emotion, because a piece with a story is kept longer, worn better and loved twice.
+          </p>
+        </div>
+        <div>
+          <blockquote class="pullquote reveal" style="--d:.14s">
+            “A piece is never sold here.
+            It is <span class="text-gold">continued</span>.”
+          </blockquote>
+          <p class="text-dim mt-4 reveal" style="--d:.22s">
+            Every item that passes through the house leaves richer than it arrived —
+            examined by machine and by hand, sealed into a digital passport, and written
+            into the archive's memory alongside the pieces that came before it.
+          </p>
+          <a class="text-link mt-4 reveal" style="--d:.3s" href="authentication.html">How the house verifies <span class="arrow">→</span></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ DESIGN PHILOSOPHY ============ -->
+  <section class="section section--coal" id="philosophy">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <p class="kicker reveal">Design Philosophy</p>
+          <h2 class="display display-lg reveal" style="--d:.08s">Dark. Quiet. Cinematic.</h2>
+        </div>
+        <p class="lede reveal" style="--d:.15s; max-width: 26rem;">
+          The house looks the way it thinks. Nothing decorative, nothing loud —
+          a dark room where every piece is lit like the only one.
+        </p>
+      </div>
+
+      <div class="reveal" style="display:flex; flex-wrap:wrap; gap:.8rem;">
+        <span class="badge">Dark luxury</span>
+        <span class="badge">Minimal</span>
+        <span class="badge">Cinematic</span>
+        <span class="badge">Modern</span>
+        <span class="badge">Premium</span>
+        <span class="badge">Gender-neutral</span>
+      </div>
+
+      <p class="text-dim mt-4 mb-4 reveal" style="--d:.08s; max-width: 44rem;">
+        Six colours are the entire wardrobe of the brand — black for the room, charcoal
+        for the walls, ivory for the voice, burgundy for the blood, silver for the
+        machines, and gold for the moments that matter.
+      </p>
+
+      <div class="palette-grid mt-5">
+        <div class="swatch reveal" style="--d:0s">
+          <div class="swatch-chip" style="background:#0A0A0B;"></div>
+          <div class="swatch-cap"><span class="small-label">Black</span><span class="swatch-hex">#0A0A0B</span></div>
+        </div>
+        <div class="swatch reveal" style="--d:.06s">
+          <div class="swatch-chip" style="background:#17171A;"></div>
+          <div class="swatch-cap"><span class="small-label">Charcoal</span><span class="swatch-hex">#17171A</span></div>
+        </div>
+        <div class="swatch reveal" style="--d:.12s">
+          <div class="swatch-chip" style="background:#F3EDE4;"></div>
+          <div class="swatch-cap"><span class="small-label">Ivory</span><span class="swatch-hex">#F3EDE4</span></div>
+        </div>
+        <div class="swatch reveal" style="--d:.18s">
+          <div class="swatch-chip" style="background:#6D2E46;"></div>
+          <div class="swatch-cap"><span class="small-label">Deep Burgundy</span><span class="swatch-hex">#6D2E46</span></div>
+        </div>
+        <div class="swatch reveal" style="--d:.24s">
+          <div class="swatch-chip" style="background:#A9A9A9;"></div>
+          <div class="swatch-cap"><span class="small-label">Silver</span><span class="swatch-hex">#A9A9A9</span></div>
+        </div>
+        <div class="swatch reveal" style="--d:.3s">
+          <div class="swatch-chip" style="background:#C9A227;"></div>
+          <div class="swatch-cap"><span class="small-label">Gold</span><span class="swatch-hex">#C9A227</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ THE VISION ============ -->
+  <section class="section" id="region">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <p class="kicker reveal">The Vision</p>
+          <h2 class="display display-lg reveal" style="--d:.08s">Today, a boutique.<br>Tomorrow, an infrastructure.</h2>
+        </div>
+      </div>
+
+      <div class="vision-cols">
+        <div class="vision-col reveal" style="--d:.1s">
+          <p class="small-label vision-when">Today</p>
+          <h3 class="display display-sm mt-2">A curated luxury resale platform.</h3>
+          <p class="mt-2">
+            A boutique archive, owned and authenticated by the house — the finest pieces
+            of the region, verified twice, storied once, and released in considered drops
+            from Amman.
+          </p>
+        </div>
+        <div class="vision-col reveal" style="--d:.2s">
+          <p class="small-label vision-when">Tomorrow</p>
+          <h3 class="display display-sm mt-2">The trusted AI layer for luxury commerce across the region.</h3>
+          <p class="mt-2">
+            The systems built for our own vault — authentication, passports, provenance,
+            intelligence — offered outward, until “verified by RAÉCAE” means what a
+            hallmark means on silver.
+          </p>
+        </div>
+      </div>
+
+      <p class="small-label mt-6 mb-3 reveal">Future capabilities</p>
+      <div class="grid-3">
+        <div class="cap reveal" style="--d:0s">
+          <span class="num-index">01</span>
+          <div>
+            <h3>AI authentication APIs</h3>
+            <p>For retailers and partners who need verdicts at the counter, not weeks later.</p>
+          </div>
+        </div>
+        <div class="cap reveal" style="--d:.06s">
+          <span class="num-index">02</span>
+          <div>
+            <h3>Authentication for insurance providers</h3>
+            <p>Condition and authenticity records that policies can be written against.</p>
+          </div>
+        </div>
+        <div class="cap reveal" style="--d:.12s">
+          <span class="num-index">03</span>
+          <div>
+            <h3>Digital ownership records</h3>
+            <p>A permanent, transferable identity for every piece — provenance that outlives its owners.</p>
+          </div>
+        </div>
+        <div class="cap reveal" style="--d:.18s">
+          <span class="num-index">04</span>
+          <div>
+            <h3>Cross-border luxury verification</h3>
+            <p>One standard of trust from Amman to Dubai to Paris, recognised at every border.</p>
+          </div>
+        </div>
+        <div class="cap reveal" style="--d:.24s">
+          <span class="num-index">05</span>
+          <div>
+            <h3>Fashion analytics for brands &amp; collectors</h3>
+            <p>What the region wears, keeps and lets go — read from the archive itself.</p>
+          </div>
+        </div>
+        <div class="cap reveal" style="--d:.3s">
+          <span class="num-index">06</span>
+          <div>
+            <h3>Personal AI luxury shopping concierge</h3>
+            <p>A stylist, buyer and authenticator in one voice, retained by a single client.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="route mt-6 reveal" style="--d:.1s">
+        <div class="route-stop">
+          <h3 class="display display-sm">Amman</h3>
+          <span class="small-label">The origin</span>
+        </div>
+        <span class="route-sep" aria-hidden="true"></span>
+        <div class="route-stop">
+          <h3 class="display display-sm">The Gulf</h3>
+          <span class="small-label">The horizon</span>
+        </div>
+        <span class="route-sep" aria-hidden="true"></span>
+        <div class="route-stop">
+          <h3 class="display display-sm">Europe</h3>
+          <span class="small-label">The destination</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ THE ROAD ============ -->
+  <section class="section section--coal">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <p class="kicker reveal">The Road</p>
+          <h2 class="display display-lg reveal" style="--d:.08s">Three phases. One direction.</h2>
+        </div>
+      </div>
+      <div class="grid-3">
+        <div class="reveal" style="--d:.1s">
+          <p class="num-index">Phase I</p>
+          <h3 class="display display-sm mt-1">Curated Boutique</h3>
+          <p class="text-dim mt-2" style="font-size:.92rem;">
+            RAÉCAE owns and curates the archive; clients purchase directly from an
+            authenticated collection, launched from Amman. This is where the standard is
+            set — every process proven on our own vault before anyone else's.
+          </p>
+        </div>
+        <div class="reveal" style="--d:.18s">
+          <p class="num-index">Phase II</p>
+          <h3 class="display display-sm mt-1">Marketplace</h3>
+          <p class="text-dim mt-2" style="font-size:.92rem;">
+            Sellers across the region list through the AI assistant; every piece is
+            verified before it reaches the vault. The house becomes a stage for a thousand
+            wardrobes — without ever raising the lights.
+          </p>
+        </div>
+        <div class="reveal" style="--d:.26s">
+          <p class="num-index">Phase III</p>
+          <h3 class="display display-sm mt-1">Trust Infrastructure</h3>
+          <p class="text-dim mt-2" style="font-size:.92rem;">
+            Authentication as a service — digital passports, certificates and fashion
+            intelligence for the luxury economy of the region. In the end, the name on the
+            certificate matters more than the name on the door.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CONTACT ============ -->
+  <section class="section" id="contact">
+    <div class="wrap wrap--narrow center">
+      <p class="kicker kicker--plain reveal">Contact</p>
+      <h2 class="display display-lg mt-3 reveal" style="--d:.08s">The house is listening.</h2>
+      <p class="lede mt-4 reveal" style="--d:.16s">
+        Consignments, partnerships, press — or a piece you believe belongs in the archive.
+      </p>
+      <p class="mt-5 reveal" style="--d:.22s">
+        <a class="contact-mail" href="mailto:hello@raecae.com">hello@raecae.com</a>
+      </p>
+      <p class="small-label mt-4 reveal" style="--d:.28s">Amman &nbsp;·&nbsp; Dubai &nbsp;·&nbsp; Paris</p>
+
+      <div class="mt-6 reveal" style="--d:.34s">
+        <p class="small-label">The Private List</p>
+        <p class="text-dim mt-2" style="font-size:.9rem;">Drops, archive arrivals and stories — before anyone else.</p>
+        <form class="footer-newsletter contact-form mt-3" onsubmit="event.preventDefault(); this.querySelector('input').value=''; this.querySelector('.btn').textContent='Welcome';">
+          <input class="field" type="email" placeholder="Email address" aria-label="Email address" required>
+          <button class="btn btn--gold btn--small" type="submit">Join</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CLOSING CTA ============ -->
+  <section class="section section--coal">
+    <div class="wrap center">
+      <h2 class="display display-lg reveal">The house is best understood <span class="italic text-gold">through its pieces</span>.</h2>
+      <div class="mt-5 reveal" style="--d:.15s">
+        <a href="archive.html" class="btn btn--gold">Enter the Archive <span class="arrow">→</span></a>
+      </div>
+    </div>
+  </section>
+
+  <div id="footer-root"></div>
+
+  <script src="js/art.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

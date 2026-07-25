@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Authentication — RAÉCAE</title>
+  <meta name="description" content="Inside the RAÉCAE authentication room — computer vision and expert hands examine every piece against the reference archive before it enters the vault, and every verdict is sealed into a digital product passport.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230a0a0b'/%3E%3Ctext x='16' y='22' text-anchor='middle' font-family='Georgia' font-size='18' fill='%23c9a227'%3ER%3C/text%3E%3C/svg%3E">
+  <style>
+    /* ---------- Authentication page styles ---------- */
+
+    /* Hero figures */
+    .auth-figs { display: flex; flex-wrap: wrap; gap: 1.4rem 0; margin-top: 2.8rem; }
+    .auth-fig {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      padding-right: clamp(1.4rem, 3vw, 2.6rem);
+      margin-right: clamp(1.4rem, 3vw, 2.6rem);
+      border-right: 1px solid var(--line-strong);
+    }
+    .auth-fig:last-child { border-right: 0; margin-right: 0; padding-right: 0; }
+    .auth-num {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: clamp(1.9rem, 3vw, 2.4rem);
+      line-height: 1;
+      color: var(--ivory);
+    }
+    .auth-num .text-gold { font-size: 0.65em; }
+    @media (max-width: 640px) {
+      .auth-figs { gap: 1.2rem 2.4rem; }
+      .auth-fig { border-right: 0; margin-right: 0; padding-right: 0; }
+    }
+
+    /* The process — four steps joined by a hairline */
+    .step { border-top: 1px solid var(--line); padding-top: 1.6rem; position: relative; }
+    .step::before {
+      content: "";
+      position: absolute;
+      top: -1px; left: 0;
+      width: 2.4rem; height: 1px;
+      background: var(--gold);
+    }
+    .step p { font-size: 0.92rem; }
+
+    /* What the AI examines */
+    .exam-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      background: var(--coal-2);
+      border: 1px solid var(--line);
+      padding: 1.35rem 1.4rem;
+      transition: border-color 0.5s var(--ease), background 0.5s var(--ease);
+    }
+    .exam-item:hover { border-color: rgba(201, 162, 39, 0.35); background: var(--coal-3); }
+    .exam-item svg { width: 21px; height: 21px; flex: none; margin-top: 0.15rem; }
+    .exam-item h3 {
+      font-family: var(--serif);
+      font-size: 1.2rem;
+      font-weight: 400;
+      line-height: 1.3;
+    }
+    .exam-item p { font-size: 0.8rem; color: var(--ivory-faint); margin-top: 0.4rem; line-height: 1.55; }
+
+    /* Confidence meter panel */
+    .meter-panel {
+      background: var(--coal-2);
+      border: 1px solid var(--line);
+      padding: clamp(1.8rem, 3vw, 2.8rem);
+    }
+    .tier + .tier { margin-top: 1.6rem; }
+    .tier-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 1rem;
+      margin-bottom: 0.7rem;
+    }
+    .tier-range { font-family: var(--serif); font-size: 1.2rem; line-height: 1; white-space: nowrap; }
+    .tier-note {
+      font-size: 0.6rem;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: var(--ivory-faint);
+      text-align: right;
+    }
+    .tier-bar { height: 2px; background: rgba(243, 237, 228, 0.08); position: relative; overflow: hidden; }
+    .tier-fill { position: absolute; top: 0; bottom: 0; left: 0; width: var(--w, 0%); }
+    .tier-fill--gold { background: linear-gradient(90deg, rgba(201, 162, 39, 0.35), var(--gold)); }
+    .tier-fill--ivory { background: linear-gradient(90deg, rgba(243, 237, 228, 0.2), rgba(243, 237, 228, 0.72)); }
+    .tier-fill--burgundy { background: linear-gradient(90deg, rgba(109, 46, 70, 0.45), var(--burgundy-bright)); }
+    .meter-example { margin-top: 2.1rem; border-top: 1px solid var(--line); padding-top: 1.7rem; }
+    .meter-example .tier-bar { height: 5px; }
+    .conf-num { font-family: var(--serif); font-size: 1.7rem; line-height: 1; color: var(--gold-soft); white-space: nowrap; }
+    .conf-num small { font-size: 0.55em; color: var(--ivory-faint); font-family: var(--sans); letter-spacing: 0.1em; }
+    #conf-fill { width: 0%; transition: width 1.8s var(--ease); }
+    @media (max-width: 540px) { .meter-scale { display: none; } }
+
+    /* Digital product passport certificate */
+    .passport-card {
+      position: relative;
+      max-width: 58rem;
+      margin-inline: auto;
+      background: linear-gradient(180deg, var(--coal-2), var(--coal));
+      border: 1px solid rgba(201, 162, 39, 0.32);
+      padding: clamp(1.9rem, 4vw, 3.4rem);
+    }
+    .passport-card::before {
+      content: "";
+      position: absolute;
+      inset: 9px;
+      border: 1px solid var(--line);
+      pointer-events: none;
+    }
+    .passport-top {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.8rem 1.5rem;
+    }
+    .passport-body {
+      display: grid;
+      grid-template-columns: minmax(0, 15rem) 1fr;
+      gap: clamp(1.6rem, 3.4vw, 3rem);
+      margin-top: clamp(1.6rem, 3vw, 2.4rem);
+    }
+    .passport-plate { border: 1px solid var(--line); align-self: start; }
+    @media (max-width: 760px) {
+      .passport-body { grid-template-columns: 1fr; }
+      .passport-plate { max-width: 14rem; }
+    }
+    .passport-fields {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1.35rem 2rem;
+      margin-top: 1.8rem;
+    }
+    .pf--wide { grid-column: 1 / -1; }
+    .pf-value { margin-top: 0.45rem; font-size: 0.92rem; color: var(--ivory); line-height: 1.6; }
+    .pf-big { font-family: var(--serif); font-size: 1.65rem; line-height: 1; }
+    .passport-sig {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 1.8rem 2.5rem;
+      border-top: 1px solid var(--line);
+      margin-top: clamp(1.8rem, 3vw, 2.6rem);
+      padding-top: clamp(1.5rem, 2.5vw, 2.1rem);
+    }
+    .sig-name { font-family: var(--serif); font-style: italic; font-size: 1.75rem; line-height: 1.1; }
+    .sig-rule { width: 13rem; max-width: 100%; border-top: 1px solid var(--line-strong); margin-top: 0.55rem; margin-bottom: 0.55rem; }
+    .sig-value { font-family: var(--serif); font-size: 1.9rem; line-height: 1; margin-top: 0.55rem; }
+    .sig-value .text-gold { font-size: 0.62em; }
+    .passport-seal { flex: none; }
+    .passport-note {
+      margin-top: clamp(1.8rem, 3vw, 2.4rem);
+      padding-top: 1.5rem;
+      border-top: 1px dashed rgba(201, 162, 39, 0.28);
+      font-family: var(--serif);
+      font-style: italic;
+      font-size: 1.05rem;
+      color: var(--ivory-dim);
+      text-align: center;
+      text-wrap: balance;
+    }
+
+    /* FAQ */
+    .faq { border-top: 1px solid var(--line); }
+    .faq details { border-bottom: 1px solid var(--line); }
+    .faq summary {
+      list-style: none;
+      cursor: pointer;
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 2rem;
+      padding: 1.6rem 0;
+      font-family: var(--serif);
+      font-size: clamp(1.2rem, 2vw, 1.5rem);
+      font-weight: 400;
+      line-height: 1.3;
+      transition: color 0.3s;
+    }
+    .faq summary::-webkit-details-marker { display: none; }
+    .faq summary:hover { color: var(--gold-soft); }
+    .faq summary::after {
+      content: "+";
+      flex: none;
+      font-family: var(--serif);
+      font-size: 1.5rem;
+      line-height: 1;
+      color: var(--gold);
+      transition: transform 0.4s var(--ease);
+    }
+    .faq details[open] summary::after { transform: rotate(45deg); }
+    .faq-body { padding: 0 0 1.8rem; font-size: 0.94rem; color: var(--ivory-dim); max-width: 58ch; }
+  </style>
+</head>
+<body data-page="authentication">
+
+  <div id="nav-root"></div>
+
+  <!-- ============ PAGE HERO ============ -->
+  <section class="page-hero">
+    <div class="hero-bg"></div>
+    <div class="wrap">
+      <p class="kicker reveal">Human + AI Authentication</p>
+      <h1 class="display display-xl mt-3 reveal" style="--d:.1s; max-width: 15ch;">
+        Trust, <span class="italic text-gold">engineered</span> into every piece.
+      </h1>
+      <p class="lede mt-4 reveal" style="--d:.2s">
+        Computer vision measures what the eye cannot; expert hands judge what a model
+        should not. Every piece that enters the vault passes through both — and leaves
+        with a digital passport to prove it.
+      </p>
+      <div class="auth-figs reveal" style="--d:.3s">
+        <div class="auth-fig">
+          <span class="auth-num">40<span class="text-gold">+</span></span>
+          <span class="small-label">Checkpoints per piece</span>
+        </div>
+        <div class="auth-fig">
+          <span class="auth-num">2<span class="text-gold">×</span></span>
+          <span class="small-label">AI + expert review</span>
+        </div>
+        <div class="auth-fig">
+          <span class="auth-num">100<span class="text-gold">%</span></span>
+          <span class="small-label">Leave with a passport</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="hairline">
+
+  <!-- ============ THE PROCESS ============ -->
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <p class="kicker reveal">The Process</p>
+          <h2 class="display display-lg reveal" style="--d:.08s">Four movements,<br>one verdict.</h2>
+        </div>
+        <p class="lede reveal" style="--d:.15s; max-width: 26rem;">
+          From the moment a piece arrives to the moment its passport is sealed,
+          nothing is assumed and nothing is skipped.
+        </p>
+      </div>
+
+      <div class="grid-4">
+        <article class="step reveal" style="--d:0s">
+          <span class="num-index">01</span>
+          <h3 class="display display-sm mt-1">Intake &amp; imaging</h3>
+          <p class="text-dim mt-2">
+            Every arrival is photographed under calibrated light — macro captures of
+            stamps, seams, hardware and serials build the piece's visual record.
+          </p>
+        </article>
+        <article class="step reveal" style="--d:.08s">
+          <span class="num-index">02</span>
+          <h3 class="display display-sm mt-1">AI analysis</h3>
+          <p class="text-dim mt-2">
+            Computer vision measures the piece against the reference archive —
+            thousands of verified examples per maison, era by era, detail by detail.
+          </p>
+        </article>
+        <article class="step reveal" style="--d:.16s">
+          <span class="num-index">03</span>
+          <h3 class="display display-sm mt-1">Expert review</h3>
+          <p class="text-dim mt-2">
+            High-value pieces, and anything the model scores below its threshold,
+            pass to senior authenticators for judgement by hand, loupe and eye.
+          </p>
+        </article>
+        <article class="step reveal" style="--d:.24s">
+          <span class="num-index">04</span>
+          <h3 class="display display-sm mt-1">Passport issued</h3>
+          <p class="text-dim mt-2">
+            The verdict, the evidence and the piece's identity are sealed into a
+            digital product passport that travels with it for life.
+          </p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ WHAT THE AI EXAMINES ============ -->
+  <section class="section section--coal">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <p class="kicker reveal">Computer Vision</p>
+          <h2 class="display display-lg reveal" style="--d:.08s">What the AI examines.</h2>
+        </div>
+        <p class="lede reveal" style="--d:.15s; max-width: 26rem;">
+          More than forty checkpoints per piece, each compared against verified
+          reference plates from the archive.
+        </p>
+      </div>
+      <div class="grid-4 reveal" id="exam-grid" style="--d:.1s"></div>
+    </div>
+  </section>
+
+  <!-- ============ CONFIDENCE EXPLAINED ============ -->
+  <section class="section">
+    <div class="wrap">
+      <div class="grid-2" style="align-items:center;">
+        <div>
+          <p class="kicker reveal">Confidence, Quantified</p>
+          <h2 class="display display-lg mt-3 reveal" style="--d:.08s">A score for every piece. A route for every score.</h2>
+          <p class="lede mt-4 reveal" style="--d:.16s">
+            Every piece receives an AI confidence score out of 100 — a measure of how
+            closely it matches the verified reference archive — together with an
+            authenticity prediction and an estimated resale value.
+          </p>
+          <p class="text-dim mt-3 reveal" style="--d:.22s; font-size:.95rem; max-width:44rem;">
+            The score never certifies anything on its own. It decides the route —
+            certify, escalate, or decline — and the house's judgement remains final.
+            The model does not replace the expert; it tells the expert where to look.
+          </p>
+        </div>
+
+        <div class="meter-panel reveal" id="meter-panel" style="--d:.15s">
+          <div class="flex-between" style="margin-bottom:2rem;">
+            <span class="small-label">House thresholds</span>
+            <span class="small-label meter-scale">Score / 100</span>
+          </div>
+
+          <div class="tier">
+            <div class="tier-head">
+              <span class="tier-range text-gold">≥ 95</span>
+              <span class="tier-note">Certified · expert spot-check</span>
+            </div>
+            <div class="tier-bar"><span class="tier-fill tier-fill--gold" style="--w:100%"></span></div>
+          </div>
+          <div class="tier">
+            <div class="tier-head">
+              <span class="tier-range">80 – 95</span>
+              <span class="tier-note">Routed to expert review</span>
+            </div>
+            <div class="tier-bar"><span class="tier-fill tier-fill--ivory" style="--w:95%"></span></div>
+          </div>
+          <div class="tier">
+            <div class="tier-head">
+              <span class="tier-range text-burgundy">&lt; 80</span>
+              <span class="tier-note">Declined by the house</span>
+            </div>
+            <div class="tier-bar"><span class="tier-fill tier-fill--burgundy" style="--w:79%"></span></div>
+          </div>
+
+          <div class="meter-example">
+            <div class="tier-head">
+              <span class="small-label" id="conf-label">Live example</span>
+              <span class="conf-num"><span id="conf-num">0.0</span><small> / 100</small></span>
+            </div>
+            <div class="tier-bar"><span class="tier-fill tier-fill--gold" id="conf-fill"></span></div>
+            <p class="small-label mt-2" style="color:var(--gold-soft);">Verdict — certified, expert spot-check</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ THE DIGITAL PRODUCT PASSPORT ============ -->
+  <section class="section section--coal">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <p class="kicker reveal">The Digital Product Passport</p>
+          <h2 class="display display-lg reveal" style="--d:.08s">An identity that travels with the piece.</h2>
+        </div>
+        <p class="lede reveal" style="--d:.15s; max-width: 26rem;">
+          Every verdict is sealed into a passport — the record a piece carries from
+          this owner to the next. One example, drawn from the vault:
+        </p>
+      </div>
+
+      <div class="reveal" id="passport-root" style="--d:.1s"></div>
+
+      <p class="center mt-5 reveal" style="--d:.18s">
+        <a class="text-link" href="product.html?id=cartier-tank-must">See this piece in the archive <span class="arrow">→</span></a>
+      </p>
+    </div>
+  </section>
+
+  <!-- ============ FAQ ============ -->
+  <section class="section">
+    <div class="wrap wrap--narrow">
+      <div class="section-head">
+        <div>
+          <p class="kicker reveal">Questions of Trust</p>
+          <h2 class="display display-lg reveal" style="--d:.08s">Asked, answered.</h2>
+        </div>
+      </div>
+
+      <div class="faq reveal" style="--d:.12s">
+        <details>
+          <summary>What happens if the AI is uncertain?</summary>
+          <div class="faq-body">
+            Uncertainty is treated as a routing signal, never a verdict. Any piece
+            scoring below 95 passes to a senior authenticator for physical
+            examination — hand, loupe and reference plates. The house's judgement is
+            final, and nothing is certified on probability alone.
+          </div>
+        </details>
+        <details>
+          <summary>Do you authenticate items bought elsewhere?</summary>
+          <div class="faq-body">
+            Yes — this arrives as a Phase III service. Bring a piece purchased
+            anywhere and the house will examine it, score it and issue its digital
+            passport, whether or not it is ever consigned to the vault.
+          </div>
+        </details>
+        <details>
+          <summary>What does the passport contain?</summary>
+          <div class="faq-body">
+            The passport number; the maison, model and year; materials; the serials
+            and stamps examined; the condition report; the AI confidence score; the
+            expert countersignature; and the estimated resale value at issue. Future
+            chapters — price history and changes of hands — are appended for life.
+          </div>
+        </details>
+        <details>
+          <summary>What about counterfeits?</summary>
+          <div class="faq-body">
+            A counterfeit never enters the vault. It is returned to its sender, or
+            destroyed with their consent — and it is never relisted, under any
+            circumstance. Zero tolerance is a number in our record, not a slogan.
+          </div>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CLOSING CTA ============ -->
+  <section class="section section--coal">
+    <div class="wrap center">
+      <h2 class="display display-lg reveal">Certainty, in both directions.</h2>
+      <p class="lede mt-3 reveal" style="--d:.1s">
+        Consign knowing your piece will be treated as evidence. Purchase knowing it already has been.
+      </p>
+      <div class="mt-5 reveal" style="--d:.2s; display:flex; gap:1rem; justify-content:center; flex-wrap:wrap;">
+        <a href="sell.html" class="btn btn--gold">Sell With Certainty <span class="arrow">→</span></a>
+        <a href="archive.html" class="btn">Shop Without Doubt</a>
+      </div>
+    </div>
+  </section>
+
+  <div id="footer-root"></div>
+
+  <script src="js/art.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    (function () {
+      /* ---------- What the AI examines ---------- */
+      var CHECK =
+        '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true">' +
+          '<circle cx="12" cy="12" r="10.6" stroke="rgba(201,162,39,.45)" stroke-width="1.2" fill="rgba(201,162,39,.07)"/>' +
+          '<path d="M7.6 12.4l2.9 2.9 5.9-6.1" stroke="#d6b65a" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>' +
+        "</svg>";
+
+      var EXAMS = [
+        ["Logos &amp; stamps", "Depth, spacing and placement, compared against reference plates."],
+        ["Stitching geometry", "Stitch count, angle and tension, mapped seam by seam."],
+        ["Materials &amp; grain", "Leather grain, silk weave and alloy tone under magnification."],
+        ["Hardware &amp; engravings", "Weight, finish and engraving depth of every fitting."],
+        ["Labels &amp; typography", "Letterforms, kerning and label placement across eras."],
+        ["Serial numbers &amp; date codes", "Cross-checked against era, atelier and format records."],
+        ["Proportions &amp; pattern alignment", "Millimetre geometry and pattern continuity across panels."],
+        ["Manufacturing details", "Edge paint, lining and heat stamps — the details forgers miss."]
+      ];
+
+      document.getElementById("exam-grid").innerHTML = EXAMS.map(function (e) {
+        return (
+          '<div class="exam-item">' + CHECK +
+            "<div><h3>" + e[0] + "</h3><p>" + e[1] + "</p></div>" +
+          "</div>"
+        );
+      }).join("");
+
+      /* ---------- Confidence meter (animated example) ---------- */
+      var example = window.raecaeFindProduct("hermes-kelly-28");
+      var target = example ? example.confidence : 98.6;
+      document.getElementById("conf-label").textContent =
+        "Live example — " + (example ? example.brand + " " + example.title.split(",")[0] : "From the vault");
+
+      var numEl = document.getElementById("conf-num");
+      var fillEl = document.getElementById("conf-fill");
+      var played = false;
+
+      function playMeter() {
+        if (played) return;
+        played = true;
+        var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        fillEl.style.width = target + "%";
+        if (reduce || !window.requestAnimationFrame) {
+          numEl.textContent = target.toFixed(1);
+          return;
+        }
+        var t0 = null, dur = 1800;
+        function tick(ts) {
+          if (t0 === null) t0 = ts;
+          var k = Math.min((ts - t0) / dur, 1);
+          var eased = 1 - Math.pow(1 - k, 3);
+          numEl.textContent = (target * eased).toFixed(1);
+          if (k < 1) window.requestAnimationFrame(tick);
+        }
+        window.requestAnimationFrame(tick);
+      }
+
+      var panel = document.getElementById("meter-panel");
+      if ("IntersectionObserver" in window) {
+        var io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) { playMeter(); io.disconnect(); }
+          });
+        }, { threshold: 0.35 });
+        io.observe(panel);
+      } else {
+        playMeter();
+      }
+
+      /* ---------- Digital product passport certificate ---------- */
+      var p = window.raecaeFindProduct("cartier-tank-must");
+      if (p) {
+        document.getElementById("passport-root").innerHTML =
+          '<article class="passport-card" aria-label="Digital product passport for ' + p.brand + " " + p.title + '">' +
+            '<div class="passport-top">' +
+              '<span class="badge badge--verified">RAÉCAE Verified</span>' +
+              '<span class="small-label">Passport № ' + p.passport + "</span>" +
+            "</div>" +
+            '<div class="passport-body">' +
+              '<div class="passport-plate product-art">' + window.raecaeArt(p.art) + "</div>" +
+              "<div>" +
+                '<p class="small-label">Digital Product Passport</p>' +
+                '<h3 class="display display-md" style="margin-top:.7rem;">' + p.title + "</h3>" +
+                '<p class="text-dim mt-1" style="font-size:.9rem; letter-spacing:.08em;">' +
+                  p.brand + " · " + p.year + " · " + p.category +
+                "</p>" +
+                '<div class="passport-fields">' +
+                  "<div>" +
+                    '<p class="small-label">AI confidence</p>' +
+                    '<p class="pf-value"><span class="pf-big">' + p.confidence + '</span><span class="text-faint"> / 100</span></p>' +
+                  "</div>" +
+                  "<div>" +
+                    '<p class="small-label">Checkpoints</p>' +
+                    '<p class="pf-value"><span class="pf-big">43</span><span class="text-faint"> / 43 passed</span></p>' +
+                  "</div>" +
+                  '<div class="pf--wide">' +
+                    '<p class="small-label">Materials</p>' +
+                    '<p class="pf-value">' + p.material + "</p>" +
+                  "</div>" +
+                  '<div class="pf--wide">' +
+                    '<p class="small-label">Serial record</p>' +
+                    '<p class="pf-value">' + p.serial + "</p>" +
+                  "</div>" +
+                  '<div class="pf--wide">' +
+                    '<p class="small-label">Condition — ' + p.condition + "</p>" +
+                    '<p class="pf-value text-dim">' + p.conditionNote + "</p>" +
+                  "</div>" +
+                "</div>" +
+              "</div>" +
+            "</div>" +
+            '<div class="passport-sig">' +
+              "<div>" +
+                '<p class="sig-name">M. Haddad</p>' +
+                '<div class="sig-rule"></div>' +
+                '<p class="small-label">Senior Authenticator · Amman Atelier</p>' +
+              "</div>" +
+              '<div class="passport-seal" aria-hidden="true">' +
+                '<svg viewBox="0 0 96 96" width="84" height="84">' +
+                  '<circle cx="48" cy="48" r="40" fill="rgba(201,162,39,.05)" stroke="rgba(201,162,39,.5)" stroke-width="1.2"/>' +
+                  '<circle cx="48" cy="48" r="36" fill="none" stroke="rgba(201,162,39,.55)" stroke-width="2" stroke-dasharray="1 8.4" stroke-linecap="round"/>' +
+                  '<circle cx="48" cy="48" r="29" fill="none" stroke="rgba(201,162,39,.28)" stroke-width="1"/>' +
+                  '<path d="M37 49l8 8 15-16" fill="none" stroke="#d6b65a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>' +
+                "</svg>" +
+              "</div>" +
+              '<div style="text-align:right;">' +
+                '<p class="small-label">Estimated resale value</p>' +
+                '<p class="sig-value">' +
+                  window.raecaeMoney(p.price).replace(" JOD", ' <span class="text-gold">JOD</span>') +
+                "</p>" +
+              "</div>" +
+            "</div>" +
+            '<p class="passport-note">This passport follows the piece for life — every future sale, service and change of hands is appended to its record, price history included.</p>' +
+          "</article>";
+      }
+    })();
+  </script>
+</body>
+</html>
