@@ -333,6 +333,7 @@
   <script src="js/art.js"></script>
   <script src="js/data.js"></script>
   <script src="js/main.js"></script>
+  <script src="js/config.js"></script>
   <script>
     (function () {
       var find = window.raecaeFindProduct;
@@ -429,34 +430,68 @@
         scrollBottom();
       }
 
+      var typingTimer = null;
       function showTyping() {
         typingEl = addMsg("msg--ai msg--typing",
           '<span class="tdot"></span><span class="tdot"></span><span class="tdot"></span>');
       }
+      function queueTyping(delay) {
+        typingTimer = window.setTimeout(function () { typingTimer = null; showTyping(); }, delay);
+      }
       function hideTyping() {
+        /* cancel a queued indicator too — a fast reply must not strand one */
+        if (typingTimer) { window.clearTimeout(typingTimer); typingTimer = null; }
         if (typingEl) { typingEl.parentNode.removeChild(typingEl); typingEl = null; }
+      }
+
+      /* Conversation memory — sent to the live intelligence when available */
+      var history = [];
+
+      function deliver(reply, ids) {
+        var replyEl = addMsg("msg--ai", escapeHtml(reply));
+        history.push({ role: "assistant", content: reply });
+        if (ids && ids.length) addCards(ids);
+        /* Show the reply from its first line, not the bottom of the cards
+           (.chat-messages is position:relative, so offsetTop is box-local) */
+        box.scrollTop = Math.max(0, replyEl.offsetTop - 18);
+        busy = false;
       }
 
       function respond(intentKey) {
         busy = true;
-        setTimeout(showTyping, 150);
+        queueTyping(150);
         setTimeout(function () {
           hideTyping();
           var intent = intentKey && INTENTS[intentKey];
-          var replyEl = addMsg("msg--ai", intent ? intent.reply : FALLBACK);
-          if (intent) addCards(intent.ids);
-          /* Show the reply from its first line, not the bottom of the cards
-             (.chat-messages is position:relative, so offsetTop is box-local) */
-          box.scrollTop = Math.max(0, replyEl.offsetTop - 18);
-          busy = false;
+          deliver(intent ? intent.reply : FALLBACK, intent ? intent.ids : null);
         }, 1050);
+      }
+
+      function respondLive(text) {
+        busy = true;
+        queueTyping(150);
+        window.RAECAE_AI.stylist(history)
+          .then(function (res) {
+            hideTyping();
+            var ids = (res.pieces || []).filter(function (id) { return !!find(id); });
+            deliver(res.reply, ids);
+          })
+          .catch(function () {
+            /* The vault never goes silent — fall back to the concept engine. */
+            hideTyping();
+            var intent = matchIntent(text);
+            var canned = intent && INTENTS[intent];
+            deliver(canned ? canned.reply : FALLBACK, canned ? canned.ids : null);
+          });
       }
 
       function send(text, forcedIntent) {
         text = (text || "").trim();
         if (busy || !text) return;
         addMsg("msg--user", escapeHtml(text));
-        respond(forcedIntent || matchIntent(text));
+        history.push({ role: "user", content: text });
+        if (window.RAECAE_AI && window.RAECAE_AI.isLive()) respondLive(text);
+        else respond(forcedIntent || matchIntent(text));
       }
 
       /* ---------- Wiring ---------- */
@@ -474,6 +509,18 @@
         });
       });
 
+      /* ---------- Live intelligence (optional) ---------- */
+      if (window.RAECAE_AI) {
+        window.RAECAE_AI.probe().then(function (isLive) {
+          if (!isLive) return;
+          document.querySelector(".chat-status").textContent = "Live";
+          var note = document.querySelector(".stylist-note");
+          if (note) note.textContent =
+            "A live consultation — every answer is generated in real time, " +
+            "and the stylist recommends only from the authenticated archive.";
+        });
+      }
+
       /* ---------- Opening sequence (+ optional ?q= autoplay) ---------- */
       var q = new URLSearchParams(window.location.search).get("q");
       if (!(q && INTENTS[q])) q = null;
@@ -483,6 +530,7 @@
         setTimeout(function () {
           hideTyping();
           addMsg("msg--ai", GREETING);
+          history.push({ role: "assistant", content: GREETING });
           busy = false;
           if (q) setTimeout(function () { send(INTENTS[q].prompt, q); }, 750);
         }, 900);

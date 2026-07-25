@@ -109,6 +109,19 @@
       border-color: var(--gold);
       background: radial-gradient(circle, var(--gold) 3px, transparent 3.6px);
     }
+    /* Your-own-piece upload (revealed when the live atelier is configured) */
+    .upload-sample { cursor: pointer; }
+    .upload-sample .sample-thumb {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--gold-soft);
+    }
+    .upload-sample .sample-thumb svg { width: 55%; height: auto; }
+    .upload-sample .sample-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .upload-notes { margin-top: 0.7rem; }
+    .ai-line--error span:last-child { color: var(--burgundy-bright); }
+
     .gen-row { margin-top: 1.5rem; display: grid; gap: 1rem; }
     .gen-row .btn { width: 100%; }
     .gen-row .text-link { justify-self: center; }
@@ -314,6 +327,30 @@
           <div>
             <p class="small-label">Choose a piece to try</p>
             <div class="tray" id="tray" role="group" aria-label="Sample pieces"></div>
+
+            <div id="upload-block" hidden>
+              <p class="small-label" style="margin-top:1.6rem;">Or your own piece</p>
+              <div class="tray">
+                <label class="sample upload-sample" id="upload-sample" for="photo-input">
+                  <span class="sample-thumb" aria-hidden="true" id="upload-thumb">
+                    <svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M8 14h6l3-4h10l3 4h6a2 2 0 012 2v18a2 2 0 01-2 2H8a2 2 0 01-2-2V16a2 2 0 012-2z"/>
+                      <circle cx="22" cy="25" r="6"/>
+                    </svg>
+                  </span>
+                  <span class="sample-cap">
+                    <span class="sample-brand">Your photographs</span>
+                    <span class="sample-name" id="upload-name">Upload up to four</span>
+                    <span class="sample-meta" id="upload-meta">JPEG, PNG or WEBP · honest daylight</span>
+                  </span>
+                  <span class="sample-dot" aria-hidden="true"></span>
+                </label>
+              </div>
+              <input type="file" id="photo-input" accept="image/jpeg,image/png,image/webp" multiple hidden>
+              <input class="field upload-notes" id="upload-notes" type="text" maxlength="300"
+                     placeholder="Anything the atelier cannot see (optional)" hidden>
+            </div>
+
             <div class="gen-row">
               <button class="btn btn--gold" id="generate-btn" type="button">Generate the Listing</button>
               <button class="text-link" id="reset-link" type="button" hidden>Try another piece</button>
@@ -411,6 +448,7 @@
   <script src="js/art.js"></script>
   <script src="js/data.js"></script>
   <script src="js/main.js"></script>
+  <script src="js/config.js"></script>
   <script>
     (function () {
       var SAMPLES = [
@@ -436,6 +474,18 @@
       var currentId = SAMPLES[0].id;
       var phase = "idle";
       var timers = [];
+
+      /* Live atelier (real photographs → real AI draft) */
+      var UPLOAD_ID = "__upload__";
+      var uploadPhotos = [];
+      var lastDraft = null; /* { brand, ref } for the confirmation state */
+      var uploadBlock = document.getElementById("upload-block");
+      var uploadSample = document.getElementById("upload-sample");
+      var uploadThumb = document.getElementById("upload-thumb");
+      var uploadName = document.getElementById("upload-name");
+      var uploadMeta = document.getElementById("upload-meta");
+      var uploadNotes = document.getElementById("upload-notes");
+      var photoInput = document.getElementById("photo-input");
 
       function product() { return window.raecaeFindProduct(currentId); }
       function money(n) { return window.raecaeMoney(n); }
@@ -474,8 +524,50 @@
           b.classList.toggle("selected", on);
           b.setAttribute("aria-pressed", on ? "true" : "false");
         });
+        if (uploadSample) uploadSample.classList.toggle("selected", currentId === UPLOAD_ID);
       }
       syncTray();
+
+      /* ---------- Live atelier wiring ---------- */
+      if (window.RAECAE_AI) {
+        window.RAECAE_AI.probe().then(function (isLive) {
+          if (!isLive) return;
+          uploadBlock.hidden = false;
+          uploadNotes.hidden = false;
+          var badge = document.querySelector(".atelier-head .badge");
+          if (badge) badge.textContent = "Live atelier";
+        });
+      }
+
+      photoInput.addEventListener("change", function () {
+        var files = Array.prototype.slice.call(photoInput.files || []).slice(0, 4);
+        if (!files.length) return;
+        Promise.all(files.map(function (f) { return window.RAECAE_AI.fileToDataUrl(f, 1024); }))
+          .then(function (urls) {
+            uploadPhotos = urls;
+            uploadThumb.innerHTML = '<img src="' + urls[0] + '" alt="">';
+            uploadName.textContent = files.length === 1 ? "One photograph" :
+              ["", "One", "Two", "Three", "Four"][files.length] + " photographs";
+            uploadMeta.textContent = "ready for the atelier";
+            currentId = UPLOAD_ID;
+            syncTray();
+            if (phase !== "idle") resetDemo();
+          })
+          .catch(function () {
+            uploadMeta.textContent = "those files could not be read — try JPEG or PNG";
+          });
+      });
+
+      uploadSample.addEventListener("click", function (e) {
+        if (uploadPhotos.length && currentId !== UPLOAD_ID) {
+          /* first click re-selects without reopening the picker;
+             a second click opens it again to replace the photographs */
+          e.preventDefault();
+          currentId = UPLOAD_ID;
+          syncTray();
+          if (phase !== "idle") resetDemo();
+        }
+      });
 
       /* ---------- Demo state ---------- */
       function resetDemo() {
@@ -502,8 +594,16 @@
       });
       resetLink.addEventListener("click", resetDemo);
 
+      function esc(s) {
+        return String(s == null ? "" : s)
+          .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+      }
+
       /* ---------- Generation sequence ---------- */
+      var genSeq = 0;
+
       function start() {
+        if (currentId === UPLOAD_ID) { startLive(); return; }
         var p = product();
         phase = "generating";
         genBtn.classList.add("is-busy");
@@ -529,6 +629,106 @@
           finishActiveLine();
           showListing(p);
         });
+      }
+
+      /* ---------- Live generation (your own photographs) ---------- */
+      function startLive() {
+        var seq = ++genSeq;
+        phase = "generating";
+        genBtn.classList.add("is-busy");
+        genBtn.setAttribute("aria-busy", "true");
+        genBtn.textContent = "Drafting…";
+        consoleEl.classList.remove("is-idle");
+        consoleEl.innerHTML = "";
+        consoleEl.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        var lines = [
+          "Reading the photographs…",
+          "Identifying the house…",
+          "Assessing condition and materials…",
+          "Writing your story…",
+          "Pricing for the regional market…"
+        ];
+        lines.forEach(function (text, i) {
+          schedule(250 + i * 1400, function () {
+            finishActiveLine();
+            addLine(text);
+          });
+        });
+        window.RAECAE_AI.listing(uploadPhotos, uploadNotes.value)
+          .then(function (d) {
+            if (seq !== genSeq || phase !== "generating") return; /* reset mid-flight */
+            clearTimers();
+            finishActiveLine();
+            showListingLive(d);
+          })
+          .catch(function (err) {
+            if (seq !== genSeq || phase !== "generating") return;
+            clearTimers();
+            finishActiveLine();
+            var el = document.createElement("div");
+            el.className = "ai-line ai-line--error";
+            el.innerHTML = '<span class="ai-dot"></span><span>' +
+              esc(err && err.message ? err.message : "The atelier could not be reached.") + "</span>";
+            consoleEl.appendChild(el);
+            phase = "idle";
+            genBtn.classList.remove("is-busy");
+            genBtn.setAttribute("aria-busy", "false");
+            genBtn.textContent = "Generate the Listing";
+            resetLink.hidden = false;
+          });
+      }
+
+      function showListingLive(d) {
+        phase = "generated";
+        lastDraft = {
+          brand: d.brand || "your piece",
+          ref: "RC-2026-" + Math.floor(1000 + Math.random() * 9000)
+        };
+        var bandHtml = d.price_high_jod > 0
+          ? '<span class="band">' +
+              '<span class="band-num">' + money(d.price_low_jod) + "</span>" +
+              '<span class="band-to">to</span>' +
+              '<span class="band-num">' + money(d.price_high_jod) + "</span>" +
+            "</span>" +
+            '<span class="band-note">Benchmarked for the regional market by the atelier.</span>'
+          : '<span class="band-note">To be priced with the house after authentication.</span>';
+        listingEl.innerHTML =
+          '<div class="flex-between" style="gap:.8rem 1.5rem; margin-bottom:1.5rem;">' +
+            '<span class="badge badge--verified">AI draft — ready for review</span>' +
+            '<span class="small-label">Model confidence <span class="text-gold">' + d.confidence + "%</span></span>" +
+          "</div>" +
+          '<p class="product-brand">' + esc(d.brand) + "</p>" +
+          '<h3 class="display display-md" style="max-width:20ch;">' + esc(d.title) + "</h3>" +
+          '<p class="listing-desc" id="listing-desc">' + esc(d.description) + "</p>" +
+          '<dl class="listing-rows">' +
+            row("Category", esc(d.category) + " · " + esc(d.era) +
+              (d.year_estimate ? ", " + esc(d.year_estimate) : "")) +
+            row("Style tags",
+              '<span class="tag-row">' +
+                d.tags.map(function (t) { return '<span class="badge">' + esc(t) + "</span>"; }).join("") +
+              "</span>") +
+            row("Condition",
+              '<span style="color:var(--ivory)">' + esc(d.condition) + "</span>" +
+              (d.condition_note ? " — " + esc(d.condition_note) : "")) +
+            row("Search keywords",
+              '<span class="small-label" style="letter-spacing:.22em; line-height:2.1;">' +
+                d.keywords.map(esc).join(" · ") +
+              "</span>") +
+            row("Suggested band", bandHtml) +
+          "</dl>" +
+          '<div class="listing-actions">' +
+            '<button type="button" class="btn btn--small" id="edit-btn">Edit Draft</button>' +
+            '<button type="button" class="btn btn--gold btn--small" id="submit-btn">Submit for Authentication</button>' +
+          "</div>";
+        listingEl.hidden = false;
+        void listingEl.offsetWidth;
+        listingEl.classList.add("in");
+        genBtn.classList.remove("is-busy");
+        genBtn.setAttribute("aria-busy", "false");
+        genBtn.textContent = "Regenerate the Listing";
+        resetLink.hidden = false;
+        document.getElementById("edit-btn").addEventListener("click", toggleEdit);
+        document.getElementById("submit-btn").addEventListener("click", submit);
       }
 
       function addLine(html) {
@@ -558,6 +758,7 @@
 
       function showListing(p) {
         phase = "generated";
+        lastDraft = { brand: p.brand, ref: p.passport };
         listingEl.innerHTML =
           '<div class="flex-between" style="gap:.8rem 1.5rem; margin-bottom:1.5rem;">' +
             '<span class="badge badge--verified">AI draft — ready for review</span>' +
@@ -628,7 +829,7 @@
       /* ---------- Submit for authentication ---------- */
       function submit() {
         phase = "submitted";
-        var p = product();
+        var d = lastDraft || { brand: product().brand, ref: product().passport };
         gridEl.hidden = true;
         confirmEl.innerHTML =
           '<svg class="confirm-seal" viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
@@ -638,8 +839,8 @@
           '<h3 class="display display-md mt-3">Received.</h3>' +
           '<p class="lede mt-3" style="max-width:36rem; margin-inline:auto;">' +
             "The Authentication Room takes it from here. Computer vision first, expert hands after — your " +
-            p.brand + " goes live the moment it is beyond question.</p>" +
-          '<p class="small-label mt-4">Submission reference · <span class="text-gold" style="white-space:nowrap">' + p.passport + "</span></p>" +
+            esc(d.brand) + " goes live the moment it is beyond question.</p>" +
+          '<p class="small-label mt-4">Submission reference · <span class="text-gold" style="white-space:nowrap">' + esc(d.ref) + "</span></p>" +
           '<div class="mt-5" style="display:flex; gap:1rem; justify-content:center; flex-wrap:wrap;">' +
             '<a href="authentication.html" class="btn btn--gold">Inside the Authentication Room</a>' +
             '<button type="button" class="btn" id="again-btn">Prepare Another Piece</button>' +
