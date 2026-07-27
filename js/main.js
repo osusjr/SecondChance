@@ -63,7 +63,7 @@
           '<div class="footer-grid">' +
             '<div class="footer-brand">' +
               '<a href="index.html" class="wordmark">RA<span class="accent">É</span>CAE</a>' +
-              "<p>The intelligent fashion archive of the region — where every piece is verified, understood, and given a story. Connecting Jordan, the Gulf and Europe through technology and authenticity.</p>" +
+              "<p>Authenticated luxury resale, built in Amman. Every piece is verified by AI and expert hands before it is listed, and carries a digital passport for life.</p>" +
             "</div>" +
             "<div>" +
               "<h4>House</h4>" +
@@ -85,7 +85,7 @@
             "</div>" +
             "<div>" +
               "<h4>The Private List</h4>" +
-              '<p class="footer-note">Drops, archive arrivals and stories — before anyone else.</p>' +
+              '<p class="footer-note">New drops and archive arrivals, before anyone else.</p>' +
               '<form class="footer-newsletter" onsubmit="event.preventDefault(); this.querySelector(\'input\').value=\'\'; this.querySelector(\'.btn\').textContent=\'Welcome\';">' +
                 '<input class="field" type="email" placeholder="Email address" aria-label="Email address" required>' +
                 '<button class="btn btn--gold btn--small" type="submit">Join</button>' +

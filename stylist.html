@@ -4,10 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>The AI Stylist — RAÉCAE</title>
-  <meta name="description" content="A personal AI stylist that has read the entire RAÉCAE archive — ask for quiet luxury, a vintage-inspired look or styling for an evening, and receive authenticated pieces chosen for your taste, occasion and budget.">
+  <meta name="description" content="The RAÉCAE AI stylist — ask for quiet luxury, a vintage look or styling for an evening, and get authenticated pieces from the archive that fit your taste, occasion and budget.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Space+Grotesk:wght@300;400;500;600&family=Syne:wght@500;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/main.css">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230a0a0b'/%3E%3Ctext x='16' y='22' text-anchor='middle' font-family='Georgia' font-size='18' fill='%23c9a227'%3ER%3C/text%3E%3C/svg%3E">
   <style>
@@ -196,8 +196,8 @@
       </h1>
       <p class="lede mt-4 reveal" style="--d:.2s">
         Ask for quiet luxury, a vintage mood, or a look for Thursday&rsquo;s dinner.
-        The RAÉCAE stylist answers with authenticated pieces from the vault —
-        chosen for your taste, your occasion and your budget.
+        The stylist answers with pieces from the archive — all authenticated,
+        all actually in stock, all within the budget you give it.
       </p>
     </div>
   </section>
@@ -233,8 +233,8 @@
       </div>
 
       <p class="stylist-note reveal" style="--d:.15s">
-        A concept demonstration — the stylist answers from the current archive,
-        where every piece is already authenticated and passported.
+        This is a demonstration — the stylist answers from the current archive,
+        and every piece it suggests is already authenticated.
       </p>
     </div>
   </section>
@@ -245,11 +245,11 @@
       <div class="section-head">
         <div>
           <p class="kicker reveal">The Method</p>
-          <h2 class="display display-lg reveal" style="--d:.08s">How the stylist thinks.</h2>
+          <h2 class="display display-lg reveal" style="--d:.08s">How it works.</h2>
         </div>
         <p class="lede reveal" style="--d:.15s; max-width: 26rem;">
-          Recommendation engines push product. The RAÉCAE stylist reads four
-          signals and answers like someone who knows you.
+          Every recommendation is based on four things the stylist
+          knows about you.
         </p>
       </div>
 
@@ -263,8 +263,8 @@
             </svg>
           </div>
           <h3>Personal taste</h3>
-          <p>It learns the register you dress in — the silhouettes, houses and eras
-          you return to — and proposes pieces in your language, not the algorithm&rsquo;s.</p>
+          <p>It picks up on what you actually wear — the brands, cuts and eras you
+          keep coming back to — and suggests pieces along those lines.</p>
         </article>
 
         <article class="card reveal" style="--d:.08s">
@@ -276,8 +276,8 @@
             </svg>
           </div>
           <h3>Budget</h3>
-          <p>Name a ceiling in JOD and it is respected without comment — elegance
-          proposed within your means, never pushed beyond them.</p>
+          <p>Give it a ceiling in JOD and it stays under it. It will not try
+          to upsell you.</p>
         </article>
 
         <article class="card reveal" style="--d:.16s">
@@ -290,8 +290,8 @@
             </svg>
           </div>
           <h3>Occasion</h3>
-          <p>A wedding in Amman, a dinner in Dubai, an ordinary Tuesday — the stylist
-          dresses the moment you are actually living.</p>
+          <p>A wedding, a work dinner, an ordinary Tuesday — tell it the occasion
+          and it suggests something appropriate for it.</p>
         </article>
 
         <article class="card reveal" style="--d:.24s">
@@ -304,8 +304,8 @@
             </svg>
           </div>
           <h3>Previous interactions</h3>
-          <p>Every consultation refines the next — what you loved and what you
-          declined both teach the archive to arrive closer to you.</p>
+          <p>It remembers what you liked and what you passed on, so the
+          recommendations get better the more you use it.</p>
         </article>
       </div>
     </div>
@@ -317,9 +317,9 @@
       <p class="kicker kicker--plain reveal">Continue</p>
       <h2 class="display display-lg mt-3 reveal" style="--d:.08s">Prefer to wander the vault yourself?</h2>
       <p class="lede mt-3 reveal" style="--d:.16s">
-        Everything the stylist recommends is already in the archive —
-        authenticated, passported and storied. The vault is open, with or
-        without an appointment.
+        Everything the stylist recommends is already in the archive,
+        authenticated and ready to buy. You can browse it yourself
+        whenever you like.
       </p>
       <div class="mt-5 reveal" style="--d:.24s; display:flex; gap:1rem; justify-content:center; flex-wrap:wrap;">
         <a href="archive.html" class="btn btn--gold">Enter the Archive <span class="arrow">→</span></a>
@@ -333,6 +333,7 @@
   <script src="js/art.js"></script>
   <script src="js/data.js"></script>
   <script src="js/main.js"></script>
+  <script src="js/fx.js"></script>
   <script src="js/config.js"></script>
   <script>
     (function () {
@@ -349,39 +350,39 @@
       var INTENTS = {
         "quiet-luxury": {
           prompt: "Find me a quiet luxury outfit",
-          reply: "Quiet luxury is a discipline of line and cloth — nothing that announces itself, everything that endures. I would anchor you in The Row’s double-faced wool, carry box calf that has spent two decades earning its patina, and finish with black acetate. No logos required; none missed.",
+          reply: "For quiet luxury I would start with The Row blazer — clean lines, no logos anywhere. The 1998 Kelly in box calf sits well with it, and the black Céline frames finish the look. All three are in the archive now.",
           ids: ["the-row-blazer", "hermes-kelly-28", "celine-sunglasses"]
         },
         "vintage": {
           prompt: "I want a vintage-inspired look",
-          reply: "A vintage mood deserves pieces with an actual past, not a reference to one. Begin with a 1997 bias-cut slip that moves like water, ground it with horsebit loafers that have crossed thirty-five years of doorways, and knot a 1985 carré at the neck or the handle.",
+          reply: "Start with the 1997 Saint Laurent slip dress — bias-cut silk, it moves beautifully. The 1989 Gucci horsebit loafers ground it, and the 1985 Hermès scarf works at the neck or tied to a bag handle.",
           ids: ["ysl-slip-dress", "gucci-horsebit-loafers", "hermes-carre-90"]
         },
         "event": {
           prompt: "Style me for an evening event",
-          reply: "For an evening, dress the light itself: charmeuse cut on the bias, pearls that have attended more weddings than most families, and a Classic Flap to close the look the way Mademoiselle intended. Every piece is verified — the only thing left to carry is the room’s attention.",
+          reply: "For an evening event: the Saint Laurent slip dress, the Mikimoto double strand, and the Chanel Classic Flap to carry. All three are verified and available now.",
           ids: ["ysl-slip-dress", "mikimoto-pearls", "chanel-classic-flap"]
         },
         "the-row": {
           prompt: "Something similar to The Row",
-          reply: "If The Row is your register, you are asking for severity with softness — precision without a single logo. The blazer itself is in the vault; I would pair it with Bottega’s sculptural ankle boots and oversized black acetate. Minimal, deliberate, unmistakable.",
+          reply: "If The Row is your style, the blazer itself is in the archive. I would pair it with the Bottega ankle boots and the oversized Céline sunglasses — minimal, well made, no logos.",
           ids: ["the-row-blazer", "bottega-ankle-boots", "celine-sunglasses"]
         },
         "budget": {
           prompt: "Under 600 JOD",
-          reply: "Elegance has never been a price point. Under " + money(600) + ", the vault currently holds " +
-            (NUMWORDS[budgetPieces.length] || budgetPieces.length) + " authenticated pieces, from " +
+          reply: "Under " + money(600) + " the archive currently has " +
+            (NUMWORDS[budgetPieces.length] || budgetPieces.length) + " pieces, from " +
             money(budgetPieces[0].price) + " to " + money(budgetPieces[budgetPieces.length - 1].price) +
-            " — vintage silk, archive-era acetate, horsebit leather — each with its passport and its story intact.",
+            " — all authenticated, all with their passports. Here they are.",
           ids: budgetPieces.map(function (p) { return p.id; })
         }
       };
 
-      var FALLBACK = "Forgive me — I answer in the language of the vault. Ask me for a quiet luxury outfit, a vintage-inspired look, styling for an evening event, something in the register of The Row — or simply name a budget in JOD.";
+      var FALLBACK = "I can help with things like a quiet luxury outfit, a vintage look, styling for an evening event, or something similar to The Row — or just give me a budget in JOD.";
 
       var hour = new Date().getHours();
       var salute = hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
-      var GREETING = salute + " — I am the RAÉCAE stylist. I have read every piece in the vault: its era, its condition, its story. Tell me the mood, the occasion or the budget, and I will answer from the archive.";
+      var GREETING = salute + " — welcome to RAÉCAE. Tell me what you are looking for — an occasion, a style, or a budget — and I will pull options from the archive.";
 
       /* ---------- Intent matching for free text ---------- */
       function matchIntent(text) {
@@ -516,8 +517,8 @@
           document.querySelector(".chat-status").textContent = "Live";
           var note = document.querySelector(".stylist-note");
           if (note) note.textContent =
-            "A live consultation — every answer is generated in real time, " +
-            "and the stylist recommends only from the authenticated archive.";
+            "Live — answers are generated in real time, and the stylist " +
+            "only recommends pieces from the authenticated archive.";
         });
       }
 

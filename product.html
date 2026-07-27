@@ -7,7 +7,7 @@
   <meta name="description" content="A verified piece from the RAÉCAE archive — authenticated by AI and expert hands, with its full story and digital product passport.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Space+Grotesk:wght@300;400;500;600&family=Syne:wght@500;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/main.css">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230a0a0b'/%3E%3Ctext x='16' y='22' text-anchor='middle' font-family='Georgia' font-size='18' fill='%23c9a227'%3ER%3C/text%3E%3C/svg%3E">
   <style>
@@ -249,8 +249,8 @@
       <p class="kicker kicker--plain">The Archive</p>
       <h1 class="display display-lg mt-3">This piece has left the vault.</h1>
       <p class="lede mt-4">
-        Some pieces stay only a moment — acquired, re-homed, already beginning their next
-        chapter. The story you are looking for has moved on, but the archive never stands still.
+        It has either been sold or withdrawn. New pieces enter the archive
+        every week — the collection is worth another look.
       </p>
       <div class="mt-5">
         <a href="archive.html" class="btn btn--gold">Return to the Archive <span class="arrow">→</span></a>
@@ -313,7 +313,7 @@
       <div class="wrap wrap--narrow center">
         <p class="kicker kicker--plain reveal">Product Storytelling</p>
         <blockquote class="pullquote pullquote--story mt-5 reveal" style="--d:.1s" id="story-quote"></blockquote>
-        <p class="small-label mt-5 reveal" style="--d:.2s">Written by the RAÉCAE storytelling AI, from this piece's documented history</p>
+        <p class="small-label mt-5 reveal" style="--d:.2s">Description written from this piece's documented history</p>
       </div>
     </section>
 
@@ -322,7 +322,7 @@
       <div class="wrap wrap--narrow">
         <div class="center">
           <p class="kicker kicker--plain reveal">Digital Product Passport</p>
-          <h2 class="display display-md mt-3 reveal" style="--d:.08s">One piece. One identity. For life.</h2>
+          <h2 class="display display-md mt-3 reveal" style="--d:.08s">One piece, one record — for life.</h2>
         </div>
 
         <div class="passport-cert mt-6 reveal" id="passport-cert" style="--d:.12s">
@@ -405,6 +405,7 @@
   <script src="js/art.js"></script>
   <script src="js/data.js"></script>
   <script src="js/main.js"></script>
+  <script src="js/fx.js"></script>
   <script>
     (function () {
       var params = new URLSearchParams(location.search);

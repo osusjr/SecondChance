@@ -7,7 +7,7 @@
   <meta name="description" content="Inside the RAÉCAE authentication room — computer vision and expert hands examine every piece against the reference archive before it enters the vault, and every verdict is sealed into a digital product passport.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Space+Grotesk:wght@300;400;500;600&family=Syne:wght@500;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/main.css">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230a0a0b'/%3E%3Ctext x='16' y='22' text-anchor='middle' font-family='Georgia' font-size='18' fill='%23c9a227'%3ER%3C/text%3E%3C/svg%3E">
   <style>
@@ -217,9 +217,9 @@
         Trust, <span class="italic text-gold">engineered</span> into every piece.
       </h1>
       <p class="lede mt-4 reveal" style="--d:.2s">
-        Computer vision measures what the eye cannot; expert hands judge what a model
-        should not. Every piece that enters the vault passes through both — and leaves
-        with a digital passport to prove it.
+        Every piece is checked twice: computer vision compares it against a reference
+        archive, and an expert reviews anything high-value or uncertain. If it passes,
+        it gets a digital passport to prove it.
       </p>
       <div class="auth-figs reveal" style="--d:.3s">
         <div class="auth-fig">
@@ -246,11 +246,11 @@
       <div class="section-head">
         <div>
           <p class="kicker reveal">The Process</p>
-          <h2 class="display display-lg reveal" style="--d:.08s">Four movements,<br>one verdict.</h2>
+          <h2 class="display display-lg reveal" style="--d:.08s">Four steps,<br>one verdict.</h2>
         </div>
         <p class="lede reveal" style="--d:.15s; max-width: 26rem;">
-          From the moment a piece arrives to the moment its passport is sealed,
-          nothing is assumed and nothing is skipped.
+          This is what happens between a piece arriving and its
+          passport being issued.
         </p>
       </div>
 
@@ -321,9 +321,9 @@
             authenticity prediction and an estimated resale value.
           </p>
           <p class="text-dim mt-3 reveal" style="--d:.22s; font-size:.95rem; max-width:44rem;">
-            The score never certifies anything on its own. It decides the route —
-            certify, escalate, or decline — and the house's judgement remains final.
-            The model does not replace the expert; it tells the expert where to look.
+            The score does not certify anything on its own — it decides the route:
+            certify, escalate to an expert, or decline. The final call is
+            always human.
           </p>
         </div>
 
@@ -404,10 +404,9 @@
         <details>
           <summary>What happens if the AI is uncertain?</summary>
           <div class="faq-body">
-            Uncertainty is treated as a routing signal, never a verdict. Any piece
-            scoring below 95 passes to a senior authenticator for physical
-            examination — hand, loupe and reference plates. The house's judgement is
-            final, and nothing is certified on probability alone.
+            Any piece scoring below 95 goes to a senior authenticator for physical
+            examination — by hand, loupe and reference plates. Nothing is certified
+            on the AI score alone.
           </div>
         </details>
         <details>
@@ -430,9 +429,9 @@
         <details>
           <summary>What about counterfeits?</summary>
           <div class="faq-body">
-            A counterfeit never enters the vault. It is returned to its sender, or
+            A counterfeit never enters the archive. It is returned to the sender, or
             destroyed with their consent — and it is never relisted, under any
-            circumstance. Zero tolerance is a number in our record, not a slogan.
+            circumstance.
           </div>
         </details>
       </div>
@@ -444,11 +443,11 @@
     <div class="wrap center">
       <h2 class="display display-lg reveal">Certainty, in both directions.</h2>
       <p class="lede mt-3 reveal" style="--d:.1s">
-        Consign knowing your piece will be treated as evidence. Purchase knowing it already has been.
+        Sellers get a documented verdict. Buyers get proof of what they are buying.
       </p>
       <div class="mt-5 reveal" style="--d:.2s; display:flex; gap:1rem; justify-content:center; flex-wrap:wrap;">
-        <a href="sell.html" class="btn btn--gold">Sell With Certainty <span class="arrow">→</span></a>
-        <a href="archive.html" class="btn">Shop Without Doubt</a>
+        <a href="sell.html" class="btn btn--gold">Sell a Piece <span class="arrow">→</span></a>
+        <a href="archive.html" class="btn">Browse the Archive</a>
       </div>
     </div>
   </section>
@@ -458,6 +457,7 @@
   <script src="js/art.js"></script>
   <script src="js/data.js"></script>
   <script src="js/main.js"></script>
+  <script src="js/fx.js"></script>
   <script>
     (function () {
       /* ---------- What the AI examines ---------- */

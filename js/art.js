@@ -41,8 +41,8 @@
         '<path d="M164 242 L188 222 L206 238 L218 228 L236 244"/>' +
       "</g>" +
       /* label */
-      '<text x="200" y="298" text-anchor="middle" font-family="Jost, Futura, sans-serif" font-size="15" letter-spacing="4.5" fill="' + LABEL + '">INSERT IMAGE HERE</text>' +
-      '<text x="200" y="324" text-anchor="middle" font-family="Jost, Futura, sans-serif" font-size="10.5" letter-spacing="2.5" fill="' + SUB + '">PRODUCT PHOTOGRAPHY · 4 : 5</text>' +
+      '<text x="200" y="298" text-anchor="middle" font-family="Space Grotesk, Jost, sans-serif" font-size="15" letter-spacing="4.5" fill="' + LABEL + '">INSERT IMAGE HERE</text>' +
+      '<text x="200" y="324" text-anchor="middle" font-family="Space Grotesk, Jost, sans-serif" font-size="10.5" letter-spacing="2.5" fill="' + SUB + '">PRODUCT PHOTOGRAPHY · 4 : 5</text>' +
       "</svg>";
   };
 
