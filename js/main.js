@@ -93,7 +93,7 @@
             "</div>" +
           "</div>" +
           '<div class="footer-bottom">' +
-            "<span>© 2026 RAÉCAE — Where fashion history meets artificial intelligence</span>" +
+            "<span>© 2026 RAÉCAE · Authenticated luxury resale</span>" +
             "<span>Amman · Dubai · Paris</span>" +
           "</div>" +
         "</div>" +

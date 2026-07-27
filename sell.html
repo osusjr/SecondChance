@@ -254,7 +254,7 @@
     <div class="wrap">
       <p class="kicker reveal">AI Listing Assistant</p>
       <h1 class="display display-xl mt-3 reveal" style="--d:.1s; max-width: 13ch;">
-        Sell like the <span class="italic text-gold">house</span> itself.
+        List a piece in <span class="italic text-gold">minutes</span>.
       </h1>
       <p class="lede mt-4 reveal" style="--d:.2s">
         Upload your photos and the assistant drafts everything else — the title,
@@ -307,8 +307,8 @@
     <div class="wrap">
       <div class="section-head">
         <div>
-          <p class="kicker reveal">The Demonstration</p>
-          <h2 class="display display-lg reveal" style="--d:.08s">Watch a listing<br>write itself.</h2>
+          <p class="kicker reveal">Try It</p>
+          <h2 class="display display-lg reveal" style="--d:.08s">See it draft<br>a real listing.</h2>
         </div>
         <p class="lede reveal" style="--d:.15s; max-width: 26rem;">
           Pick one of these three pieces and generate — it is the same
@@ -318,7 +318,7 @@
 
       <div class="atelier reveal" style="--d:.1s">
         <div class="atelier-head">
-          <span class="small-label">The Listing Atelier</span>
+          <span class="small-label">AI Listing Assistant</span>
           <span class="badge">Interactive demonstration</span>
         </div>
 
@@ -348,7 +348,7 @@
               </div>
               <input type="file" id="photo-input" accept="image/jpeg,image/png,image/webp" multiple hidden>
               <input class="field upload-notes" id="upload-notes" type="text" maxlength="300"
-                     placeholder="Anything the atelier cannot see (optional)" hidden>
+                     placeholder="Anything the photos don't show (optional)" hidden>
             </div>
 
             <div class="gen-row">
@@ -378,7 +378,7 @@
     <div class="wrap">
       <div class="section-head">
         <div>
-          <p class="kicker reveal">The Deliverables</p>
+          <p class="kicker reveal">What You Get</p>
           <h2 class="display display-lg reveal" style="--d:.08s">What the AI writes for you.</h2>
         </div>
         <p class="lede reveal" style="--d:.15s; max-width: 26rem;">
@@ -431,7 +431,7 @@
   <section class="section section--coal">
     <div class="wrap wrap--narrow center">
       <blockquote class="pullquote reveal">
-        “You photograph it. <span class="text-gold">The house describes it.</span>”
+        “You photograph it. <span class="text-gold">The assistant writes the listing.</span>”
       </blockquote>
       <p class="lede mt-4 reveal" style="--d:.1s">
         Authentication, the description and the pricing are handled for you.
@@ -536,7 +536,7 @@
           uploadBlock.hidden = false;
           uploadNotes.hidden = false;
           var badge = document.querySelector(".atelier-head .badge");
-          if (badge) badge.textContent = "Live atelier";
+          if (badge) badge.textContent = "Live";
         });
       }
 
@@ -549,7 +549,7 @@
             uploadThumb.innerHTML = '<img src="' + urls[0] + '" alt="">';
             uploadName.textContent = files.length === 1 ? "One photograph" :
               ["", "One", "Two", "Three", "Four"][files.length] + " photographs";
-            uploadMeta.textContent = "ready for the atelier";
+            uploadMeta.textContent = "ready to generate";
             currentId = UPLOAD_ID;
             syncTray();
             if (phase !== "idle") resetDemo();
@@ -669,7 +669,7 @@
             var el = document.createElement("div");
             el.className = "ai-line ai-line--error";
             el.innerHTML = '<span class="ai-dot"></span><span>' +
-              esc(err && err.message ? err.message : "The atelier could not be reached.") + "</span>";
+              esc(err && err.message ? err.message : "The assistant could not be reached.") + "</span>";
             consoleEl.appendChild(el);
             phase = "idle";
             genBtn.classList.remove("is-busy");
@@ -691,7 +691,7 @@
               '<span class="band-to">to</span>' +
               '<span class="band-num">' + money(d.price_high_jod) + "</span>" +
             "</span>" +
-            '<span class="band-note">Benchmarked for the regional market by the atelier.</span>'
+            '<span class="band-note">Based on recent sales of similar pieces in the region.</span>'
           : '<span class="band-note">To be priced with the house after authentication.</span>';
         listingEl.innerHTML =
           '<div class="flex-between" style="gap:.8rem 1.5rem; margin-bottom:1.5rem;">' +
@@ -783,7 +783,7 @@
               "</span>") +
             row("Suggested band",
               '<span class="band">' + priceBand(p) + "</span>" +
-              '<span class="band-note">Benchmarked against archive sales of the house.</span>') +
+              '<span class="band-note">Based on recent sales of similar pieces.</span>') +
           "</dl>" +
           '<div class="listing-actions">' +
             '<button type="button" class="btn btn--small" id="edit-btn">Edit Draft</button>' +
