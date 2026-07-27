@@ -24,7 +24,7 @@ window.RAECAE_PRODUCTS = [
     serial: "Blind stamp B in square — 1998, craftsman ID verified",
     tags: ["quiet luxury", "heritage", "investment piece", "top handle", "timeless"],
     story:
-      "Stamped in a Paris atelier in 1998, this Kelly has spent two decades learning the shape of one woman's mornings. The box calf has taken on the deep, mirror-like patina that cannot be manufactured — only lived. It arrives at RAÉCAE ready for its second chapter.",
+      "A 1998 Kelly 28 in box calf, with the blind stamp to match the year. One owner from new, and the leather has developed the deep, glossy patina box calf is known for. The structure is firm, the corners are intact and the interior is immaculate.",
     keywords: ["hermès kelly 28", "vintage kelly bag", "box calf kelly", "authenticated hermès jordan"]
   },
   {
@@ -45,7 +45,7 @@ window.RAECAE_PRODUCTS = [
     serial: "Hologram series 15xxxxxx — authenticated",
     tags: ["evening", "iconic", "chain bag", "black lambskin", "collectible"],
     story:
-      "Some designs stop being products and become punctuation. This 2011 Classic Flap closed a decade of evenings — the quilting still holds its geometry, the chain still catches the light the way Mademoiselle intended in 1955.",
+      "A 2011 Classic Flap in black lambskin with gold-tone hardware. The quilting is still full and even, and the chain and turnlock are bright. Consistently one of the most requested bags in the archive.",
     keywords: ["chanel classic flap medium", "chanel lambskin bag", "authenticated chanel amman"]
   },
   {
@@ -66,7 +66,7 @@ window.RAECAE_PRODUCTS = [
     serial: "Interior label & care code cross-checked",
     tags: ["heritage", "trench", "rainwear", "british classic", "unisex"],
     story:
-      "A century of weather is woven into the idea of this coat. This Westminster kept its first owner dry across London and Amman alike, and its gabardine still turns rain the way it did on day one. Heritage you can button.",
+      "The Westminster is Burberry's classic long trench in cotton gabardine. This one has barely been worn — the check lining is unmarked and the cuff straps show no wear. Professionally pressed and ready to go.",
     keywords: ["burberry westminster trench", "heritage trench coat", "burberry gabardine"]
   },
   {
@@ -87,7 +87,7 @@ window.RAECAE_PRODUCTS = [
     serial: "Content & origin labels verified",
     tags: ["quiet luxury", "tailoring", "minimal", "old money", "wardrobe anchor"],
     story:
-      "The Row does not raise its voice, and neither does this blazer. Cut with the severity of menswear and the fall of couture, it is the piece stylists reach for when a client asks to look expensive without a single logo.",
+      "A structured blazer in double-faced virgin wool, cut close to menswear tailoring. No logos, no visible branding — this is the piece people mean when they say quiet luxury. Worn only a handful of times.",
     keywords: ["the row blazer", "quiet luxury tailoring", "wool blazer resale"]
   },
   {
@@ -108,7 +108,7 @@ window.RAECAE_PRODUCTS = [
     serial: "Case & movement serials matched to papers",
     tags: ["dress watch", "unisex", "investment piece", "art deco", "cartier"],
     story:
-      "Designed in 1917 and never improved upon, the Tank is what time looks like when it dresses for dinner. This example keeps its papers, its unpolished case, and its perfect proportions — a quiet rectangle against a loud world.",
+      "The Tank has hardly changed since 1917, and this 2021 Tank Must shows why. The case is unpolished, the papers are present and the movement has been serviced. A dress watch that suits anyone.",
     keywords: ["cartier tank must", "authenticated cartier", "tank watch resale jordan"]
   },
   {
@@ -129,7 +129,7 @@ window.RAECAE_PRODUCTS = [
     serial: "Interior stamping consistent with late-80s production",
     tags: ["vintage", "loafers", "horsebit", "ivy style", "gender-neutral"],
     story:
-      "Thirty-five years of doorways have crossed under these loafers, and the horsebit has outshone every one of them. Bought in Milan, resoled in Amman, and still walking into rooms first.",
+      "A late-80s pair of Gucci's 1953 horsebit loafers, bought in Milan and resoled by a master cobbler in Amman. The leather is supple, the horsebit is bright and the patina is the real thing.",
     keywords: ["gucci horsebit loafer vintage", "1953 loafer", "vintage gucci shoes"]
   },
   {
@@ -150,7 +150,7 @@ window.RAECAE_PRODUCTS = [
     serial: "Copyright & care tag verified against archive",
     tags: ["silk scarf", "vintage", "collectible print", "heritage", "gift"],
     story:
-      "Brides de Gala is the most reissued carré in the house's history, but a 1985 printing carries colour depth the modern screens no longer reach. Ninety centimetres of silk that has been folded into four decades of collars and handles.",
+      "Brides de Gala is the most reissued print in Hermès history, but this is a 1985 printing — the colour depth is noticeably richer than modern runs. The hand-rolled hem is intact, with one faint storage crease.",
     keywords: ["hermès carré 90", "brides de gala scarf", "vintage silk scarf"]
   },
   {
@@ -171,7 +171,7 @@ window.RAECAE_PRODUCTS = [
     serial: "Era label & union tag consistent with 1997",
     tags: ["90s minimalism", "slip dress", "evening", "archive", "rare"],
     story:
-      "1997 was the year fashion whispered. This slip dress is that whisper preserved in charmeuse — cut on the bias so it moves like water, from the era every current designer keeps trying to quote.",
+      "A 1997 bias-cut slip dress in silk charmeuse, from the 90s minimalist era designers still reference. No alterations, no flaws in the silk — hard to find in this condition.",
     keywords: ["saint laurent slip dress 90s", "vintage ysl dress", "bias cut silk dress"]
   },
   {
@@ -192,7 +192,7 @@ window.RAECAE_PRODUCTS = [
     serial: "Temple engraving & model code verified",
     tags: ["sunglasses", "oversized", "phoebe era", "minimal", "everyday"],
     story:
-      "From the era of Celine that collectors now speak about in past tense. Acetate thick enough to feel architectural, black enough to make any outfit look deliberate.",
+      "Oversized acetate frames from the Phoebe Philo era of Celine — the period collectors look for. The lenses are scratch-free, the hinges are tight, and the original case and cloth are included.",
     keywords: ["celine oversized sunglasses", "celine acetate", "designer sunglasses resale"]
   },
   {
@@ -213,7 +213,7 @@ window.RAECAE_PRODUCTS = [
     serial: "Interior stamp & size coding verified",
     tags: ["ankle boots", "sculptural", "new bottega", "statement", "leather"],
     story:
-      "Bottega under Daniel Lee turned footwear into sculpture. These boots carry that moment — the toe, the shaft, the confidence — worn one season and kept like an argument the owner won.",
+      "Ankle boots from Bottega Veneta's Daniel Lee period, when the house's footwear was at its most sculptural. Worn one season — the uppers are unmarked and the shape holds perfectly on the last.",
     keywords: ["bottega veneta boots", "bottega ankle boot", "designer boots resale"]
   },
   {
@@ -234,7 +234,7 @@ window.RAECAE_PRODUCTS = [
     serial: "Clasp hallmark & signature verified",
     tags: ["pearls", "heirloom", "bridal", "vintage", "investment piece"],
     story:
-      "Strung in 1978 and re-knotted by hand this year, these Akoya pearls have attended more weddings than most families. An heirloom in the truest sense — the kind of piece that is never really owned, only kept for the next generation.",
+      "A double strand of Akoya pearls, strung in 1978 and professionally re-knotted this year. The lustre is exceptional and the 18k clasp is original. A genuine heirloom piece.",
     keywords: ["mikimoto pearl necklace", "akoya double strand", "vintage pearls authenticated"]
   },
   {
@@ -255,7 +255,7 @@ window.RAECAE_PRODUCTS = [
     serial: "Era tag & zip stamps consistent with 1999",
     tags: ["90s", "leather", "biker", "archive prada", "gender-neutral"],
     story:
-      "Millennium-eve Prada, when the house was rewriting what luxury meant. This nappa biker has the exact softness a jacket only earns by being someone's favourite for twenty-five years.",
+      "A 1999 Prada biker in nappa leather, from the house's archive era. The leather is soft with even wear, the original Riri zips run smooth, and the lining is sound.",
     keywords: ["prada leather jacket vintage", "90s prada archive", "nappa biker jacket"]
   }
 ];
