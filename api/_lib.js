@@ -105,7 +105,7 @@ function parseModelJson(text) {
 function friendlyError(err) {
   switch (err.code) {
     case "NOT_CONFIGURED":
-      return { status: 503, message: "The live atelier is not configured yet." };
+      return { status: 503, message: "The live AI is not configured yet." };
     case "BAD_KEY":
       return { status: 502, message: "The house cannot reach its intelligence — the API key was refused." };
     case "RATE_OR_FUNDS":
