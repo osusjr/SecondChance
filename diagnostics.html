@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Diagnostics · SecondChance Collective</title>
+<style>
+  :root { --ok:#1a7f4b; --bad:#b3261e; --warn:#a16207; --line:#e7e8eb;
+          --ink:#101114; --muted:#62666f; --accent:#872222; }
+  * { box-sizing:border-box; }
+  body { margin:0; padding:30px 18px 70px; background:#fff; color:var(--ink);
+    font:15px/1.6 ui-sans-serif,system-ui,-apple-system,sans-serif; }
+  .wrap { max-width:760px; margin:0 auto; }
+  h1 { font-size:24px; margin:0 0 4px; letter-spacing:-.02em; }
+  .sub { color:var(--muted); font-size:14px; margin:0 0 26px; }
+  .row { display:flex; gap:12px; padding:13px 0; border-bottom:1px solid var(--line);
+    align-items:flex-start; }
+  .dot { flex:0 0 auto; width:9px; height:9px; border-radius:50%; margin-top:8px;
+    background:#c9ccd1; }
+  .dot.ok{background:var(--ok)} .dot.bad{background:var(--bad)} .dot.warn{background:var(--warn)}
+  .dot.run{background:var(--accent); animation:p 1s ease-in-out infinite}
+  @keyframes p { 50%{opacity:.25} }
+  .name { font-weight:500; flex:0 0 210px; }
+  .res { flex:1; min-width:0; font-size:13.5px; color:var(--muted); word-break:break-word; }
+  .res code { background:#f4f4f6; padding:1px 5px; border-radius:5px; font-size:12.5px; }
+  .fix { margin-top:6px; padding:9px 11px; background:#fdf6f6; border-left:3px solid var(--accent);
+    border-radius:0 7px 7px 0; color:var(--ink); font-size:13px; }
+  .sum { margin:26px 0 0; padding:16px; border-radius:12px; background:#f7f7f8; font-size:14px; }
+  button { margin-top:22px; height:40px; padding:0 20px; border-radius:999px; border:0;
+    background:var(--accent); color:#fff; font:inherit; font-size:14px; cursor:pointer; }
+  a { color:var(--accent); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Diagnostics</h1>
+  <p class="sub">Tests each layer separately, so a failure points at one thing.</p>
+  <div id="out"></div>
+  <div id="summary"></div>
+  <button onclick="location.reload()">Run again</button>
+</div>
+
+<script type="module">
+const out = document.getElementById('out');
+const results = [];
+
+function row(name) {
+  const el = document.createElement('div');
+  el.className = 'row';
+  el.innerHTML = `<span class="dot run"></span><span class="name">${name}</span>
+                  <span class="res">checking…</span>`;
+  out.appendChild(el);
+  return {
+    pass: (msg) => { el.querySelector('.dot').className = 'dot ok';
+                     el.querySelector('.res').innerHTML = msg; results.push(true); },
+    warn: (msg, fix) => { el.querySelector('.dot').className = 'dot warn';
+                     el.querySelector('.res').innerHTML = msg + (fix ? `<div class="fix">${fix}</div>` : '');
+                     results.push(true); },
+    fail: (msg, fix) => { el.querySelector('.dot').className = 'dot bad';
+                     el.querySelector('.res').innerHTML = msg + (fix ? `<div class="fix">${fix}</div>` : '');
+                     results.push(false); },
+  };
+}
+
+const timeout = (p, ms, label) => Promise.race([p,
+  new Promise((_, r) => setTimeout(() => r(new Error(label + ' timed out after ' + ms + 'ms')), ms))]);
+
+// --- 1. how the page is being served -------------------------------------
+{
+  const r = row('Page origin');
+  if (location.protocol === 'file:') {
+    r.fail('Opened as <code>file://</code>',
+      'Module scripts and Supabase both fail here. Run <code>python3 -m http.server 5500</code> ' +
+      'in the site folder and open <code>http://localhost:5500/diagnostics.html</code>.');
+  } else {
+    r.pass(`<code>${location.origin}</code>`);
+  }
+}
+
+// --- 2. can the supabase client library even load? -----------------------
+let sb = null, CFG = null;
+{
+  const r = row('Supabase library');
+  try {
+    const mod = await timeout(import('https://esm.sh/@supabase/supabase-js@2.112.3'), 12000, 'CDN');
+    r.pass('loaded from esm.sh');
+    CFG = await import('./js/config.js');
+    sb = mod.createClient(CFG.SUPABASE_URL, CFG.SUPABASE_ANON_KEY);
+  } catch (e) {
+    r.fail(`could not load: <code>${e.message}</code>`,
+      'The site loads supabase-js from esm.sh at runtime. If that CDN is slow or blocked on ' +
+      'your connection, every page will hang exactly like this. Try a different network, ' +
+      'or vendor the library locally.');
+  }
+}
+
+// --- 3. config values ----------------------------------------------------
+if (CFG) {
+  const r = row('Config');
+  const k = CFG.SUPABASE_ANON_KEY || '';
+  if (!k || /PASTE_YOUR|YOUR-ANON/.test(k)) {
+    r.fail('key is still a placeholder', 'Paste your publishable key into <code>js/config.js</code>.');
+  } else if (k.startsWith('sb_secret_')) {
+    r.fail('that is the SECRET key',
+      'Never put <code>sb_secret_</code> in the browser. Rotate it now and use the publishable key.');
+  } else {
+    r.pass(`<code>${CFG.SUPABASE_URL}</code><br>key <code>${k.slice(0, 22)}…</code>`);
+  }
+}
+
+// --- 4. REST reachable + key accepted ------------------------------------
+if (sb && CFG) {
+  const r = row('REST + key');
+  try {
+    const res = await timeout(fetch(CFG.SUPABASE_URL + '/rest/v1/', {
+      headers: { apikey: CFG.SUPABASE_ANON_KEY },
+    }), 8000, 'REST');
+    if (res.status === 401) {
+      r.fail('401 — key rejected',
+        'The key does not belong to this project, or legacy keys were disabled while the ' +
+        'site still uses one. Check Project Settings → API Keys.');
+    } else if (res.ok || res.status === 404) {
+      r.pass(`HTTP ${res.status} — project reachable, key accepted`);
+    } else {
+      r.warn(`HTTP ${res.status}`);
+    }
+  } catch (e) {
+    r.fail(`unreachable: <code>${e.message}</code>`,
+      'Either the project is paused (Supabase pauses free projects after inactivity), ' +
+      'the URL is wrong, or something on this network is blocking supabase.co.');
+  }
+}
+
+// --- 5. tables, one at a time -------------------------------------------
+const tables = [
+  ['platform_settings', 'Settings row',  'Run 01_schema_core.sql, then 06_seed.sql.'],
+  ['categories',        'Categories',    'Run 06_seed.sql.'],
+  ['brands',            'Brands',        'Run 06_seed.sql.'],
+  ['conditions',        'Conditions',    'Run 06_seed.sql.'],
+  ['listings',          'Listings',      'Run 01_schema_core.sql.'],
+];
+
+for (const [table, label, fix] of tables) {
+  if (!sb) break;
+  const r = row(label);
+  try {
+    const { data, error, count } = await timeout(
+      sb.from(table).select('*', { count: 'exact' }).limit(1), 8000, table);
+    if (error) {
+      const rls = /permission denied|row-level security/i.test(error.message);
+      r.fail(`<code>${error.message}</code>`,
+        rls ? 'RLS is on with no policy that lets anonymous visitors read this. ' +
+              'Re-run <code>04_rls.sql</code> — it drops and recreates every policy, so it is safe to repeat.'
+            : fix);
+    } else if (count === 0) {
+      r.warn('table exists but is empty', table === 'listings'
+        ? 'This is normal before you add stock. The grids will show "Nothing here yet".'
+        : fix);
+    } else {
+      r.pass(`${count} row${count === 1 ? '' : 's'}`);
+    }
+  } catch (e) {
+    r.fail(`<code>${e.message}</code>`, 'The request never came back. Usually a paused project.');
+  }
+}
+
+// --- 6. the exact query the grids run ------------------------------------
+if (sb) {
+  const r = row('Grid query');
+  try {
+    const { error } = await timeout(sb.from('listings')
+      .select(`id, title, price, original_retail, is_featured, authentication_status,
+               brand:brands(name, slug), category:categories(name, slug),
+               condition:conditions(label),
+               images:listing_images(storage_path, sort_order)`)
+      .eq('status', 'active')
+      .order('published_at', { ascending: false, nullsFirst: false })
+      .limit(4), 10000, 'grid query');
+    if (error) {
+      r.fail(`<code>${error.message}</code>`,
+        'A join or column in the grid query does not match your schema. ' +
+        'Send me this message and I will fix it.');
+    } else {
+      r.pass('the homepage and catalogue query runs');
+    }
+  } catch (e) {
+    r.fail(`<code>${e.message}</code>`);
+  }
+}
+
+// --- 7. migrations 07 and 08 --------------------------------------------
+if (sb) {
+  const r = row('Migration 07 (delivery)');
+  const { error } = await sb.from('orders').select('contact_name').limit(1);
+  if (error && /contact_name/.test(error.message)) {
+    r.fail('not applied', 'Run <code>07_remove_delivery.sql</code>. Checkout will fail without it.');
+  } else if (error) { r.warn(`<code>${error.message}</code>`); }
+  else { r.pass('applied'); }
+}
+if (sb) {
+  const r = row('Migration 08 (phone)');
+  const { error } = await sb.from('profiles').select('phone_verified_at').limit(1);
+  if (error && /phone_verified_at/.test(error.message)) {
+    r.fail('not applied', 'Run <code>08_phone_identity.sql</code>. Sign-up will fail without it.');
+  } else if (error) { r.warn(`<code>${error.message}</code>`); }
+  else { r.pass('applied'); }
+}
+
+// --- 8. auth endpoint ----------------------------------------------------
+if (sb) {
+  const r = row('Auth service');
+  try {
+    const { error } = await timeout(sb.auth.getSession(), 8000, 'auth');
+    error ? r.warn(`<code>${error.message}</code>`) : r.pass('responding');
+  } catch (e) {
+    r.fail(`<code>${e.message}</code>`,
+      'A hung auth call blocks any page that waits on the session.');
+  }
+}
+
+// --- summary -------------------------------------------------------------
+const bad = results.filter(x => !x).length;
+document.getElementById('summary').innerHTML = `<div class="sum">
+  ${bad === 0
+    ? '<strong>Everything passed.</strong> If pages still hang, hard-reload with Ctrl/Cmd+Shift+R — a cached old module may still be running.'
+    : `<strong>${bad} check${bad === 1 ? '' : 's'} failed.</strong> Fix the first red one and run again; later failures are often caused by it.`}
+</div>`;
+</script>
+</body>
+</html>

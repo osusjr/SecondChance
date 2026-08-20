@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+
+<html class="bricolage_grotesque_e01f6fad-module__frOMPG__variable poppins_ead9b0ae-module__Bvcf9q__variable" lang="en-JO">
+<head><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link data-sc="arfonts" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&amp;family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<meta content="#ffffff" name="theme-color"/>
+<meta content="noindex" name="robots"/>
+<title>Your account · SecondChance Collective</title>
+<link href="styles.css" rel="stylesheet"/>
+<link href="sc-app.css" rel="stylesheet"/>
+<style>
+  .acct-head { border-bottom: 1px solid var(--color-line); background: var(--color-canvas); }
+  .acct-bar { display: flex; align-items: center; gap: 14px; padding: 16px 0; }
+  .acct-brand { font-family: var(--font-bricolage); font-size: 15px; font-weight: 600; letter-spacing: -.01em; }
+  .acct-brand i { font-style: normal; color: var(--color-accent); }
+  .acct-hero { padding: 26px 0 20px; }
+  .acct-tabs { display: flex; gap: 4px; overflow-x: auto; padding-bottom: 10px; }
+  .acct-tab {
+    border: 0; background: none; font: inherit; font-size: 14px; cursor: pointer;
+    padding: 8px 14px; border-radius: 999px; color: var(--color-muted); white-space: nowrap;
+    transition: background-color .2s, color .2s;
+  }
+  .acct-tab:hover { background: var(--color-surface); color: var(--color-ink); }
+  .acct-tab.is-active { background: var(--color-ink); color: #fff; }
+  .acct-body { padding: 22px 0 70px; min-height: 50vh; }
+  .acct-listing { display: flex; gap: 14px; align-items: center; }
+  .acct-listing img { width: 56px; height: 70px; border-radius: 10px; object-fit: cover; background: var(--color-product); flex: none; }
+</style>
+<link href="sc-rtl.css" rel="stylesheet"/></head>
+<body class="sc" style="background:var(--color-surface)">
+<header class="acct-head">
+<div class="sc-shell acct-bar">
+<a class="acct-brand" href="index.html">SecondChance collective<i>.</i></a>
+<nav class="sc-row-tight sc-right" style="gap:4px">
+<a class="sc-btn sc-btn-ghost sc-btn-sm" href="index.html">Shop</a>
+<a class="sc-btn sc-btn-primary sc-btn-sm" href="sell.html">List an item</a>
+</nav>
+</div>
+</header>
+<div style="background:var(--color-canvas);border-bottom:1px solid var(--color-line)">
+<div class="sc-shell">
+<div class="acct-hero" id="acct-hero">
+<div class="sc-skeleton" style="height:26px;width:220px"></div>
+</div>
+<div class="acct-tabs" id="acct-tabs" role="tablist"></div>
+</div>
+</div>
+<main class="sc-shell acct-body" id="acct-body">
+<div class="sc-grid sc-grid-3">
+<div class="sc-skeleton" style="height:92px"></div>
+<div class="sc-skeleton" style="height:92px"></div>
+<div class="sc-skeleton" style="height:92px"></div>
+</div>
+</main>
+<script type="module">
+  import { initAccount } from './js/sc-account.js';
+  initAccount();
+</script>
+<script data-sc="i18n" type="module">import { initI18n } from './js/sc-i18n.js'; initI18n();</script></body>
+</html>

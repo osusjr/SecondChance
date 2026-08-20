@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+
+<html class="bricolage_grotesque_e01f6fad-module__frOMPG__variable poppins_ead9b0ae-module__Bvcf9q__variable" lang="en-JO">
+<head><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link data-sc="arfonts" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&amp;family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>Confirming · SecondChance Collective</title>
+<link href="styles.css" rel="stylesheet"/>
+<link href="sc-app.css" rel="stylesheet"/>
+<style>
+  .cb { min-height: 100vh; display: grid; place-items: center; padding: 30px 20px; }
+  .cb-box { width: 100%; max-width: 430px; text-align: center; }
+  .cb-mark { font-family: var(--font-bricolage); font-size: 15px; font-weight: 600;
+    letter-spacing: -.01em; margin-bottom: 26px; display: block; color: var(--color-ink);
+    text-decoration: none; }
+  .cb-mark i { font-style: normal; color: var(--color-accent); }
+  .cb-spin { width: 34px; height: 34px; margin: 0 auto 18px; border-radius: 50%;
+    border: 2.5px solid var(--color-line); border-top-color: var(--color-accent);
+    animation: cb-turn .8s linear infinite; }
+  @keyframes cb-turn { to { transform: rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce) { .cb-spin { animation-duration: 2.4s; } }
+</style>
+<link href="sc-rtl.css" rel="stylesheet"/></head>
+<body class="sc">
+<main class="cb">
+<div class="cb-box" id="cb-root">
+<a class="cb-mark" href="index.html">SecondChance collective<i>.</i></a>
+<div class="cb-spin"></div>
+<p class="sc-lead">Confirming your email…</p>
+</div>
+</main>
+<script type="module">
+  import { initAuthCallback } from './js/sc-auth.js';
+  initAuthCallback();
+</script>
+<script data-sc="i18n" type="module">import { initI18n } from './js/sc-i18n.js'; initI18n();</script></body>
+</html>

@@ -1,0 +1,171 @@
+/* ==========================================================================
+   SecondChance Collective — Arabic / RTL
+   
+   The site's stylesheet is compiled Tailwind using physical properties
+   (pl-, mr-, text-left, left-0). Those do not flip on their own when dir="rtl",
+   so each one is mirrored here. Everything is scoped to .sc-ar so the English
+   side of the site is untouched.
+   ========================================================================== */
+
+/* Both families carry the full 400/500/600/700 range. That matters: the site
+   uses font-medium (500) and font-semibold (600) heavily, and a family missing
+   those weights makes the browser synthesise bold by overdrawing the glyph.
+   On connected Arabic script that reads as blur, not weight. */
+
+.sc-ar {
+  --font-ar-display: 'Cairo', 'Bricolage Grotesque', sans-serif;
+  --font-ar-body: 'IBM Plex Sans Arabic', 'Poppins', sans-serif;
+}
+
+/* Never fake a weight or a slant. If something is ever missing, fall back to
+   the nearest real cut rather than smearing the strokes. */
+.sc-ar body,
+.sc-ar body * {
+  font-synthesis: none;
+  -webkit-font-synthesis: none;
+}
+
+/* --- typography ---------------------------------------------------------- */
+/* Arabic has no capitals and a taller x-height, so uppercase tracking and
+   tight leading from the Latin design read badly. Loosen both. */
+.sc-ar body,
+.sc-ar input,
+.sc-ar textarea,
+.sc-ar select,
+.sc-ar button {
+  font-family: var(--font-ar-body);
+  letter-spacing: 0;
+}
+
+.sc-ar h1, .sc-ar h2, .sc-ar h3, .sc-ar h4,
+.sc-ar .font-display,
+.sc-ar .sc-h1, .sc-ar .sc-h2, .sc-ar .sc-h3 {
+  font-family: var(--font-ar-display);
+  letter-spacing: 0;
+  line-height: 1.4;
+}
+
+.sc-ar p, .sc-ar li, .sc-ar dd, .sc-ar .sc-lead {
+  line-height: 1.85;
+}
+
+/* Arabic does not have letter case; forced uppercase mangles nothing but the
+   tracking still applies, so neutralise both. */
+.sc-ar .uppercase,
+.sc-ar .sc-eyebrow,
+.sc-ar [class*='tracking-'] {
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+/* Keep the wordmark, designer names and payment rails in Latin type. */
+.sc-ar .sc-keep-en,
+.sc-ar [data-keep-en] {
+  font-family: 'Bricolage Grotesque', 'Poppins', sans-serif;
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+
+/* Prices, references and any Latin run inside Arabic text. */
+.sc-ar .tnum,
+.sc-ar .sc-money,
+.sc-ar .sc-money-lg {
+  direction: ltr;
+  unicode-bidi: isolate;
+  display: inline-block;
+}
+
+/* --- direction ----------------------------------------------------------- */
+.sc-ar { direction: rtl; }
+.sc-ar input, .sc-ar textarea { text-align: right; }
+.sc-ar input[type='email'],
+.sc-ar input[type='url'],
+.sc-ar input[type='tel'],
+.sc-ar input[type='number'],
+.sc-ar input[type='password'] { direction: ltr; text-align: left; }
+
+/* --- mirror Tailwind's physical spacing ---------------------------------- */
+.sc-ar .pl-0  { padding-left: revert; padding-right: 0; }
+.sc-ar .pl-1  { padding-left: revert; padding-right: .25rem; }
+.sc-ar .pl-2  { padding-left: revert; padding-right: .5rem; }
+.sc-ar .pl-3  { padding-left: revert; padding-right: .75rem; }
+.sc-ar .pl-4  { padding-left: revert; padding-right: 1rem; }
+.sc-ar .pl-5  { padding-left: revert; padding-right: 1.25rem; }
+.sc-ar .pl-6  { padding-left: revert; padding-right: 1.5rem; }
+.sc-ar .pr-0  { padding-right: revert; padding-left: 0; }
+.sc-ar .pr-1  { padding-right: revert; padding-left: .25rem; }
+.sc-ar .pr-2  { padding-right: revert; padding-left: .5rem; }
+.sc-ar .pr-3  { padding-right: revert; padding-left: .75rem; }
+.sc-ar .pr-4  { padding-right: revert; padding-left: 1rem; }
+.sc-ar .pr-5  { padding-right: revert; padding-left: 1.25rem; }
+.sc-ar .pr-6  { padding-right: revert; padding-left: 1.5rem; }
+
+.sc-ar .ml-0  { margin-left: revert; margin-right: 0; }
+.sc-ar .ml-1  { margin-left: revert; margin-right: .25rem; }
+.sc-ar .ml-2  { margin-left: revert; margin-right: .5rem; }
+.sc-ar .ml-3  { margin-left: revert; margin-right: .75rem; }
+.sc-ar .ml-4  { margin-left: revert; margin-right: 1rem; }
+.sc-ar .ml-auto { margin-left: revert; margin-right: auto; }
+.sc-ar .mr-0  { margin-right: revert; margin-left: 0; }
+.sc-ar .mr-1  { margin-right: revert; margin-left: .25rem; }
+.sc-ar .mr-2  { margin-right: revert; margin-left: .5rem; }
+.sc-ar .mr-3  { margin-right: revert; margin-left: .75rem; }
+.sc-ar .mr-4  { margin-right: revert; margin-left: 1rem; }
+.sc-ar .mr-auto { margin-right: revert; margin-left: auto; }
+
+/* --- alignment ----------------------------------------------------------- */
+.sc-ar .text-left  { text-align: right; }
+.sc-ar .text-right { text-align: left; }
+
+/* --- absolute positioning ------------------------------------------------ */
+.sc-ar .left-0   { left: auto; right: 0; }
+.sc-ar .left-2   { left: auto; right: .5rem; }
+.sc-ar .left-3   { left: auto; right: .75rem; }
+.sc-ar .left-4   { left: auto; right: 1rem; }
+.sc-ar .right-0  { right: auto; left: 0; }
+.sc-ar .right-2  { right: auto; left: .5rem; }
+.sc-ar .right-3  { right: auto; left: .75rem; }
+.sc-ar .right-4  { right: auto; left: 1rem; }
+
+/* --- borders ------------------------------------------------------------- */
+.sc-ar .border-l { border-left: 0; border-right-width: 1px; }
+.sc-ar .border-r { border-right: 0; border-left-width: 1px; }
+
+/* --- rounded corners on split controls ----------------------------------- */
+.sc-ar .rounded-l-full  { border-radius: 0 9999px 9999px 0; }
+.sc-ar .rounded-r-full  { border-radius: 9999px 0 0 9999px; }
+.sc-ar .rounded-l-lg    { border-radius: 0 .5rem .5rem 0; }
+.sc-ar .rounded-r-lg    { border-radius: .5rem 0 0 .5rem; }
+
+/* --- directional icons --------------------------------------------------- */
+/* Chevrons and arrows point the wrong way in RTL. Chevron-down must not
+   flip, so it is excluded explicitly. */
+.sc-ar .lucide-chevron-right,
+.sc-ar .lucide-chevron-left,
+.sc-ar .lucide-arrow-right,
+.sc-ar .lucide-arrow-left,
+.sc-ar .lucide-move-right,
+.sc-ar .lucide-arrow-up-right {
+  transform: scaleX(-1);
+}
+
+/* --- the app layer (sc-app.css) ------------------------------------------ */
+.sc-ar .sc-sidebar { border-right: 0; border-left: 1px solid var(--color-line); }
+.sc-ar .sc-table th,
+.sc-ar .sc-table td { text-align: right; }
+.sc-ar .sc-cell-num,
+.sc-ar .sc-table th.sc-num { text-align: left; direction: ltr; }
+.sc-ar .sc-cell-actions { text-align: left; }
+.sc-ar .sc-kv dt { text-align: right; }
+.sc-ar .sc-toast { right: auto; left: 20px; }
+.sc-ar .sc-check input { margin-left: 8px; margin-right: 0; }
+.sc-ar .sc-prefix-tag { border-radius: 0 var(--radius-inner) var(--radius-inner) 0; }
+.sc-ar .sc-otp { direction: ltr; }
+
+/* --- swap the shadow direction on floating panels ------------------------ */
+.sc-ar .sc-modal,
+.sc-ar .sc-drawer { text-align: right; }
+
+/* --- the language button itself ------------------------------------------ */
+[data-lang-label] { font-family: 'IBM Plex Sans Arabic', 'Poppins', sans-serif; }
+

@@ -1,89 +1,90 @@
-/* ============================================================
-   RAÉCAE — live intelligence bridge
-   Detects the serverless API (deployed alongside the site) and
-   exposes it to the pages. When the API is absent — opening the
-   files directly, or no key configured — every page falls back
-   to its built-in concept demonstration. No API key ever appears
-   in client code.
-   ============================================================ */
+// ============================================================================
+// SecondChance Collective — configuration
+//
+// Fill in your publishable key below. Get it from:
+//   Supabase dashboard → Project Settings → API Keys → Publishable key
+//
+// It starts with `sb_publishable_`. If you only see legacy keys, use the
+// `anon` key from the "Legacy API Keys" tab instead — both work.
+//
+// This key is DESIGNED to be public. It ships to every visitor's browser,
+// and Row Level Security is what actually protects your data.
+//
+// NEVER put the secret key (`sb_secret_...`) or the legacy `service_role`
+// key in this file. Those bypass all security.
+// ============================================================================
 
-window.RAECAE_CONFIG = window.RAECAE_CONFIG || {
-  /* Same-origin by default. Point at another deployment if the
-     functions are hosted separately, e.g. "https://raecae.vercel.app/api". */
-  apiBase: "/api"
+export const SUPABASE_URL = 'https://yjlfiotjrjkfwxzjrkcf.supabase.co';
+export const SUPABASE_ANON_KEY = 'sb_publishable_jPV9ToHbfjGdHgVFPxbU2Q_cOzWSh50';
+
+// ---------------------------------------------------------------------------
+// Business constants. These are display defaults only — the authoritative
+// values live in the platform_settings table and are loaded at runtime, so
+// changing them in Admin → Settings updates the whole site.
+// ---------------------------------------------------------------------------
+export const DEFAULTS = {
+  currency: 'JOD',
+  commissionRate: 0.12,
+  authThreshold: 350,
+  buyerProtectionRate: 0.05,
+  buyerProtectionMin: 3,
 };
 
-window.RAECAE_AI = (function () {
-  var base = window.RAECAE_CONFIG.apiBase.replace(/\/$/, "");
-  var probePromise = null;
-  var live = false;
-  var model = "";
+export const CITIES = [
+  'Amman', 'Zarqa', 'Irbid', 'Aqaba', 'Madaba', 'Salt',
+  'Jerash', 'Ajloun', 'Karak', 'Mafraq', 'Tafilah', "Ma'an",
+];
 
-  function probe() {
-    if (probePromise) return probePromise;
-    if (window.location.protocol === "file:") {
-      probePromise = Promise.resolve(false);
-      return probePromise;
-    }
-    probePromise = fetch(base + "/health", { method: "GET" })
-      .then(function (r) { return r.ok ? r.json() : null; })
-      .then(function (j) {
-        live = !!(j && j.ok && j.configured);
-        model = (j && j.model) || "";
-        return live;
-      })
-      .catch(function () { live = false; return false; });
-    return probePromise;
-  }
+export const PAYMENT_METHODS = [
+  { value: 'card',         label: 'Card',            note: 'Visa or Mastercard' },
+  { value: 'cliq',         label: 'CliQ',            note: 'Instant bank transfer' },
+  { value: 'efawateercom', label: 'eFAWATEERcom',    note: 'Pay through your bank' },
+  { value: 'cod',          label: 'Cash on delivery', note: 'Pay the courier' },
+];
 
-  function post(path, body, timeoutMs) {
-    var ctrl = typeof AbortController !== "undefined" ? new AbortController() : null;
-    var timer = ctrl && window.setTimeout(function () { ctrl.abort(); }, timeoutMs || 45000);
-    return fetch(base + path, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-      signal: ctrl ? ctrl.signal : undefined
-    })
-      .then(function (r) {
-        return r.json().catch(function () { return {}; }).then(function (j) {
-          if (!r.ok) throw new Error((j && j.error) || "Request failed (" + r.status + ")");
-          return j;
-        });
-      })
-      .finally(function () { if (timer) window.clearTimeout(timer); });
-  }
+export const PHOTO_SLOTS = [
+  { slot: 'front',  label: 'Front',  note: 'Whole piece, straight on' },
+  { slot: 'back',   label: 'Back',   note: 'Including the base' },
+  { slot: 'detail', label: 'Detail', note: 'Hardware or stitching' },
+  { slot: 'label',  label: 'Label',  note: 'Interior stamp or serial' },
+];
 
-  return {
-    probe: probe,
-    isLive: function () { return live; },
-    modelName: function () { return model; },
-    /** messages: [{role:"user"|"assistant", content}] → {reply, pieces[]} */
-    stylist: function (messages) { return post("/stylist", { messages: messages }, 45000); },
-    /** photos: [dataURL], notes → structured listing */
-    listing: function (photos, notes) { return post("/listing", { photos: photos, notes: notes }, 60000); },
-
-    /** Downscale an image File to a JPEG data URL (max edge px). */
-    fileToDataUrl: function (file, maxEdge) {
-      maxEdge = maxEdge || 1024;
-      return new Promise(function (resolve, reject) {
-        var url = URL.createObjectURL(file);
-        var img = new Image();
-        img.onload = function () {
-          try {
-            var scale = Math.min(1, maxEdge / Math.max(img.width, img.height));
-            var w = Math.max(1, Math.round(img.width * scale));
-            var h = Math.max(1, Math.round(img.height * scale));
-            var canvas = document.createElement("canvas");
-            canvas.width = w; canvas.height = h;
-            canvas.getContext("2d").drawImage(img, 0, 0, w, h);
-            URL.revokeObjectURL(url);
-            resolve(canvas.toDataURL("image/jpeg", 0.82));
-          } catch (e) { reject(e); }
-        };
-        img.onerror = function () { URL.revokeObjectURL(url); reject(new Error("Unreadable image")); };
-        img.src = url;
-      });
-    }
-  };
-})();
+// Every permission the admin panel understands, grouped for the roles screen.
+export const PERMISSIONS = {
+  'Users': [
+    ['users.view', 'View members'],
+    ['users.manage', 'Edit member details'],
+    ['users.suspend', 'Suspend or block members'],
+    ['users.approve_sellers', 'Approve seller accounts'],
+  ],
+  'Listings': [
+    ['listings.view', 'View all listings'],
+    ['listings.moderate', 'Approve, reject and edit listings'],
+    ['listings.authenticate', 'Record authentication results'],
+    ['taxonomy.manage', 'Manage categories, brands and sizes'],
+  ],
+  'Orders': [
+    ['orders.view', 'View orders'],
+    ['orders.manage', 'Change order status'],
+    ['orders.returns', 'Handle returns and refunds'],
+    ['orders.disputes', 'Resolve disputes'],
+  ],
+  'Money': [
+    ['payments.view', 'View transactions'],
+    ['payments.manage', 'Adjust transactions'],
+    ['payments.payouts', 'Approve and send payouts'],
+  ],
+  'Platform': [
+    ['reports.manage', 'Handle reports and complaints'],
+    ['promotions.manage', 'Discount codes, banners, collections'],
+    ['content.manage', 'Pages, FAQs, blog'],
+    ['notifications.send', 'Send notifications'],
+    ['analytics.view', 'View analytics'],
+    ['settings.manage', 'Change platform settings'],
+  ],
+  'Administration': [
+    ['admin.manage_admins', 'Add and remove admins'],
+    ['admin.manage_roles', 'Create and edit roles'],
+    ['admin.view_audit', 'View audit trail and login history'],
+  ],
+};
