@@ -1,857 +1,396 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sell a Piece — RAÉCAE</title>
-  <meta name="description" content="Sell with RAÉCAE — upload photos and the AI drafts the title, description, condition report, keywords and price range. You review it, then submit for authentication.">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Space+Grotesk:wght@300;400;500;600&family=Syne:wght@500;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/main.css">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230a0a0b'/%3E%3Ctext x='16' y='22' text-anchor='middle' font-family='Georgia' font-size='18' fill='%23c9a227'%3ER%3C/text%3E%3C/svg%3E">
-  <style>
-    /* ---------- Sell page styles ---------- */
 
-    /* Three-step editorial row */
-    .step { border-top: 1px solid var(--line-strong); padding-top: 1.6rem; }
-
-    /* The Listing Atelier — demo panel */
-    #atelier { scroll-margin-top: 5.5rem; }
-    .atelier {
-      position: relative;
-      border: 1px solid var(--line-strong);
-      background: linear-gradient(180deg, var(--coal-2), rgba(10, 10, 11, 0.55));
-      padding: clamp(1.4rem, 4vw, 3.2rem);
-    }
-    .atelier::before {
-      content: "";
-      position: absolute;
-      top: -1px; left: 8%; right: 8%;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(201, 162, 39, 0.6), transparent);
-    }
-    .atelier-head {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 0.8rem 1.5rem;
-      flex-wrap: wrap;
-      padding-bottom: 1.2rem;
-      margin-bottom: clamp(1.6rem, 3vw, 2.4rem);
-      border-bottom: 1px solid var(--line);
-    }
-    .demo-grid {
-      display: grid;
-      grid-template-columns: minmax(0, 22rem) minmax(0, 1fr);
-      gap: clamp(1.8rem, 4vw, 3.5rem);
-      align-items: start;
-    }
-    @media (max-width: 940px) { .demo-grid { grid-template-columns: 1fr; } }
-
-    /* Sample upload tray */
-    .tray { margin-top: 1.1rem; display: grid; gap: 0.7rem; }
-    .sample {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      width: 100%;
-      text-align: left;
-      padding: 0.85rem 1rem;
-      border: 1px solid var(--line);
-      background: rgba(10, 10, 11, 0.4);
-      transition: border-color 0.35s var(--ease), background 0.35s var(--ease);
-    }
-    .sample:hover { border-color: var(--line-strong); }
-    .sample.selected {
-      border-color: rgba(201, 162, 39, 0.65);
-      background: rgba(201, 162, 39, 0.05);
-    }
-    .sample-thumb {
-      width: 3.9rem;
-      aspect-ratio: 4 / 5;
-      flex: none;
-      border: 1px solid var(--line);
-      background: linear-gradient(180deg, var(--coal-3), var(--coal));
-      overflow: hidden;
-    }
-    .sample-thumb svg { width: 100%; height: 100%; }
-    .sample-cap { display: flex; flex-direction: column; min-width: 0; }
-    .sample-brand {
-      font-size: 0.58rem;
-      letter-spacing: 0.3em;
-      text-transform: uppercase;
-      color: var(--gold-soft);
-    }
-    .sample-name {
-      font-family: var(--serif);
-      font-size: 1.12rem;
-      line-height: 1.25;
-      margin-top: 0.2rem;
-      color: var(--ivory);
-    }
-    .sample-meta {
-      font-size: 0.58rem;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: var(--ivory-faint);
-      margin-top: 0.35rem;
-    }
-    .sample-dot {
-      margin-left: auto;
-      flex: none;
-      width: 14px; height: 14px;
-      border-radius: 50%;
-      border: 1px solid var(--line-strong);
-      transition: border-color 0.3s, background 0.3s;
-    }
-    .sample.selected .sample-dot {
-      border-color: var(--gold);
-      background: radial-gradient(circle, var(--gold) 3px, transparent 3.6px);
-    }
-    /* Your-own-piece upload (revealed when the live atelier is configured) */
-    .upload-sample { cursor: pointer; }
-    .upload-sample .sample-thumb {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--gold-soft);
-    }
-    .upload-sample .sample-thumb svg { width: 55%; height: auto; }
-    .upload-sample .sample-thumb img { width: 100%; height: 100%; object-fit: cover; }
-    .upload-notes { margin-top: 0.7rem; }
-    .ai-line--error span:last-child { color: var(--burgundy-bright); }
-
-    .gen-row { margin-top: 1.5rem; display: grid; gap: 1rem; }
-    .gen-row .btn { width: 100%; }
-    .gen-row .text-link { justify-self: center; }
-    .btn.is-busy { cursor: progress; }
-    /* Local remedy: the shared .btn hover-fill (::before, z-index:-1) paints
-       beneath opaque backgrounds; isolating the button keeps it inside. */
-    .btn { isolation: isolate; }
-    /* Author display rules must not defeat the hidden attribute */
-    .atelier [hidden] { display: none !important; }
-
-    /* Assistant console */
-    .console {
-      margin-top: 1.1rem;
-      border: 1px solid var(--line);
-      background: rgba(10, 10, 11, 0.5);
-      padding: 1.3rem 1.6rem;
-      min-height: 14.5rem;
-    }
-    .console.is-idle {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-    }
-    .console-hint {
-      font-family: var(--serif);
-      font-style: italic;
-      font-size: 1.08rem;
-      color: var(--ivory-faint);
-      max-width: 30ch;
-      text-wrap: balance;
-    }
-    .ai-line {
-      display: flex;
-      align-items: flex-start;
-      gap: 0.9rem;
-      padding-block: 0.6rem;
-      font-size: 0.7rem;
-      letter-spacing: 0.24em;
-      text-transform: uppercase;
-      color: var(--ivory-dim);
-      opacity: 0;
-      transform: translateY(8px);
-      animation: lineIn 0.55s var(--ease) forwards;
-    }
-    @keyframes lineIn { to { opacity: 1; transform: none; } }
-    .ai-dot {
-      flex: none;
-      width: 7px; height: 7px;
-      margin-top: 0.5em;
-      border-radius: 50%;
-      background: var(--gold);
-    }
-    .ai-line.active .ai-dot { animation: aipulse 1.1s ease-out infinite; }
-    @keyframes aipulse {
-      0% { box-shadow: 0 0 0 0 rgba(201, 162, 39, 0.45); }
-      100% { box-shadow: 0 0 0 10px rgba(201, 162, 39, 0); }
-    }
-    .ai-line.done { color: var(--ivory-faint); }
-    .ai-line.done .ai-dot { background: rgba(201, 162, 39, 0.5); }
-
-    /* Generated listing card */
-    .listing-card {
-      margin-top: 1.4rem;
-      border: 1px solid rgba(201, 162, 39, 0.32);
-      background: linear-gradient(180deg, var(--coal-3), var(--coal-2));
-      padding: clamp(1.4rem, 3vw, 2.4rem);
-      opacity: 0;
-      transform: translateY(26px);
-      transition: opacity 0.8s var(--ease), transform 0.8s var(--ease);
-    }
-    .listing-card.in { opacity: 1; transform: none; }
-    .listing-desc {
-      margin-top: 1.2rem;
-      font-size: 0.95rem;
-      color: var(--ivory-dim);
-      max-width: 62ch;
-    }
-    .listing-card textarea.field {
-      margin-top: 1.2rem;
-      min-height: 11rem;
-      resize: vertical;
-      line-height: 1.7;
-      font-size: 0.92rem;
-    }
-    .listing-rows { margin-top: 1.8rem; }
-    .listing-row {
-      display: grid;
-      grid-template-columns: 9.5rem minmax(0, 1fr);
-      gap: 0.35rem 1.6rem;
-      padding-block: 1rem;
-      border-top: 1px solid var(--line);
-      align-items: baseline;
-    }
-    .listing-row dd { font-size: 0.92rem; color: var(--ivory-dim); }
-    @media (max-width: 620px) { .listing-row { grid-template-columns: 1fr; } }
-    .tag-row { display: flex; flex-wrap: wrap; gap: 0.45rem; }
-    .band { display: flex; align-items: baseline; gap: 0.7rem; flex-wrap: wrap; }
-    .band-num {
-      font-family: var(--serif);
-      font-size: clamp(1.3rem, 2vw, 1.65rem);
-      font-weight: 300;
-      color: var(--ivory);
-      white-space: nowrap;
-    }
-    .band-to { font-family: var(--serif); font-style: italic; font-size: 0.95rem; color: var(--ivory-faint); }
-    .band-note { display: block; font-size: 0.74rem; letter-spacing: 0.05em; color: var(--ivory-faint); margin-top: 0.35rem; }
-    .listing-actions { margin-top: 2rem; display: flex; gap: 0.8rem; flex-wrap: wrap; }
-
-    /* Submission confirmation */
-    .confirm {
-      text-align: center;
-      padding: clamp(1.5rem, 5vw, 3.5rem) clamp(0.5rem, 3vw, 2rem);
-      opacity: 0;
-      transform: translateY(20px);
-      transition: opacity 0.8s var(--ease), transform 0.8s var(--ease);
-    }
-    .confirm.in { opacity: 1; transform: none; }
-    .confirm-seal { width: 52px; height: 52px; margin-inline: auto; color: var(--gold-soft); }
-    @media (max-width: 560px) { .confirm .btn { width: 100%; } }
-  </style>
-</head>
-<body data-page="sell">
-
-  <div id="nav-root"></div>
-
-  <!-- ============ PAGE HERO ============ -->
-  <section class="page-hero">
-    <div class="hero-bg"></div>
-    <div class="wrap">
-      <p class="kicker reveal">AI Listing Assistant</p>
-      <h1 class="display display-xl mt-3 reveal" style="--d:.1s; max-width: 13ch;">
-        List a piece in <span class="italic text-gold">minutes</span>.
-      </h1>
-      <p class="lede mt-4 reveal" style="--d:.2s">
-        Upload your photos and the assistant drafts everything else — the title,
-        the description, the condition report, the keywords and a price range.
-        You review it, edit what you want, and submit.
-      </p>
-      <div class="mt-5 reveal" style="--d:.3s; display:flex; gap:1rem; flex-wrap:wrap;">
-        <a href="#atelier" class="btn btn--gold">Try the Assistant</a>
-        <a href="archive.html" class="btn">See Finished Listings</a>
-      </div>
-    </div>
-  </section>
-
-  <hr class="hairline">
-
-  <!-- ============ THREE STEPS ============ -->
-  <section class="section section--tight">
-    <div class="wrap">
-      <div class="grid-3" style="gap: clamp(1.8rem, 3.5vw, 3rem);">
-        <div class="step reveal">
-          <p class="num-index">01</p>
-          <h3 class="display display-sm mt-1">Photograph</h3>
-          <p class="text-dim mt-2" style="font-size:.92rem;">
-            Shoot the piece in daylight — front, back, hardware, labels, and any
-            flaws. Phone photos are fine.
-          </p>
-        </div>
-        <div class="step reveal" style="--d:.1s">
-          <p class="num-index">02</p>
-          <h3 class="display display-sm mt-1">The AI drafts</h3>
-          <p class="text-dim mt-2" style="font-size:.92rem;">
-            The assistant reads your photos, identifies the brand, grades the
-            condition and writes the full listing.
-          </p>
-        </div>
-        <div class="step reveal" style="--d:.2s">
-          <p class="num-index">03</p>
-          <h3 class="display display-sm mt-1">Approve &amp; publish</h3>
-          <p class="text-dim mt-2" style="font-size:.92rem;">
-            Review the draft, edit anything you want, and submit. Every piece is
-            authenticated before it goes live.
-          </p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============ THE LISTING ATELIER (DEMO) ============ -->
-  <section class="section section--coal" id="atelier">
-    <div class="wrap">
-      <div class="section-head">
-        <div>
-          <p class="kicker reveal">Try It</p>
-          <h2 class="display display-lg reveal" style="--d:.08s">See it draft<br>a real listing.</h2>
-        </div>
-        <p class="lede reveal" style="--d:.15s; max-width: 26rem;">
-          Pick one of these three pieces and generate — it is the same
-          process your own photos would go through.
-        </p>
-      </div>
-
-      <div class="atelier reveal" style="--d:.1s">
-        <div class="atelier-head">
-          <span class="small-label">AI Listing Assistant</span>
-          <span class="badge">Interactive demonstration</span>
-        </div>
-
-        <div class="demo-grid" id="demo-grid">
-          <!-- Left: sample uploads -->
-          <div>
-            <p class="small-label">Choose a piece to try</p>
-            <div class="tray" id="tray" role="group" aria-label="Sample pieces"></div>
-
-            <div id="upload-block" hidden>
-              <p class="small-label" style="margin-top:1.6rem;">Or your own piece</p>
-              <div class="tray">
-                <label class="sample upload-sample" id="upload-sample" for="photo-input">
-                  <span class="sample-thumb" aria-hidden="true" id="upload-thumb">
-                    <svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M8 14h6l3-4h10l3 4h6a2 2 0 012 2v18a2 2 0 01-2 2H8a2 2 0 01-2-2V16a2 2 0 012-2z"/>
-                      <circle cx="22" cy="25" r="6"/>
-                    </svg>
-                  </span>
-                  <span class="sample-cap">
-                    <span class="sample-brand">Your photographs</span>
-                    <span class="sample-name" id="upload-name">Upload up to four</span>
-                    <span class="sample-meta" id="upload-meta">JPEG, PNG or WEBP · daylight works best</span>
-                  </span>
-                  <span class="sample-dot" aria-hidden="true"></span>
-                </label>
-              </div>
-              <input type="file" id="photo-input" accept="image/jpeg,image/png,image/webp" multiple hidden>
-              <input class="field upload-notes" id="upload-notes" type="text" maxlength="300"
-                     placeholder="Anything the photos don't show (optional)" hidden>
-            </div>
-
-            <div class="gen-row">
-              <button class="btn btn--gold" id="generate-btn" type="button">Generate the Listing</button>
-              <button class="text-link" id="reset-link" type="button" hidden>Try another piece</button>
-            </div>
-          </div>
-
-          <!-- Right: the assistant's desk -->
-          <div>
-            <p class="small-label">The assistant&rsquo;s desk</p>
-            <div class="console is-idle" id="console" role="log" aria-live="polite">
-              <p class="console-hint">Select a piece and generate — the draft appears here.</p>
-            </div>
-            <article class="listing-card" id="listing-card" hidden></article>
-          </div>
-        </div>
-
-        <!-- Submission confirmation (replaces the grid) -->
-        <div class="confirm" id="confirm" hidden></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============ WHAT THE AI WRITES ============ -->
-  <section class="section">
-    <div class="wrap">
-      <div class="section-head">
-        <div>
-          <p class="kicker reveal">What You Get</p>
-          <h2 class="display display-lg reveal" style="--d:.08s">What the AI writes for you.</h2>
-        </div>
-        <p class="lede reveal" style="--d:.15s; max-width: 26rem;">
-          Every draft covers six things, so nothing is left for you
-          to write from scratch.
-        </p>
-      </div>
-      <div class="grid-3">
-        <article class="card reveal" style="--d:0s">
-          <span class="num-index">01</span>
-          <h3>Product titles</h3>
-          <p>Brand, model, material and era — a proper title without
-          typing a word.</p>
-        </article>
-        <article class="card reveal" style="--d:.06s">
-          <span class="num-index">02</span>
-          <h3>Professional descriptions</h3>
-          <p>A clear, well-written description based on what is actually
-          in your photos.</p>
-        </article>
-        <article class="card reveal" style="--d:.12s">
-          <span class="num-index">03</span>
-          <h3>Categories</h3>
-          <p>The right category and era, so the piece shows up where buyers
-          are already looking.</p>
-        </article>
-        <article class="card reveal" style="--d:.18s">
-          <span class="num-index">04</span>
-          <h3>Style tags</h3>
-          <p>Quiet luxury, heritage, 90s minimalism — the terms people
-          actually search for.</p>
-        </article>
-        <article class="card reveal" style="--d:.24s">
-          <span class="num-index">05</span>
-          <h3>Condition explanations</h3>
-          <p>An honest, graded account of wear — it protects you and
-          reassures the buyer.</p>
-        </article>
-        <article class="card reveal" style="--d:.3s">
-          <span class="num-index">06</span>
-          <h3>Search keywords</h3>
-          <p>Search keywords tuned to how buyers in the region actually
-          search, added behind every listing.</p>
-        </article>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============ CLOSING ============ -->
-  <section class="section section--coal">
-    <div class="wrap wrap--narrow center">
-      <blockquote class="pullquote reveal">
-        “You photograph it. <span class="text-gold">The assistant writes the listing.</span>”
-      </blockquote>
-      <p class="lede mt-4 reveal" style="--d:.1s">
-        Authentication, the description and the pricing are handled for you.
-      </p>
-      <div class="mt-5 reveal" style="--d:.2s; display:flex; gap:1rem; justify-content:center; flex-wrap:wrap;">
-        <a href="archive.html" class="btn btn--gold">Enter the Archive <span class="arrow">→</span></a>
-        <a href="authentication.html" class="btn">How We Authenticate</a>
-      </div>
-    </div>
-  </section>
-
-  <div id="footer-root"></div>
-
-  <script src="js/art.js"></script>
-  <script src="js/data.js"></script>
-  <script src="js/main.js"></script>
-  <script src="js/fx.js"></script>
-  <script src="js/config.js"></script>
-  <script>
-    (function () {
-      var SAMPLES = [
-        { id: "chanel-classic-flap", photos: 5 },
-        { id: "burberry-trench", photos: 4 },
-        { id: "gucci-horsebit-loafers", photos: 6 }
-      ];
-      var GRADE_NOTES = {
-        "Excellent": "barely worn; close to new on inspection.",
-        "Very Good": "worn with care; minor signs of use you would only catch up close.",
-        "Good": "visibly used, professionally cleaned and structurally sound."
-      };
-      var HINT = '<p class="console-hint">Select a piece and generate — the draft appears here.</p>';
-
-      var trayEl = document.getElementById("tray");
-      var consoleEl = document.getElementById("console");
-      var listingEl = document.getElementById("listing-card");
-      var genBtn = document.getElementById("generate-btn");
-      var resetLink = document.getElementById("reset-link");
-      var gridEl = document.getElementById("demo-grid");
-      var confirmEl = document.getElementById("confirm");
-
-      var currentId = SAMPLES[0].id;
-      var phase = "idle";
-      var timers = [];
-
-      /* Live atelier (real photographs → real AI draft) */
-      var UPLOAD_ID = "__upload__";
-      var uploadPhotos = [];
-      var lastDraft = null; /* { brand, ref } for the confirmation state */
-      var uploadBlock = document.getElementById("upload-block");
-      var uploadSample = document.getElementById("upload-sample");
-      var uploadThumb = document.getElementById("upload-thumb");
-      var uploadName = document.getElementById("upload-name");
-      var uploadMeta = document.getElementById("upload-meta");
-      var uploadNotes = document.getElementById("upload-notes");
-      var photoInput = document.getElementById("photo-input");
-
-      function product() { return window.raecaeFindProduct(currentId); }
-      function money(n) { return window.raecaeMoney(n); }
-      function schedule(ms, fn) { timers.push(window.setTimeout(fn, ms)); }
-      function clearTimers() { timers.forEach(window.clearTimeout); timers = []; }
-
-      /* ---------- Sample tray ---------- */
-      trayEl.innerHTML = SAMPLES.map(function (s) {
-        var p = window.raecaeFindProduct(s.id);
-        return (
-          '<button type="button" class="sample" data-id="' + p.id + '" aria-pressed="false">' +
-            '<span class="sample-thumb" aria-hidden="true">' + window.raecaeArt(p.art) + "</span>" +
-            '<span class="sample-cap">' +
-              '<span class="sample-brand">' + p.brand + "</span>" +
-              '<span class="sample-name">' + p.title + "</span>" +
-              '<span class="sample-meta">' + s.photos + " photographs · uploaded</span>" +
-            "</span>" +
-            '<span class="sample-dot" aria-hidden="true"></span>' +
-          "</button>"
-        );
-      }).join("");
-
-      trayEl.addEventListener("click", function (e) {
-        var b = e.target.closest(".sample");
-        if (!b) return;
-        var id = b.getAttribute("data-id");
-        var changed = id !== currentId;
-        currentId = id;
-        syncTray();
-        if (changed || phase !== "idle") resetDemo();
-      });
-
-      function syncTray() {
-        trayEl.querySelectorAll(".sample").forEach(function (b) {
-          var on = b.getAttribute("data-id") === currentId;
-          b.classList.toggle("selected", on);
-          b.setAttribute("aria-pressed", on ? "true" : "false");
-        });
-        if (uploadSample) uploadSample.classList.toggle("selected", currentId === UPLOAD_ID);
-      }
-      syncTray();
-
-      /* ---------- Live atelier wiring ---------- */
-      if (window.RAECAE_AI) {
-        window.RAECAE_AI.probe().then(function (isLive) {
-          if (!isLive) return;
-          uploadBlock.hidden = false;
-          uploadNotes.hidden = false;
-          var badge = document.querySelector(".atelier-head .badge");
-          if (badge) badge.textContent = "Live";
-        });
-      }
-
-      photoInput.addEventListener("change", function () {
-        var files = Array.prototype.slice.call(photoInput.files || []).slice(0, 4);
-        if (!files.length) return;
-        Promise.all(files.map(function (f) { return window.RAECAE_AI.fileToDataUrl(f, 1024); }))
-          .then(function (urls) {
-            uploadPhotos = urls;
-            uploadThumb.innerHTML = '<img src="' + urls[0] + '" alt="">';
-            uploadName.textContent = files.length === 1 ? "One photograph" :
-              ["", "One", "Two", "Three", "Four"][files.length] + " photographs";
-            uploadMeta.textContent = "ready to generate";
-            currentId = UPLOAD_ID;
-            syncTray();
-            if (phase !== "idle") resetDemo();
-          })
-          .catch(function () {
-            uploadMeta.textContent = "those files could not be read — try JPEG or PNG";
-          });
-      });
-
-      uploadSample.addEventListener("click", function (e) {
-        if (uploadPhotos.length && currentId !== UPLOAD_ID) {
-          /* first click re-selects without reopening the picker;
-             a second click opens it again to replace the photographs */
-          e.preventDefault();
-          currentId = UPLOAD_ID;
-          syncTray();
-          if (phase !== "idle") resetDemo();
-        }
-      });
-
-      /* ---------- Demo state ---------- */
-      function resetDemo() {
-        clearTimers();
-        phase = "idle";
-        consoleEl.classList.add("is-idle");
-        consoleEl.innerHTML = HINT;
-        listingEl.hidden = true;
-        listingEl.classList.remove("in");
-        listingEl.innerHTML = "";
-        confirmEl.hidden = true;
-        confirmEl.classList.remove("in");
-        gridEl.hidden = false;
-        genBtn.classList.remove("is-busy");
-        genBtn.setAttribute("aria-busy", "false");
-        genBtn.textContent = "Generate the Listing";
-        resetLink.hidden = true;
-      }
-
-      genBtn.addEventListener("click", function () {
-        if (phase === "generating") return;
-        if (phase !== "idle") resetDemo();
-        start();
-      });
-      resetLink.addEventListener("click", resetDemo);
-
-      function esc(s) {
-        return String(s == null ? "" : s)
-          .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-      }
-
-      /* ---------- Generation sequence ---------- */
-      var genSeq = 0;
-
-      function start() {
-        if (currentId === UPLOAD_ID) { startLive(); return; }
-        var p = product();
-        phase = "generating";
-        genBtn.classList.add("is-busy");
-        genBtn.setAttribute("aria-busy", "true");
-        genBtn.textContent = "Drafting…";
-        consoleEl.classList.remove("is-idle");
-        consoleEl.innerHTML = "";
-        consoleEl.scrollIntoView({ behavior: "smooth", block: "nearest" });
-        var lines = [
-          "Reading the photographs…",
-          'Identifying the brand — <span class="text-gold">' + p.brand.toUpperCase() + "</span>",
-          "Assessing condition and materials…",
-          "Drafting the description…",
-          "Pricing against the archive…"
-        ];
-        lines.forEach(function (text, i) {
-          schedule(250 + i * 700, function () {
-            finishActiveLine();
-            addLine(text);
-          });
-        });
-        schedule(250 + lines.length * 700 + 350, function () {
-          finishActiveLine();
-          showListing(p);
-        });
-      }
-
-      /* ---------- Live generation (your own photographs) ---------- */
-      function startLive() {
-        var seq = ++genSeq;
-        phase = "generating";
-        genBtn.classList.add("is-busy");
-        genBtn.setAttribute("aria-busy", "true");
-        genBtn.textContent = "Drafting…";
-        consoleEl.classList.remove("is-idle");
-        consoleEl.innerHTML = "";
-        consoleEl.scrollIntoView({ behavior: "smooth", block: "nearest" });
-        var lines = [
-          "Reading the photographs…",
-          "Identifying the brand…",
-          "Assessing condition and materials…",
-          "Drafting the description…",
-          "Pricing for the regional market…"
-        ];
-        lines.forEach(function (text, i) {
-          schedule(250 + i * 1400, function () {
-            finishActiveLine();
-            addLine(text);
-          });
-        });
-        window.RAECAE_AI.listing(uploadPhotos, uploadNotes.value)
-          .then(function (d) {
-            if (seq !== genSeq || phase !== "generating") return; /* reset mid-flight */
-            clearTimers();
-            finishActiveLine();
-            showListingLive(d);
-          })
-          .catch(function (err) {
-            if (seq !== genSeq || phase !== "generating") return;
-            clearTimers();
-            finishActiveLine();
-            var el = document.createElement("div");
-            el.className = "ai-line ai-line--error";
-            el.innerHTML = '<span class="ai-dot"></span><span>' +
-              esc(err && err.message ? err.message : "The assistant could not be reached.") + "</span>";
-            consoleEl.appendChild(el);
-            phase = "idle";
-            genBtn.classList.remove("is-busy");
-            genBtn.setAttribute("aria-busy", "false");
-            genBtn.textContent = "Generate the Listing";
-            resetLink.hidden = false;
-          });
-      }
-
-      function showListingLive(d) {
-        phase = "generated";
-        lastDraft = {
-          brand: d.brand || "your piece",
-          ref: "RC-2026-" + Math.floor(1000 + Math.random() * 9000)
-        };
-        var bandHtml = d.price_high_jod > 0
-          ? '<span class="band">' +
-              '<span class="band-num">' + money(d.price_low_jod) + "</span>" +
-              '<span class="band-to">to</span>' +
-              '<span class="band-num">' + money(d.price_high_jod) + "</span>" +
-            "</span>" +
-            '<span class="band-note">Based on recent sales of similar pieces in the region.</span>'
-          : '<span class="band-note">To be priced with the house after authentication.</span>';
-        listingEl.innerHTML =
-          '<div class="flex-between" style="gap:.8rem 1.5rem; margin-bottom:1.5rem;">' +
-            '<span class="badge badge--verified">AI draft — ready for review</span>' +
-            '<span class="small-label">Model confidence <span class="text-gold">' + d.confidence + "%</span></span>" +
-          "</div>" +
-          '<p class="product-brand">' + esc(d.brand) + "</p>" +
-          '<h3 class="display display-md" style="max-width:20ch;">' + esc(d.title) + "</h3>" +
-          '<p class="listing-desc" id="listing-desc">' + esc(d.description) + "</p>" +
-          '<dl class="listing-rows">' +
-            row("Category", esc(d.category) + " · " + esc(d.era) +
-              (d.year_estimate ? ", " + esc(d.year_estimate) : "")) +
-            row("Style tags",
-              '<span class="tag-row">' +
-                d.tags.map(function (t) { return '<span class="badge">' + esc(t) + "</span>"; }).join("") +
-              "</span>") +
-            row("Condition",
-              '<span style="color:var(--ivory)">' + esc(d.condition) + "</span>" +
-              (d.condition_note ? " — " + esc(d.condition_note) : "")) +
-            row("Search keywords",
-              '<span class="small-label" style="letter-spacing:.22em; line-height:2.1;">' +
-                d.keywords.map(esc).join(" · ") +
-              "</span>") +
-            row("Suggested band", bandHtml) +
-          "</dl>" +
-          '<div class="listing-actions">' +
-            '<button type="button" class="btn btn--small" id="edit-btn">Edit Draft</button>' +
-            '<button type="button" class="btn btn--gold btn--small" id="submit-btn">Submit for Authentication</button>' +
-          "</div>";
-        listingEl.hidden = false;
-        void listingEl.offsetWidth;
-        listingEl.classList.add("in");
-        genBtn.classList.remove("is-busy");
-        genBtn.setAttribute("aria-busy", "false");
-        genBtn.textContent = "Regenerate the Listing";
-        resetLink.hidden = false;
-        document.getElementById("edit-btn").addEventListener("click", toggleEdit);
-        document.getElementById("submit-btn").addEventListener("click", submit);
-      }
-
-      function addLine(html) {
-        var el = document.createElement("div");
-        el.className = "ai-line active";
-        el.innerHTML = '<span class="ai-dot"></span><span>' + html + "</span>";
-        consoleEl.appendChild(el);
-      }
-      function finishActiveLine() {
-        var act = consoleEl.querySelector(".ai-line.active");
-        if (act) { act.classList.remove("active"); act.classList.add("done"); }
-      }
-
-      /* ---------- Generated listing ---------- */
-      function priceBand(p) {
-        var lo = Math.round((p.price * 0.92) / 10) * 10;
-        var hi = Math.round((p.price * 1.08) / 10) * 10;
-        return (
-          '<span class="band-num">' + money(lo) + "</span>" +
-          '<span class="band-to">to</span>' +
-          '<span class="band-num">' + money(hi) + "</span>"
-        );
-      }
-      function row(label, valueHtml) {
-        return '<div class="listing-row"><dt class="small-label">' + label + "</dt><dd>" + valueHtml + "</dd></div>";
-      }
-
-      function showListing(p) {
-        phase = "generated";
-        lastDraft = { brand: p.brand, ref: p.passport };
-        listingEl.innerHTML =
-          '<div class="flex-between" style="gap:.8rem 1.5rem; margin-bottom:1.5rem;">' +
-            '<span class="badge badge--verified">AI draft — ready for review</span>' +
-            '<span class="small-label">Model confidence <span class="text-gold">' + p.confidence + "%</span></span>" +
-          "</div>" +
-          '<p class="product-brand">' + p.brand + "</p>" +
-          '<h3 class="display display-md" style="max-width:20ch;">' + p.title + "</h3>" +
-          '<p class="listing-desc" id="listing-desc">' + p.story + " " + p.conditionNote + "</p>" +
-          '<dl class="listing-rows">' +
-            row("Category", p.category + " · " + p.era + ", " + p.year) +
-            row("Style tags",
-              '<span class="tag-row">' +
-                p.tags.map(function (t) { return '<span class="badge">' + t + "</span>"; }).join("") +
-              "</span>") +
-            row("Condition",
-              '<span style="color:var(--ivory)">' + p.condition + "</span> — " +
-              (GRADE_NOTES[p.condition] || "")) +
-            row("Search keywords",
-              '<span class="small-label" style="letter-spacing:.22em; line-height:2.1;">' +
-                p.keywords.join(" · ") +
-              "</span>") +
-            row("Suggested band",
-              '<span class="band">' + priceBand(p) + "</span>" +
-              '<span class="band-note">Based on recent sales of similar pieces.</span>') +
-          "</dl>" +
-          '<div class="listing-actions">' +
-            '<button type="button" class="btn btn--small" id="edit-btn">Edit Draft</button>' +
-            '<button type="button" class="btn btn--gold btn--small" id="submit-btn">Submit for Authentication</button>' +
-          "</div>";
-        listingEl.hidden = false;
-        void listingEl.offsetWidth;
-        listingEl.classList.add("in");
-        genBtn.classList.remove("is-busy");
-        genBtn.setAttribute("aria-busy", "false");
-        genBtn.textContent = "Regenerate the Listing";
-        resetLink.hidden = false;
-        document.getElementById("edit-btn").addEventListener("click", toggleEdit);
-        document.getElementById("submit-btn").addEventListener("click", submit);
-      }
-
-      /* ---------- Edit draft (mock) ---------- */
-      function toggleEdit() {
-        var editBtn = document.getElementById("edit-btn");
-        var desc = document.getElementById("listing-desc");
-        if (!desc) return;
-        if (desc.tagName === "TEXTAREA") {
-          var pEl = document.createElement("p");
-          pEl.className = "listing-desc";
-          pEl.id = "listing-desc";
-          pEl.textContent = desc.value.trim();
-          desc.replaceWith(pEl);
-          editBtn.textContent = "Edit Draft";
-        } else {
-          var ta = document.createElement("textarea");
-          ta.className = "field";
-          ta.id = "listing-desc";
-          ta.rows = 7;
-          ta.value = desc.textContent;
-          ta.setAttribute("aria-label", "Edit the draft description");
-          desc.replaceWith(ta);
-          ta.focus();
-          ta.setSelectionRange(0, 0);
-          ta.scrollTop = 0;
-          editBtn.textContent = "Keep the Draft";
-        }
-      }
-
-      /* ---------- Submit for authentication ---------- */
-      function submit() {
-        phase = "submitted";
-        var d = lastDraft || { brand: product().brand, ref: product().passport };
-        gridEl.hidden = true;
-        confirmEl.innerHTML =
-          '<svg class="confirm-seal" viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
-            '<path d="M22 5l13 5v10c0 8.5-5.5 15.5-13 18-7.5-2.5-13-9.5-13-18V10z"/>' +
-            '<path d="M16 21.5l4.2 4.2L29 17" stroke-width="1.6"/>' +
-          "</svg>" +
-          '<h3 class="display display-md mt-3">Received.</h3>' +
-          '<p class="lede mt-3" style="max-width:36rem; margin-inline:auto;">' +
-            "Your " + esc(d.brand) + " is in the queue for authentication — computer vision first, " +
-            "then an expert check. It goes live once it passes.</p>" +
-          '<p class="small-label mt-4">Submission reference · <span class="text-gold" style="white-space:nowrap">' + esc(d.ref) + "</span></p>" +
-          '<div class="mt-5" style="display:flex; gap:1rem; justify-content:center; flex-wrap:wrap;">' +
-            '<a href="authentication.html" class="btn btn--gold">Inside the Authentication Room</a>' +
-            '<button type="button" class="btn" id="again-btn">Prepare Another Piece</button>' +
-          "</div>";
-        confirmEl.hidden = false;
-        void confirmEl.offsetWidth;
-        confirmEl.classList.add("in");
-        document.getElementById("again-btn").addEventListener("click", resetDemo);
-      }
-    })();
-  </script>
-</body>
+<html class="bricolage_grotesque_e01f6fad-module__frOMPG__variable poppins_ead9b0ae-module__Bvcf9q__variable" lang="en-JO">
+<head><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link data-sc="arfonts" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&amp;family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<meta content="#ffffff" name="theme-color"/>
+<meta content="light" name="color-scheme"/>
+<title>List an item · SecondChance Collective</title>
+<meta content="List a piece for sale on SecondChance Collective. Free to list, with no seller fees on your first three sales." name="description"/>
+<link href="https://secondchance-xi.vercel.app" rel="canonical"/>
+<meta content="List an item · SecondChance Collective" property="og:title"/>
+<meta content="List a piece for sale on SecondChance Collective. Free to list, with no seller fees on your first three sales." property="og:description"/>
+<meta content="https://secondchance-xi.vercel.app" property="og:url"/>
+<meta content="SecondChance Collective" property="og:site_name"/>
+<meta content="en_JO" property="og:locale"/>
+<meta content="https://secondchance-xi.vercel.app/opengraph-image?f3d63118630a7953" property="og:image"/>
+<meta content="image/png" property="og:image:type"/>
+<meta content="1200" property="og:image:width"/>
+<meta content="630" property="og:image:height"/>
+<meta content="SecondChance Collective — buy and sell authenticated pre-owned luxury in Jordan" property="og:image:alt"/>
+<meta content="website" property="og:type"/>
+<meta content="summary_large_image" name="twitter:card"/>
+<meta content="List an item · SecondChance Collective" name="twitter:title"/>
+<meta content="List a piece for sale on SecondChance Collective. Free to list, with no seller fees on your first three sales." name="twitter:description"/>
+<meta content="https://secondchance-xi.vercel.app/opengraph-image?f3d63118630a7953" name="twitter:image"/>
+<meta content="SecondChance Collective — buy and sell authenticated pre-owned luxury in Jordan" name="twitter:image:alt"/>
+<meta content="image/png" name="twitter:image:type"/>
+<meta content="1200" name="twitter:image:width"/>
+<meta content="630" name="twitter:image:height"/>
+<link href="https://secondchance-xi.vercel.app/icon.svg?icon.107j7z-dw9lq4.svg" rel="icon" sizes="any" type="image/svg+xml"/>
+<meta content="" name="next-size-adjust"/>
+<link href="styles.css" rel="stylesheet"/>
+<link href="sc-app.css" rel="stylesheet"/><link href="sc-rtl.css" rel="stylesheet"/></head>
+<body>
+<div hidden=""><!--$--><!--/$--></div><a class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-full focus:bg-ink focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-canvas" href="index.html">Skip to content</a><a class="block bg-invert text-invert-fg" href="authentication.html">
+<div class="mx-auto w-full max-w-[1440px] px-4 sm:px-6 lg:px-8">
+<p class="flex items-center justify-center gap-2 py-2.5 text-center text-[12px] leading-5"><svg aria-hidden="true" class="lucide lucide-badge-check size-4 shrink-0 text-invert-fg/70" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"></path>
+<path d="m9 12 2 2 4-4"></path>
+</svg><span class="sm:hidden">Every piece over JOD 350 authenticated</span><span class="hidden sm:inline">Every piece over JOD 350 is authenticated before it reaches you.</span><span class="hidden font-medium underline underline-offset-2 sm:inline">How it works</span><svg aria-hidden="true" class="lucide lucide-chevron-right size-3.5 shrink-0 sm:hidden" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="m9 18 6-6-6-6"></path>
+</svg></p>
+</div>
+</a>
+<header class="sticky top-0 z-40 bg-canvas">
+<div class="mx-auto w-full max-w-[1440px] px-4 sm:px-6 lg:px-8">
+<div class="flex h-16 items-center gap-3 sm:gap-5"><a aria-label="SecondChance Collective - home" class="shrink-0" href="index.html"><span aria-hidden="true" class="inline-flex flex-col font-display font-semibold leading-[0.88]"><span class="text-[16px] tracking-[-0.03em]" data-keep-en="">SecondChance</span><span class="text-[10px] font-medium tracking-[0.22em] text-muted">collective<span class="text-accent">.</span></span></span></a>
+<div class="hidden min-w-0 flex-1 lg:block">
+<div class="relative w-full">
+<div class="">
+<form class="relative flex w-full items-center" role="search"><label class="sr-only" for="search-input-_R_4nb_">Search listings</label><svg aria-hidden="true" class="lucide lucide-search pointer-events-none absolute left-3.5 size-[18px] text-muted" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="m21 21-4.34-4.34"></path>
+<circle cx="11" cy="11" r="8"></circle>
+</svg><input aria-autocomplete="list" aria-controls="search-listbox-_R_4nb_" aria-expanded="false" autocomplete="off" class="h-11 w-full pl-11 pr-24 text-sm text-ink transition-[background-color,border-color,padding] duration-300 ease-(--ease-fluid) placeholder:text-muted focus:outline-none rounded-full border border-line bg-surface focus:border-accent/40 focus:bg-canvas" data-search-input="" id="search-input-_R_4nb_" name="q" placeholder="Search, or describe what you are looking for" role="combobox" type="search" value=""/>
+<div class="absolute right-1.5 flex items-center gap-1"><span aria-hidden="true" class="h-5 w-px bg-line"></span><button aria-label="Search" class="inline-flex h-9 min-w-9 shrink-0 items-center justify-center rounded-full bg-accent px-0 text-sm font-medium text-accent-contrast transition-[background-color,padding,transform] duration-300 ease-(--ease-fluid) hover:bg-accent/88 active:scale-[0.98]" type="submit"><svg aria-hidden="true" class="lucide lucide-search size-4 shrink-0" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="m21 21-4.34-4.34"></path>
+<circle cx="11" cy="11" r="8"></circle>
+</svg><span class="max-w-0 overflow-hidden whitespace-nowrap opacity-0 transition-[max-width,opacity,margin] duration-300 ease-(--ease-fluid)">Search</span></button></div>
+</form>
+</div>
+</div>
+</div>
+<nav aria-label="Account" class="ml-auto flex items-center gap-1 sm:gap-2">
+<div class="hidden items-center gap-1 md:flex sm:gap-2"><a aria-label="Favourites" class="relative inline-flex size-10 items-center justify-center rounded-full text-ink hover:bg-surface" href="account.html?tab=favorites"><svg aria-hidden="true" class="lucide lucide-heart size-5" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5"></path>
+</svg></a><a aria-label="Messages" class="inline-flex size-10 items-center justify-center rounded-full text-ink transition-colors duration-300 ease-(--ease-fluid) hover:bg-surface" href="account.html?tab=notifications"><svg aria-hidden="true" class="size-5" fill="none" stroke="currentColor" stroke-width="1.75" viewbox="2.5 2.5 19 19">
+<path d="M4 12C4 7.58172 7.58172 4 12 4C16.4183 4 20 7.58172 20 12V17.0909C20 17.9375 20 18.3608 19.8739 18.6989C19.6712 19.2425 19.2425 19.6712 18.6989 19.8739C18.3608 20 17.9375 20 17.0909 20H12C7.58172 20 4 16.4183 4 12Z" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"></path>
+<path d="M9 11H15" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"></path>
+<path d="M12 15H15" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"></path>
+</svg></a>
+<div class="relative hidden md:block"><button aria-expanded="false" aria-haspopup="true" class="inline-flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-medium text-ink transition-colors duration-300 ease-(--ease-fluid) hover:bg-surface" type="button"><svg aria-hidden="true" class="lucide lucide-user-round size-[19px]" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<circle cx="12" cy="8" r="5"></circle>
+<path d="M20 21a8 8 0 0 0-16 0"></path>
+</svg>Sign in<svg aria-hidden="true" class="lucide lucide-chevron-down size-3.5 transition-transform duration-300 ease-(--ease-fluid)" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="m6 9 6 6 6-6"></path>
+</svg></button></div><a class="group inline-flex items-center justify-center gap-2 rounded-full font-medium whitespace-nowrap transition-[background-color,color,border-color,transform] duration-300 ease-(--ease-fluid) active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none bg-accent text-accent-contrast hover:bg-accent/88 h-9 px-4 text-sm ml-1" href="sell.html"><svg aria-hidden="true" class="lucide lucide-plus size-4" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="M5 12h14"></path>
+<path d="M12 5v14"></path>
+</svg>Sell now</a>
+</div><button aria-expanded="false" aria-haspopup="dialog" aria-label="Menu" class="inline-flex size-10 items-center justify-center rounded-full text-ink transition-colors duration-300 ease-(--ease-fluid) hover:bg-surface md:hidden" type="button"><svg aria-hidden="true" class="lucide lucide-menu size-5" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="M4 5h16"></path>
+<path d="M4 12h16"></path>
+<path d="M4 19h16"></path>
+</svg></button>
+</nav>
+</div>
+<div class="pb-3 lg:hidden">
+<div class="relative w-full">
+<div class="">
+<form class="relative flex w-full items-center" role="search"><label class="sr-only" for="search-input-_R_17b_">Search listings</label><svg aria-hidden="true" class="lucide lucide-search pointer-events-none absolute left-3.5 size-[18px] text-muted" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="m21 21-4.34-4.34"></path>
+<circle cx="11" cy="11" r="8"></circle>
+</svg><input aria-autocomplete="list" aria-controls="search-listbox-_R_17b_" aria-expanded="false" autocomplete="off" class="h-11 w-full pl-11 pr-24 text-sm text-ink transition-[background-color,border-color,padding] duration-300 ease-(--ease-fluid) placeholder:text-muted focus:outline-none rounded-full border border-line bg-surface focus:border-accent/40 focus:bg-canvas" data-search-input="" id="search-input-_R_17b_" name="q" placeholder="Search or describe a piece" role="combobox" type="search" value=""/>
+<div class="absolute right-1.5 flex items-center gap-1"><span aria-hidden="true" class="h-5 w-px bg-line"></span><button aria-label="Search" class="inline-flex h-9 min-w-9 shrink-0 items-center justify-center rounded-full bg-accent px-0 text-sm font-medium text-accent-contrast transition-[background-color,padding,transform] duration-300 ease-(--ease-fluid) hover:bg-accent/88 active:scale-[0.98]" type="submit"><svg aria-hidden="true" class="lucide lucide-search size-4 shrink-0" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="m21 21-4.34-4.34"></path>
+<circle cx="11" cy="11" r="8"></circle>
+</svg><span class="max-w-0 overflow-hidden whitespace-nowrap opacity-0 transition-[max-width,opacity,margin] duration-300 ease-(--ease-fluid)">Search</span></button></div>
+</form>
+</div>
+</div>
+</div>
+</div>
+</header>
+<div class="sticky top-(--header-height) z-30 bg-canvas">
+<div class="mx-auto w-full max-w-[1440px] px-4 sm:px-6 lg:px-8">
+<nav aria-label="Categories" class="no-scrollbar -mx-1 flex gap-1 overflow-x-auto py-1 md:py-2.5"><a class="inline-flex min-h-11 shrink-0 items-center rounded-full px-3.5 text-sm transition-colors duration-300 ease-(--ease-fluid) md:min-h-0 md:py-1.5 font-medium text-ink hover:bg-surface" href="search.html">All</a>
+<div class="shrink-0"><button aria-expanded="false" aria-haspopup="true" class="inline-flex min-h-11 shrink-0 items-center rounded-full px-3.5 text-sm transition-colors duration-300 ease-(--ease-fluid) md:min-h-0 md:py-1.5 gap-1 hover:bg-surface hover:text-ink text-muted" type="button">Bags<svg aria-hidden="true" class="lucide lucide-chevron-down size-3.5 transition-transform duration-300 ease-(--ease-fluid)" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="m6 9 6 6 6-6"></path>
+</svg></button></div>
+<div class="shrink-0"><button aria-expanded="false" aria-haspopup="true" class="inline-flex min-h-11 shrink-0 items-center rounded-full px-3.5 text-sm transition-colors duration-300 ease-(--ease-fluid) md:min-h-0 md:py-1.5 gap-1 hover:bg-surface hover:text-ink text-muted" type="button">Womenswear<svg aria-hidden="true" class="lucide lucide-chevron-down size-3.5 transition-transform duration-300 ease-(--ease-fluid)" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="m6 9 6 6 6-6"></path>
+</svg></button></div>
+<div class="shrink-0"><button aria-expanded="false" aria-haspopup="true" class="inline-flex min-h-11 shrink-0 items-center rounded-full px-3.5 text-sm transition-colors duration-300 ease-(--ease-fluid) md:min-h-0 md:py-1.5 gap-1 hover:bg-surface hover:text-ink text-muted" type="button">Menswear<svg aria-hidden="true" class="lucide lucide-chevron-down size-3.5 transition-transform duration-300 ease-(--ease-fluid)" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="m6 9 6 6 6-6"></path>
+</svg></button></div><a class="inline-flex min-h-11 shrink-0 items-center rounded-full px-3.5 text-sm transition-colors duration-300 ease-(--ease-fluid) md:min-h-0 md:py-1.5 text-muted hover:bg-surface hover:text-ink" href="catalog-shoes.html">Shoes</a>
+<div class="shrink-0"><button aria-expanded="false" aria-haspopup="true" class="inline-flex min-h-11 shrink-0 items-center rounded-full px-3.5 text-sm transition-colors duration-300 ease-(--ease-fluid) md:min-h-0 md:py-1.5 gap-1 hover:bg-surface hover:text-ink text-muted" type="button">Watches<svg aria-hidden="true" class="lucide lucide-chevron-down size-3.5 transition-transform duration-300 ease-(--ease-fluid)" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="m6 9 6 6 6-6"></path>
+</svg></button></div><a class="inline-flex min-h-11 shrink-0 items-center rounded-full px-3.5 text-sm transition-colors duration-300 ease-(--ease-fluid) md:min-h-0 md:py-1.5 text-muted hover:bg-surface hover:text-ink" href="catalog-jewellery.html">Jewellery</a><a class="inline-flex min-h-11 shrink-0 items-center rounded-full px-3.5 text-sm transition-colors duration-300 ease-(--ease-fluid) md:min-h-0 md:py-1.5 text-muted hover:bg-surface hover:text-ink" href="catalog-accessories.html">Accessories</a><a class="inline-flex min-h-11 shrink-0 items-center rounded-full px-3.5 text-sm transition-colors duration-300 ease-(--ease-fluid) md:min-h-0 md:py-1.5 text-muted hover:bg-surface hover:text-ink" href="catalog-vintage.html">Vintage</a>
+</nav>
+</div>
+</div>
+<main id="main">
+<div class="bg-surface">
+<div class="mx-auto w-full max-w-[1440px] px-4 sm:px-6 lg:px-8">
+<div class="py-10 sm:py-14">
+<nav aria-label="Breadcrumb" class="mb-6">
+<ol class="flex flex-wrap items-center gap-1.5 text-sm text-muted">
+<li><a class="hover:text-ink" href="index.html">Home</a></li>
+<li class="flex items-center gap-1.5"><svg aria-hidden="true" class="lucide lucide-chevron-right size-4" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="m9 18 6-6-6-6"></path>
+</svg><span class="font-medium text-ink">Sell</span></li>
+</ol>
+</nav>
+<p class="text-xs font-medium uppercase tracking-[0.14em] text-accent-strong">Start selling</p>
+<h1 class="mt-3 max-w-3xl text-3xl sm:text-4xl lg:text-5xl">List a piece</h1>
+<p class="mt-5 max-w-2xl text-lg text-muted">Free to list, and no seller fees on your first three sales. We collect it, authenticate anything over JOD 350, and pay you once the buyer accepts.</p>
+</div>
+</div>
+</div>
+<div class="mx-auto w-full max-w-[1440px] px-4 sm:px-6 lg:px-8 py-14 sm:py-16">
+<div class="grid grid-cols-1 gap-12 lg:grid-cols-[minmax(0,1fr)_360px] lg:gap-16">
+<div>
+<aside class="rounded-(--radius-card) border border-dashed border-line bg-surface p-5 text-sm">
+<p class="font-medium">Not wired up yet</p>
+<p class="mt-1.5 text-muted">There is no backend, so photo upload and submission are disabled. The form shows the fields a real listing flow needs and the order they belong in.</p>
+</aside>
+<form aria-describedby="sell-disabled" class="mt-10 space-y-12">
+<p class="sr-only" id="sell-disabled">This form is a non-functional prototype and cannot be submitted.</p>
+<section>
+<div class="flex items-center gap-3"><span class="inline-flex size-8 items-center justify-center rounded-full bg-surface font-display text-xs font-semibold tnum">1</span>
+<h2 class="text-xl sm:text-2xl">Photos</h2>
+</div>
+<p class="mt-2 text-sm text-muted">Four angles minimum. Listings missing the label shot are held back from the feed, because authentication starts from it.</p>
+<div class="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+<div class="flex aspect-square cursor-not-allowed flex-col items-center justify-center gap-2 rounded-(--radius-card) border border-dashed border-line bg-product p-3 text-center"><svg aria-hidden="true" class="lucide lucide-camera size-6 text-muted" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="M13.997 4a2 2 0 0 1 1.76 1.05l.486.9A2 2 0 0 0 18.003 7H20a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h1.997a2 2 0 0 0 1.759-1.048l.489-.904A2 2 0 0 1 10.004 4z"></path>
+<circle cx="12" cy="13" r="3"></circle>
+</svg><span class="text-xs font-medium">Front</span><span class="text-[11px] leading-tight text-muted">Whole piece, straight on</span></div>
+<div class="flex aspect-square cursor-not-allowed flex-col items-center justify-center gap-2 rounded-(--radius-card) border border-dashed border-line bg-product p-3 text-center"><svg aria-hidden="true" class="lucide lucide-camera size-6 text-muted" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="M13.997 4a2 2 0 0 1 1.76 1.05l.486.9A2 2 0 0 0 18.003 7H20a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h1.997a2 2 0 0 0 1.759-1.048l.489-.904A2 2 0 0 1 10.004 4z"></path>
+<circle cx="12" cy="13" r="3"></circle>
+</svg><span class="text-xs font-medium">Back</span><span class="text-[11px] leading-tight text-muted">Including the base</span></div>
+<div class="flex aspect-square cursor-not-allowed flex-col items-center justify-center gap-2 rounded-(--radius-card) border border-dashed border-line bg-product p-3 text-center"><svg aria-hidden="true" class="lucide lucide-camera size-6 text-muted" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="M13.997 4a2 2 0 0 1 1.76 1.05l.486.9A2 2 0 0 0 18.003 7H20a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h1.997a2 2 0 0 0 1.759-1.048l.489-.904A2 2 0 0 1 10.004 4z"></path>
+<circle cx="12" cy="13" r="3"></circle>
+</svg><span class="text-xs font-medium">Detail</span><span class="text-[11px] leading-tight text-muted">Hardware or stitching</span></div>
+<div class="flex aspect-square cursor-not-allowed flex-col items-center justify-center gap-2 rounded-(--radius-card) border border-dashed border-line bg-product p-3 text-center"><svg aria-hidden="true" class="lucide lucide-camera size-6 text-muted" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="M13.997 4a2 2 0 0 1 1.76 1.05l.486.9A2 2 0 0 0 18.003 7H20a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h1.997a2 2 0 0 0 1.759-1.048l.489-.904A2 2 0 0 1 10.004 4z"></path>
+<circle cx="12" cy="13" r="3"></circle>
+</svg><span class="text-xs font-medium">Label</span><span class="text-[11px] leading-tight text-muted">Interior stamp or serial</span></div>
+</div>
+</section>
+<section>
+<div class="flex items-center gap-3"><span class="inline-flex size-8 items-center justify-center rounded-full bg-surface font-display text-xs font-semibold tnum">2</span>
+<h2 class="text-xl sm:text-2xl">What it is</h2>
+</div>
+<div class="mt-6 grid gap-5 sm:grid-cols-2">
+<div><label class="block text-sm font-medium" for="brand">Brand</label><select class="mt-2 h-11 w-full rounded-full border border-line bg-surface px-4 text-sm disabled:cursor-not-allowed" disabled="" id="brand" name="brand">
+<option selected="" value="">Choose one</option>
+<option value="Chanel">Chanel</option>
+<option value="Hermès">Hermès</option>
+<option value="Prada">Prada</option>
+<option value="Bottega Veneta">Bottega Veneta</option>
+<option value="The Row">The Row</option>
+<option value="Celine">Celine</option>
+<option value="Loewe">Loewe</option>
+<option value="Loro Piana">Loro Piana</option>
+<option value="Miu Miu">Miu Miu</option>
+<option value="Saint Laurent">Saint Laurent</option>
+<option value="Cartier">Cartier</option>
+<option value="Rolex">Rolex</option>
+<option value="Maison Margiela">Maison Margiela</option>
+<option value="Jacquemus">Jacquemus</option>
+<option value="Khaite">Khaite</option>
+<option value="Totême">Totême</option>
+</select></div>
+<div><label class="block text-sm font-medium" for="category">Category</label><select class="mt-2 h-11 w-full rounded-full border border-line bg-surface px-4 text-sm disabled:cursor-not-allowed" disabled="" id="category" name="category">
+<option selected="" value="">Choose one</option>
+<option value="Bags">Bags</option>
+<option value="Womenswear">Womenswear</option>
+<option value="Menswear">Menswear</option>
+<option value="Shoes">Shoes</option>
+<option value="Watches">Watches</option>
+<option value="Jewellery">Jewellery</option>
+<option value="Accessories">Accessories</option>
+<option value="Vintage">Vintage</option>
+</select></div>
+<div class="sm:col-span-2"><label class="block text-sm font-medium" for="title">Model or description</label><input class="mt-2 h-11 w-full rounded-full border border-line bg-surface px-4 text-sm disabled:cursor-not-allowed" disabled="" id="title" name="title" type="text"/>
+<p class="mt-1.5 text-xs text-muted">How a buyer would search for it, for example Birkin 30 Togo leather.</p>
+</div>
+<div class=""><label class="block text-sm font-medium" for="size">Size</label><input class="mt-2 h-11 w-full rounded-full border border-line bg-surface px-4 text-sm disabled:cursor-not-allowed" disabled="" id="size" name="size" type="text"/>
+<p class="mt-1.5 text-xs text-muted">As marked on the item.</p>
+</div>
+<div class=""><label class="block text-sm font-medium" for="colour">Colour</label><input class="mt-2 h-11 w-full rounded-full border border-line bg-surface px-4 text-sm disabled:cursor-not-allowed" disabled="" id="colour" name="colour" type="text"/>
+<p class="mt-1.5 text-xs text-muted">The house name for it, if you know it.</p>
+</div>
+</div>
+</section>
+<section>
+<div class="flex items-center gap-3"><span class="inline-flex size-8 items-center justify-center rounded-full bg-surface font-display text-xs font-semibold tnum">3</span>
+<h2 class="text-xl sm:text-2xl">Condition</h2>
+</div>
+<p class="mt-2 text-sm text-muted">Describe flaws rather than hiding them. An accurately described mark still sells; an undisclosed one comes back as a return.</p>
+<fieldset class="mt-6 space-y-2.5">
+<legend class="sr-only">Choose a condition</legend><label class="flex cursor-not-allowed items-center gap-3 rounded-(--radius-card) border border-line p-4 text-sm"><input class="size-4 shrink-0 accent-accent" disabled="" name="condition" type="radio"/><span class="font-medium">New with tags</span><span class="ml-auto text-right text-xs text-muted">Unworn, tags attached</span></label><label class="flex cursor-not-allowed items-center gap-3 rounded-(--radius-card) border border-line p-4 text-sm"><input class="size-4 shrink-0 accent-accent" disabled="" name="condition" type="radio"/><span class="font-medium">New without tags</span><span class="ml-auto text-right text-xs text-muted">Unworn, no tags</span></label><label class="flex cursor-not-allowed items-center gap-3 rounded-(--radius-card) border border-line p-4 text-sm"><input checked="" class="size-4 shrink-0 accent-accent" disabled="" name="condition" type="radio"/><span class="font-medium">Very good</span><span class="ml-auto text-right text-xs text-muted">Light use, no visible flaws</span></label><label class="flex cursor-not-allowed items-center gap-3 rounded-(--radius-card) border border-line p-4 text-sm"><input class="size-4 shrink-0 accent-accent" disabled="" name="condition" type="radio"/><span class="font-medium">Good</span><span class="ml-auto text-right text-xs text-muted">Some wear, nothing structural</span></label><label class="flex cursor-not-allowed items-center gap-3 rounded-(--radius-card) border border-line p-4 text-sm"><input class="size-4 shrink-0 accent-accent" disabled="" name="condition" type="radio"/><span class="font-medium">Fair</span><span class="ml-auto text-right text-xs text-muted">Visible wear, described in full</span></label>
+</fieldset>
+<div class="mt-5"><label class="block text-sm font-medium" for="notes">Anything else a buyer should know</label><textarea class="mt-2 w-full rounded-(--radius-card) border border-line bg-surface px-4 py-3 text-sm disabled:cursor-not-allowed" disabled="" id="notes" name="notes" rows="4"></textarea></div>
+</section>
+<section>
+<div class="flex items-center gap-3"><span class="inline-flex size-8 items-center justify-center rounded-full bg-surface font-display text-xs font-semibold tnum">4</span>
+<h2 class="text-xl sm:text-2xl">Price</h2>
+</div>
+<div class="mt-6 grid gap-5 sm:grid-cols-2">
+<div><label class="block text-sm font-medium" for="price">Your asking price</label>
+<div class="mt-2 flex items-center gap-2"><span class="inline-flex h-11 shrink-0 items-center rounded-full bg-surface px-3.5 text-sm text-muted">JOD</span><input class="h-11 w-full rounded-full border border-line bg-surface px-4 text-sm tnum disabled:cursor-not-allowed" disabled="" id="price" inputmode="numeric" name="price" type="text"/></div>
+<p class="mt-1.5 text-xs text-muted">We suggest a range from recent sales of the same model.</p>
+</div>
+<div class=""><label class="block text-sm font-medium" for="retail">Original retail price</label><input class="mt-2 h-11 w-full rounded-full border border-line bg-surface px-4 text-sm disabled:cursor-not-allowed" disabled="" id="retail" name="retail" type="text"/>
+<p class="mt-1.5 text-xs text-muted">Optional. Shows buyers the saving.</p>
+</div>
+</div>
+</section>
+<div class="flex flex-wrap gap-3 border-t border-line pt-8"><button class="group inline-flex items-center justify-center gap-2 rounded-full font-medium whitespace-nowrap transition-[background-color,color,border-color,transform] duration-300 ease-(--ease-fluid) active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none bg-accent text-accent-contrast hover:bg-accent/88 h-12 px-6 text-base" disabled=""><svg aria-hidden="true" class="lucide lucide-plus size-4" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="M5 12h14"></path>
+<path d="M12 5v14"></path>
+</svg>Publish listing</button><button class="group inline-flex items-center justify-center gap-2 rounded-full font-medium whitespace-nowrap transition-[background-color,color,border-color,transform] duration-300 ease-(--ease-fluid) active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none text-ink hover:bg-surface h-12 px-6 text-base" disabled="">Save as draft</button></div>
+</form>
+</div>
+<aside class="space-y-4 lg:sticky lg:top-32 lg:self-start">
+<div class="rounded-(--radius-card) border border-line p-5">
+<h2 class="text-base">What you take home</h2>
+<p class="mt-1.5 text-xs text-muted">Worked example on a <!-- -->JOD 600<!-- --> listing.</p>
+<dl class="mt-5 space-y-2.5 text-sm tnum">
+<div class="flex items-baseline justify-between gap-3">
+<dt class="text-muted">Buyer pays</dt>
+<dd>JOD 600</dd>
+</div>
+<div class="flex items-baseline justify-between gap-3">
+<dt class="text-muted">Commission (12%)</dt>
+<dd>-<!-- -->JOD 72</dd>
+</div>
+<div class="flex items-baseline justify-between gap-3">
+<dt class="text-muted">Handover</dt>
+<dd>JOD 0</dd>
+</div>
+<div class="flex items-baseline justify-between gap-3">
+<dt class="text-muted">Authentication</dt>
+<dd>JOD 0</dd>
+</div>
+<div class="flex items-baseline justify-between gap-3 border-t border-line pt-3.5">
+<dt class="font-medium">You receive</dt>
+<dd class="font-display text-lg font-semibold">JOD 528</dd>
+</div>
+</dl>
+<p class="mt-4 text-xs text-muted">Buyer Protection is paid by the buyer on top of your price, so it never comes out of your payout.<!-- --> <a class="text-accent-strong hover:underline" href="help-fees.html">How fees work</a></p>
+</div>
+<div class="rounded-(--radius-card) bg-surface p-5">
+<h2 class="text-base">After it sells</h2>
+<ul class="mt-4 space-y-4 text-sm">
+<li class="flex gap-3"><svg aria-hidden="true" class="lucide lucide-truck size-5 shrink-0 text-accent" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"></path>
+<path d="M15 18H9"></path>
+<path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"></path>
+<circle cx="17" cy="18" r="2"></circle>
+<circle cx="7" cy="18" r="2"></circle>
+</svg><span class="text-muted">Free <!-- -->the buyer<!-- --> pickup from your address anywhere in Jordan.</span></li>
+<li class="flex gap-3"><svg aria-hidden="true" class="lucide lucide-badge-check size-5 shrink-0 text-accent" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"></path>
+<path d="m9 12 2 2 4-4"></path>
+</svg><span class="text-muted">Anything over <!-- -->JOD 350<!-- --> is authenticated in Amman before it reaches the buyer.</span></li>
+</ul><a class="group inline-flex items-center justify-center gap-2 rounded-full font-medium whitespace-nowrap transition-[background-color,color,border-color,transform] duration-300 ease-(--ease-fluid) active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none border border-line text-ink hover:border-ink/40 hover:bg-surface h-9 px-4 text-sm mt-5 w-full" href="account/listings.html">Manage your listings</a>
+</div>
+</aside>
+</div>
+</div><!--$--><!--/$-->
+</main>
+<footer class="mt-24 bg-surface">
+<div class="mx-auto w-full max-w-[1440px] px-4 sm:px-6 lg:px-8">
+<div class="grid grid-cols-2 gap-10 py-16 sm:grid-cols-3 lg:grid-cols-5">
+<div class="col-span-2 sm:col-span-3 lg:col-span-1"><span aria-hidden="true" class="inline-flex flex-col font-display font-semibold leading-[0.88]"><span class="text-[22px] tracking-[-0.03em]" data-keep-en="">SecondChance</span><span class="text-[13px] font-medium tracking-[0.22em] text-muted">collective<span class="text-accent">.</span></span></span>
+<p class="mt-4 max-w-xs text-sm text-muted">Jordan's marketplace for pre-owned luxury. Authenticated, protected, and priced by the people who own it.</p>
+<p class="mt-5 inline-flex items-center gap-1.5 rounded-full bg-accent-tint px-3 py-1.5 text-xs font-medium text-accent-strong"><svg aria-hidden="true" class="lucide lucide-badge-check size-4" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"></path>
+<path d="m9 12 2 2 4-4"></path>
+</svg><span data-sc-count="authenticated">—</span><!-- --> pieces authenticated</p>
+</div>
+<nav aria-label="Shop">
+<h3 class="text-sm">Shop</h3>
+<ul class="mt-4 space-y-2.5">
+<li><a class="text-sm text-muted transition-colors hover:text-ink" href="search-newest.html">New in</a></li>
+<li><a class="text-sm text-muted transition-colors hover:text-ink" href="catalog.html">All categories</a></li>
+<li><a class="text-sm text-muted transition-colors hover:text-ink" href="catalog-bags.html">Bags</a></li>
+<li><a class="text-sm text-muted transition-colors hover:text-ink" href="catalog-womenswear.html">Womenswear</a></li>
+<li><a class="text-sm text-muted transition-colors hover:text-ink" href="brands.html">All brands</a></li>
+</ul>
+</nav>
+<nav aria-label="Sell">
+<h3 class="text-sm">Sell</h3>
+<ul class="mt-4 space-y-2.5">
+<li><a class="text-sm text-muted transition-colors hover:text-ink" href="sell.html">List an item</a></li>
+<li><a class="text-sm text-muted transition-colors hover:text-ink" href="account/listings.html">Your listings</a></li>
+<li><a class="text-sm text-muted transition-colors hover:text-ink" href="help-fees.html">Seller fees</a></li>
+<li><a class="text-sm text-muted transition-colors hover:text-ink" href="help-pricing.html">Pricing your piece</a></li>
+<li><a class="text-sm text-muted transition-colors hover:text-ink" href="help-handover.html">Handover</a></li>
+</ul>
+</nav>
+<nav aria-label="Trust and safety">
+<h3 class="text-sm">Trust and safety</h3>
+<ul class="mt-4 space-y-2.5">
+<li><a class="text-sm text-muted transition-colors hover:text-ink" href="authentication.html">Authentication</a></li>
+<li><a class="text-sm text-muted transition-colors hover:text-ink" href="help-buyer-protection.html">Buyer Protection</a></li>
+<li><a class="text-sm text-muted transition-colors hover:text-ink" href="help-returns.html">Returns and refunds</a></li>
+<li><a class="text-sm text-muted transition-colors hover:text-ink" href="help-report.html">Report a listing</a></li>
+</ul>
+</nav>
+<nav aria-label="Help">
+<h3 class="text-sm">Help</h3>
+<ul class="mt-4 space-y-2.5">
+<li><a class="text-sm text-muted transition-colors hover:text-ink" href="help.html">Help centre</a></li>
+<li><a class="text-sm text-muted transition-colors hover:text-ink" href="help-contact.html">Contact us</a></li>
+<li><a class="text-sm text-muted transition-colors hover:text-ink" href="account.html?tab=orders">Your orders</a></li>
+<li><a class="text-sm text-muted transition-colors hover:text-ink" href="members.html">Members</a></li>
+<li><a class="text-sm text-muted transition-colors hover:text-ink" href="about.html">About us</a></li>
+</ul>
+</nav>
+</div>
+<div class="flex flex-col gap-5 border-t border-line py-7 sm:flex-row sm:items-center sm:justify-between">
+<div class="flex flex-wrap items-center gap-2"><button class="inline-flex items-center gap-1.5 rounded-full border border-line bg-canvas px-3.5 py-2 text-xs font-medium text-ink transition-colors hover:border-ink/30" type="button">Jordan<svg aria-hidden="true" class="lucide lucide-chevron-down size-3.5 text-muted" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="m6 9 6 6 6-6"></path>
+</svg></button><button class="inline-flex items-center gap-1.5 rounded-full border border-line bg-canvas px-3.5 py-2 text-xs font-medium text-ink transition-colors hover:border-ink/30" type="button">JOD (د.ا)<svg aria-hidden="true" class="lucide lucide-chevron-down size-3.5 text-muted" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="m6 9 6 6 6-6"></path>
+</svg></button><button class="inline-flex items-center gap-1.5 rounded-full border border-line bg-canvas px-3.5 py-2 text-xs font-medium text-ink transition-colors hover:border-ink/30" type="button">English / العربية<svg aria-hidden="true" class="lucide lucide-chevron-down size-3.5 text-muted" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="m6 9 6 6 6-6"></path>
+</svg></button></div>
+<div class="flex flex-wrap items-center gap-2"><span class="rounded-full border border-line bg-canvas px-2.5 py-1 text-[10px] font-medium uppercase tracking-wide text-muted" data-keep-en="">Visa</span><span class="rounded-full border border-line bg-canvas px-2.5 py-1 text-[10px] font-medium uppercase tracking-wide text-muted" data-keep-en="">Mastercard</span><span class="rounded-full border border-line bg-canvas px-2.5 py-1 text-[10px] font-medium uppercase tracking-wide text-muted" data-keep-en="">CliQ</span><span class="rounded-full border border-line bg-canvas px-2.5 py-1 text-[10px] font-medium uppercase tracking-wide text-muted" data-keep-en="">eFAWATEERcom</span><span class="rounded-full border border-line bg-canvas px-2.5 py-1 text-[10px] font-medium uppercase tracking-wide text-muted">Cash on delivery</span></div>
+</div>
+<div class="flex flex-col gap-2 border-t border-line py-7 text-xs text-muted sm:flex-row sm:items-center sm:justify-between">
+<p>© 2026 <!-- -->SecondChance Collective<!-- -->. All rights reserved.</p>
+<ul class="flex flex-wrap gap-5">
+<li><a class="hover:text-ink" href="legal-terms.html">Terms</a></li>
+<li><a class="hover:text-ink" href="legal-privacy.html">Privacy</a></li>
+<li><a class="hover:text-ink" href="legal-cookies.html">Cookies</a></li>
+</ul>
+</div>
+</div>
+<div aria-hidden="true" class="h-(--tabbar-height) md:hidden"></div>
+</footer>
+<nav aria-label="Primary" class="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-canvas/95 pb-[env(safe-area-inset-bottom,0px)] backdrop-blur md:hidden">
+<ul class="flex items-end justify-around px-2 pt-1.5 pb-1.5">
+<li><a class="inline-flex min-w-14 flex-col items-center gap-0.5 rounded-lg px-2 py-1 text-[10px] font-medium text-muted hover:text-ink" href="index.html"><svg aria-hidden="true" class="lucide lucide-house size-5" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"></path>
+<path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+</svg>Home</a></li>
+<li><a class="inline-flex min-w-14 flex-col items-center gap-0.5 rounded-lg px-2 py-1 text-[10px] font-medium text-muted hover:text-ink" href="search.html"><svg aria-hidden="true" class="lucide lucide-search size-5" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="m21 21-4.34-4.34"></path>
+<circle cx="11" cy="11" r="8"></circle>
+</svg>Search</a></li>
+<li><a aria-label="Sell an item" class="mb-0.5 inline-flex flex-col items-center gap-1" href="sell.html"><span class="inline-flex size-11 items-center justify-center rounded-full bg-accent text-accent-contrast shadow-(--shadow-lifted)"><svg aria-hidden="true" class="lucide lucide-plus size-5" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="M5 12h14"></path>
+<path d="M12 5v14"></path>
+</svg></span></a></li>
+<li><a class="inline-flex min-w-14 flex-col items-center gap-0.5 rounded-lg px-2 py-1 text-[10px] font-medium text-muted hover:text-ink" href="account.html?tab=favorites"><svg aria-hidden="true" class="lucide lucide-heart size-5" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5"></path>
+</svg>Saved</a></li>
+<li><a class="inline-flex min-w-14 flex-col items-center gap-0.5 rounded-lg px-2 py-1 text-[10px] font-medium text-muted hover:text-ink" href="signin.html"><svg aria-hidden="true" class="lucide lucide-user-round size-5" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<circle cx="12" cy="8" r="5"></circle>
+<path d="M20 21a8 8 0 0 0-16 0"></path>
+</svg>Profile</a></li>
+</ul>
+</nav>
+<script src="menus.js"></script>
+<script src="runtime.js"></script>
+<script src="search.js"></script>
+<script data-sc="nav" type="module">import { initNav } from './js/sc-nav.js'; initNav();</script><script data-sc="sell" type="module">import { initSell } from './js/sc-sell.js'; initSell();</script><script data-sc="i18n" type="module">import { initI18n } from './js/sc-i18n.js'; initI18n();</script><script data-sc="menu" type="module">import { initMenu } from './js/sc-menu.js'; initMenu();</script><script data-sc="grid" type="module">import { initCounts } from './js/sc-grid.js'; initCounts();</script></body>
 </html>

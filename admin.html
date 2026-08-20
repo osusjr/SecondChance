@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+
+<html class="bricolage_grotesque_e01f6fad-module__frOMPG__variable poppins_ead9b0ae-module__Bvcf9q__variable" lang="en-JO">
+<head><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link data-sc="arfonts" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&amp;family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<meta content="#101114" name="theme-color"/>
+<meta content="noindex, nofollow" name="robots"/>
+<title>Admin · SecondChance Collective</title>
+<link href="styles.css" rel="stylesheet"/>
+<link href="sc-app.css" rel="stylesheet"/>
+<link href="sc-rtl.css" rel="stylesheet"/></head>
+<body class="sc">
+<div class="sc-admin" id="admin-root">
+<aside class="sc-sidebar" id="admin-sidebar">
+<div class="sc-sidebar-head">
+<p class="sc-sidebar-brand" data-keep-en="">SecondChance</p>
+<p class="sc-sidebar-sub" id="admin-role">Loading…</p>
+</div>
+<nav aria-label="Admin sections" class="sc-nav" id="admin-nav"></nav>
+<div class="sc-sidebar-foot">
+<button class="sc-nav-item" id="admin-signout" type="button">Sign out</button>
+<a class="sc-nav-item" href="index.html">Back to the site</a>
+</div>
+</aside>
+<div class="sc-main">
+<header class="sc-topbar">
+<button aria-label="Open menu" class="sc-btn sc-btn-ghost sc-btn-icon" id="admin-menu" style="display:none">☰</button>
+<div class="sc-grow">
+<h1 class="sc-h2" id="admin-title">Dashboard</h1>
+<p class="sc-xs sc-muted" id="admin-subtitle"></p>
+</div>
+<div class="sc-row-tight" id="admin-actions"></div>
+</header>
+<main class="sc-content" id="admin-content">
+<div class="sc-grid sc-grid-4">
+<div class="sc-skeleton" style="height:86px"></div>
+<div class="sc-skeleton" style="height:86px"></div>
+<div class="sc-skeleton" style="height:86px"></div>
+<div class="sc-skeleton" style="height:86px"></div>
+</div>
+</main>
+</div>
+</div>
+<script type="module">
+  import { initAdmin } from './js/sc-admin.js';
+  initAdmin();
+</script>
+<script data-sc="i18n" type="module">import { initI18n } from './js/sc-i18n.js'; initI18n();</script></body>
+</html>

@@ -1,301 +1,547 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RAÉCAE — Where Fashion History Meets Artificial Intelligence</title>
-  <meta name="description" content="RAÉCAE — authenticated luxury resale, built in Amman. Every piece is verified by AI and expert hands before it's listed, and carries a digital passport.">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Space+Grotesk:wght@300;400;500;600&family=Syne:wght@500;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/main.css">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230a0a0b'/%3E%3Ctext x='16' y='22' text-anchor='middle' font-family='Georgia' font-size='18' fill='%23c9a227'%3ER%3C/text%3E%3C/svg%3E">
-</head>
-<body data-page="home">
 
-  <div id="nav-root"></div>
-
-  <!-- ============ HERO ============ -->
-  <section class="hero">
-    <div class="hero-bg"></div>
-    <div class="wrap">
-      <p class="kicker reveal">The Intelligent Fashion Archive</p>
-      <h1 class="display display-xl mt-3 reveal" style="--d:.1s; max-width: 16ch;">
-        Where fashion <span class="italic text-gold">history</span> meets artificial intelligence.
-      </h1>
-      <p class="lede mt-4 reveal" style="--d:.2s">
-        RAÉCAE is a luxury resale platform built in Amman. Every piece is checked by
-        AI and by expert hands before it goes live, and every listing carries a digital
-        passport and a description written from the piece's actual history.
-      </p>
-      <div class="mt-5 reveal" style="--d:.3s; display:flex; gap:1rem; flex-wrap:wrap;">
-        <a href="archive.html" class="btn btn--gold">Explore the Archive <span class="arrow">→</span></a>
-        <a href="sell.html" class="btn">Sell a Piece</a>
-      </div>
-    </div>
-    <div class="hero-scroll">Scroll</div>
-  </section>
-
-  <!-- ============ MARQUEE ============ -->
-  <div class="marquee" aria-hidden="true">
-    <div class="marquee-track">
-      <span>Authenticated by AI &amp; expert hands</span>
-      <span>Every item carries a digital passport</span>
-      <span>Amman</span>
-      <span>Dubai</span>
-      <span>Riyadh</span>
-      <span>Paris</span>
-      <span>Curated and verified</span>
-      <span>The archive is open</span>
-    </div>
-  </div>
-
-  <!-- ============ THE PLATFORM ============ -->
-  <section class="section">
-    <div class="wrap">
-      <div class="section-head">
-        <div>
-          <p class="kicker reveal">The Platform</p>
-          <h2 class="display display-lg reveal" style="--d:.08s">Built around<br>four AI systems.</h2>
-        </div>
-        <p class="lede reveal" style="--d:.15s; max-width: 26rem;">
-          Listing, storytelling, styling and authentication —
-          here is what each one does.
-        </p>
-      </div>
-
-      <div class="grid-4">
-        <article class="card reveal" style="--d:0s">
-          <span class="num-index">01</span>
-          <div class="card-icon">
-            <svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round">
-              <rect x="7" y="10" width="30" height="24" rx="2"/>
-              <path d="M7 18h30M13 25h10M13 29h14"/>
-              <path d="M30 24l2.2 2.2L36 22" stroke-width="1.6"/>
-            </svg>
-          </div>
-          <h3>AI Listing Assistant</h3>
-          <p>Upload photos and the AI drafts the title, description, category, condition
-          report and search keywords. You review it, edit what you want, and publish.</p>
-          <a class="text-link mt-3" href="sell.html">See it work <span class="arrow">→</span></a>
-        </article>
-
-        <article class="card reveal" style="--d:.08s">
-          <span class="num-index">02</span>
-          <div class="card-icon">
-            <svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round">
-              <path d="M10 34V12c0-1.7 1.3-3 3-3h18c1.7 0 3 1.3 3 3v22"/>
-              <path d="M10 34c0 1.7 1.3 3 3 3h21"/>
-              <path d="M16 16h12M16 21h12M16 26h7"/>
-            </svg>
-          </div>
-          <h3>Product Storytelling</h3>
-          <p>Every listing is written from the piece's documented history — its era,
-          materials and condition — so you know exactly what you are looking at.</p>
-          <a class="text-link mt-3" href="archive.html">Read the stories <span class="arrow">→</span></a>
-        </article>
-
-        <article class="card reveal" style="--d:.16s">
-          <span class="num-index">03</span>
-          <div class="card-icon">
-            <svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round">
-              <circle cx="19" cy="19" r="10"/>
-              <path d="M27 27l9 9"/>
-              <path d="M15 19c0-2.2 1.8-4 4-4"/>
-            </svg>
-          </div>
-          <h3>AI Style Recommendations</h3>
-          <p>Ask for quiet luxury, a vintage look, or styling for an event — the stylist
-          suggests pieces from the archive that fit your taste and your budget.</p>
-          <a class="text-link mt-3" href="stylist.html">Meet your stylist <span class="arrow">→</span></a>
-        </article>
-
-        <article class="card reveal" style="--d:.24s">
-          <span class="num-index">04</span>
-          <div class="card-icon">
-            <svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round">
-              <path d="M22 5l13 5v10c0 8.5-5.5 15.5-13 18-7.5-2.5-13-9.5-13-18V10z"/>
-              <path d="M16 21.5l4.2 4.2L29 17" stroke-width="1.6"/>
-            </svg>
-          </div>
-          <h3>Human + AI Authentication</h3>
-          <p>Computer vision analyses logos, stitching, hardware and serials; experts verify
-          the highest-value pieces. Every item receives a digital product passport.</p>
-          <a class="text-link mt-3" href="authentication.html">How we verify <span class="arrow">→</span></a>
-        </article>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============ FEATURED ARCHIVE ============ -->
-  <section class="section section--coal">
-    <div class="wrap">
-      <div class="section-head">
-        <div>
-          <p class="kicker reveal">New to the Vault</p>
-          <h2 class="display display-lg reveal" style="--d:.08s">From the archive.</h2>
-        </div>
-        <a href="archive.html" class="text-link reveal" style="--d:.15s">View all pieces <span class="arrow">→</span></a>
-      </div>
-      <div class="product-grid" id="featured-grid"></div>
-    </div>
-  </section>
-
-  <!-- ============ STORYTELLING ============ -->
-  <section class="section">
-    <div class="wrap wrap--narrow center">
-      <p class="kicker kicker--plain reveal">Product Storytelling</p>
-      <p class="mt-5 reveal" style="--d:.1s">
-        <span class="small-label" style="text-decoration: line-through; text-decoration-color: rgba(156,68,99,.7);">"Vintage leather bag"</span>
-      </p>
-      <blockquote class="pullquote mt-4 reveal" style="--d:.2s">
-        “A 1998 Kelly 28 in box calf —
-        <span class="text-gold">one owner from new</span>,
-        with the patina to prove it.”
-      </blockquote>
-      <p class="lede mt-5 reveal" style="--d:.3s">
-        The storytelling AI turns a bare listing into a real description — where the
-        piece comes from, what it is made of, what condition it is in. Written to be
-        read, not skimmed.
-      </p>
-    </div>
-  </section>
-
-  <!-- ============ AUTHENTICATION ============ -->
-  <section class="section section--coal">
-    <div class="wrap">
-      <div class="grid-2" style="align-items:center;">
-        <div>
-          <p class="kicker reveal">Authentication</p>
-          <h2 class="display display-lg mt-3 reveal" style="--d:.08s">Every piece deserves a verified identity.</h2>
-          <p class="lede mt-4 reveal" style="--d:.16s">
-            AI examines logos, stitching, materials, hardware, labels and serial numbers
-            against a reference archive. Expert authenticators make the final call on
-            the highest-value pieces. Nothing is listed until it passes.
-          </p>
-          <a href="authentication.html" class="btn mt-5 reveal" style="--d:.24s">Inside the Authentication Room <span class="arrow">→</span></a>
-        </div>
-        <div class="grid-2" style="gap: clamp(1.5rem,3vw,3rem);">
-          <div class="stat reveal" style="--d:.1s">
-            <div class="stat-value">40<span class="text-gold">+</span></div>
-            <div class="stat-label">Checkpoints per item</div>
-          </div>
-          <div class="stat reveal" style="--d:.18s">
-            <div class="stat-value">2<span class="text-gold">×</span></div>
-            <div class="stat-label">AI + expert review</div>
-          </div>
-          <div class="stat reveal" style="--d:.26s">
-            <div class="stat-value">100<span class="text-gold">%</span></div>
-            <div class="stat-label">Pieces carry a passport</div>
-          </div>
-          <div class="stat reveal" style="--d:.34s">
-            <div class="stat-value">0<span class="text-gold"></span></div>
-            <div class="stat-label">Tolerance for counterfeits</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============ STYLIST TEASER ============ -->
-  <section class="section">
-    <div class="wrap wrap--narrow center">
-      <p class="kicker kicker--plain reveal">AI Style Recommendations</p>
-      <h2 class="display display-lg mt-3 reveal" style="--d:.08s">Ask the archive anything.</h2>
-      <div class="mt-5 reveal" style="--d:.16s; display:flex; flex-wrap:wrap; gap:.8rem; justify-content:center;">
-        <a href="stylist.html?q=quiet-luxury" class="badge" style="padding:.7rem 1.4rem; font-size:.66rem;">“Find me a quiet luxury outfit”</a>
-        <a href="stylist.html?q=vintage" class="badge" style="padding:.7rem 1.4rem; font-size:.66rem;">“I want a vintage-inspired look”</a>
-        <a href="stylist.html?q=event" class="badge" style="padding:.7rem 1.4rem; font-size:.66rem;">“Style me for an evening event”</a>
-        <a href="stylist.html?q=the-row" class="badge" style="padding:.7rem 1.4rem; font-size:.66rem;">“Something similar to The Row”</a>
-      </div>
-      <p class="lede mt-5 reveal" style="--d:.24s">
-        Tell it your taste, your budget and the occasion — everything it
-        recommends is already authenticated and in stock.
-      </p>
-      <a href="stylist.html" class="btn btn--gold mt-5 reveal" style="--d:.3s">Start a Consultation <span class="arrow">→</span></a>
-    </div>
-  </section>
-
-  <!-- ============ VISION ============ -->
-  <section class="section section--coal" id="vision">
-    <div class="wrap">
-      <div class="section-head">
-        <div>
-          <p class="kicker reveal">The Vision</p>
-          <h2 class="display display-lg reveal" style="--d:.08s">The intelligent fashion<br>archive of the region.</h2>
-        </div>
-      </div>
-      <div class="region-line reveal" style="--d:.15s">
-        <svg viewBox="0 0 1200 170" xmlns="http://www.w3.org/2000/svg" aria-label="RAÉCAE expansion: Amman to the Gulf to Europe">
-          <path d="M60 110 C 260 30, 420 140, 600 85 S 980 40, 1140 95" fill="none" stroke="rgba(201,162,39,.35)" stroke-width="1.4" stroke-dasharray="3 7"/>
-          <g fill="#c9a227">
-            <circle cx="60" cy="110" r="5"/>
-            <circle cx="300" cy="72" r="3.4" opacity=".85"/>
-            <circle cx="470" cy="112" r="3.4" opacity=".85"/>
-            <circle cx="600" cy="85" r="3.4" opacity=".85"/>
-            <circle cx="880" cy="58" r="3.4" opacity=".85"/>
-            <circle cx="1140" cy="95" r="5"/>
-          </g>
-          <g font-family="Space Grotesk, sans-serif" font-size="13" letter-spacing="3" fill="rgba(243,237,228,.62)" text-transform="uppercase">
-            <text x="60" y="145" text-anchor="middle">AMMAN</text>
-            <text x="300" y="50" text-anchor="middle">DUBAI</text>
-            <text x="470" y="145" text-anchor="middle">RIYADH</text>
-            <text x="600" y="60" text-anchor="middle">DOHA</text>
-            <text x="880" y="36" text-anchor="middle">MILAN</text>
-            <text x="1140" y="130" text-anchor="middle">PARIS</text>
-          </g>
-        </svg>
-      </div>
-      <div class="grid-3 mt-6">
-        <div class="reveal" style="--d:.1s">
-          <p class="num-index">Phase I</p>
-          <h3 class="display display-sm mt-1">Curated Boutique</h3>
-          <p class="text-dim mt-2" style="font-size:.92rem;">RAÉCAE owns and curates the archive. Clients purchase directly from an authenticated collection, launched from Amman.</p>
-        </div>
-        <div class="reveal" style="--d:.18s">
-          <p class="num-index">Phase II</p>
-          <h3 class="display display-sm mt-1">Marketplace</h3>
-          <p class="text-dim mt-2" style="font-size:.92rem;">Sellers across the region list through the AI assistant; every piece is verified before it reaches the vault.</p>
-        </div>
-        <div class="reveal" style="--d:.26s">
-          <p class="num-index">Phase III</p>
-          <h3 class="display display-sm mt-1">Trust Infrastructure</h3>
-          <p class="text-dim mt-2" style="font-size:.92rem;">Authentication as a service — digital passports, certificates and fashion intelligence for the luxury economy of the region.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============ CLOSING CTA ============ -->
-  <section class="section">
-    <div class="wrap center">
-      <h2 class="display display-lg reveal">The archive is open.</h2>
-      <p class="lede mt-3 reveal" style="--d:.1s">Every piece verified, every piece with a passport.</p>
-      <div class="mt-5 reveal" style="--d:.2s; display:flex; gap:1rem; justify-content:center; flex-wrap:wrap;">
-        <a href="archive.html" class="btn btn--gold">Enter the Vault <span class="arrow">→</span></a>
-        <a href="about.html" class="btn">Discover the Maison</a>
-      </div>
-    </div>
-  </section>
-
-  <div id="footer-root"></div>
-
-  <script src="js/art.js"></script>
-  <script src="js/data.js"></script>
-  <script src="js/main.js"></script>
-  <script src="js/fx.js"></script>
-  <script>
-    (function () {
-      var featured = ["hermes-kelly-28", "cartier-tank-must", "ysl-slip-dress", "prada-biker-jacket"]
-        .map(window.raecaeFindProduct);
-      document.getElementById("featured-grid").innerHTML = featured
-        .map(function (p, i) { return window.renderProductCard(p, { delay: i * 0.08 }); })
-        .join("");
-      /* Re-observe injected reveal elements */
-      document.querySelectorAll("#featured-grid .reveal").forEach(function (el) {
-        el.classList.add("visible");
-      });
-    })();
+<html class="bricolage_grotesque_e01f6fad-module__frOMPG__variable poppins_ead9b0ae-module__Bvcf9q__variable" lang="en-JO">
+<head><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link data-sc="arfonts" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&amp;family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<meta content="#ffffff" name="theme-color"/>
+<meta content="light" name="color-scheme"/>
+<title>SecondChance Collective. Buy and sell authenticated pre-owned luxury in Jordan</title>
+<meta content="Jordan's marketplace for pre-owned luxury fashion. Authenticated bags, watches and wardrobe staples from members across the Kingdom, with Buyer Protection on every order. Pay by card, CliQ or cash on delivery." name="description"/>
+<link href="https://secondchance-xi.vercel.app" rel="canonical"/>
+<meta content="SecondChance Collective. Buy and sell authenticated pre-owned luxury in Jordan" property="og:title"/>
+<meta content="Jordan's marketplace for pre-owned luxury fashion. Authenticated bags, watches and wardrobe staples from members across the Kingdom, with Buyer Protection on every order. Pay by card, CliQ or cash on delivery." property="og:description"/>
+<meta content="https://secondchance-xi.vercel.app" property="og:url"/>
+<meta content="SecondChance Collective" property="og:site_name"/>
+<meta content="en_JO" property="og:locale"/>
+<meta content="https://secondchance-xi.vercel.app/opengraph-image?f3d63118630a7953" property="og:image"/>
+<meta content="image/png" property="og:image:type"/>
+<meta content="1200" property="og:image:width"/>
+<meta content="630" property="og:image:height"/>
+<meta content="SecondChance Collective — buy and sell authenticated pre-owned luxury in Jordan" property="og:image:alt"/>
+<meta content="website" property="og:type"/>
+<meta content="summary_large_image" name="twitter:card"/>
+<meta content="SecondChance Collective. Buy and sell authenticated pre-owned luxury in Jordan" name="twitter:title"/>
+<meta content="Jordan's marketplace for pre-owned luxury fashion. Authenticated bags, watches and wardrobe staples from members across the Kingdom, with Buyer Protection on every order. Pay by card, CliQ or cash on delivery." name="twitter:description"/>
+<meta content="https://secondchance-xi.vercel.app/opengraph-image?f3d63118630a7953" name="twitter:image"/>
+<meta content="SecondChance Collective — buy and sell authenticated pre-owned luxury in Jordan" name="twitter:image:alt"/>
+<meta content="image/png" name="twitter:image:type"/>
+<meta content="1200" name="twitter:image:width"/>
+<meta content="630" name="twitter:image:height"/>
+<link href="https://secondchance-xi.vercel.app/icon.svg?icon.107j7z-dw9lq4.svg" rel="icon" sizes="any" type="image/svg+xml"/>
+<meta content="" name="next-size-adjust"/>
+<link href="styles.css" rel="stylesheet"/>
+<link href="sc-app.css" rel="stylesheet"/><link href="sc-rtl.css" rel="stylesheet"/></head>
+<body>
+<div hidden=""><!--$--><!--/$--></div><a class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-full focus:bg-ink focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-canvas" href="index.html">Skip to content</a><a class="block bg-invert text-invert-fg" href="authentication.html">
+<div class="mx-auto w-full max-w-[1440px] px-4 sm:px-6 lg:px-8">
+<p class="flex items-center justify-center gap-2 py-2.5 text-center text-[12px] leading-5"><svg aria-hidden="true" class="lucide lucide-badge-check size-4 shrink-0 text-invert-fg/70" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"></path>
+<path d="m9 12 2 2 4-4"></path>
+</svg><span class="sm:hidden">Every piece over JOD 350 authenticated</span><span class="hidden sm:inline">Every piece over JOD 350 is authenticated before it reaches you.</span><span class="hidden font-medium underline underline-offset-2 sm:inline">How it works</span><svg aria-hidden="true" class="lucide lucide-chevron-right size-3.5 shrink-0 sm:hidden" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="m9 18 6-6-6-6"></path>
+</svg></p>
+</div>
+</a>
+<header class="sticky top-0 z-40 bg-canvas">
+<div class="mx-auto w-full max-w-[1440px] px-4 sm:px-6 lg:px-8">
+<div class="flex h-16 items-center gap-3 sm:gap-5"><a aria-label="SecondChance Collective - home" class="shrink-0" href="index.html"><span aria-hidden="true" class="inline-flex flex-col font-display font-semibold leading-[0.88]"><span class="text-[16px] tracking-[-0.03em]" data-keep-en="">SecondChance</span><span class="text-[10px] font-medium tracking-[0.22em] text-muted">collective<span class="text-accent">.</span></span></span></a>
+<div class="hidden min-w-0 flex-1 lg:block">
+<div class="relative w-full">
+<div class="">
+<form class="relative flex w-full items-center" role="search"><label class="sr-only" for="search-input-_R_4nb_">Search listings</label><svg aria-hidden="true" class="lucide lucide-search pointer-events-none absolute left-3.5 size-[18px] text-muted" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="m21 21-4.34-4.34"></path>
+<circle cx="11" cy="11" r="8"></circle>
+</svg><input aria-autocomplete="list" aria-controls="search-listbox-_R_4nb_" aria-expanded="false" autocomplete="off" class="h-11 w-full pl-11 pr-24 text-sm text-ink transition-[background-color,border-color,padding] duration-300 ease-(--ease-fluid) placeholder:text-muted focus:outline-none rounded-full border border-line bg-surface focus:border-accent/40 focus:bg-canvas" data-search-input="" id="search-input-_R_4nb_" name="q" placeholder="Search, or describe what you are looking for" role="combobox" type="search" value=""/>
+<div class="absolute right-1.5 flex items-center gap-1"><span aria-hidden="true" class="h-5 w-px bg-line"></span><button aria-label="Search" class="inline-flex h-9 min-w-9 shrink-0 items-center justify-center rounded-full bg-accent px-0 text-sm font-medium text-accent-contrast transition-[background-color,padding,transform] duration-300 ease-(--ease-fluid) hover:bg-accent/88 active:scale-[0.98]" type="submit"><svg aria-hidden="true" class="lucide lucide-search size-4 shrink-0" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="m21 21-4.34-4.34"></path>
+<circle cx="11" cy="11" r="8"></circle>
+</svg><span class="max-w-0 overflow-hidden whitespace-nowrap opacity-0 transition-[max-width,opacity,margin] duration-300 ease-(--ease-fluid)">Search</span></button></div>
+</form>
+</div>
+</div>
+</div>
+<nav aria-label="Account" class="ml-auto flex items-center gap-1 sm:gap-2">
+<div class="hidden items-center gap-1 md:flex sm:gap-2"><a aria-label="Favourites" class="relative inline-flex size-10 items-center justify-center rounded-full text-ink hover:bg-surface" href="account.html?tab=favorites"><svg aria-hidden="true" class="lucide lucide-heart size-5" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5"></path>
+</svg></a><a aria-label="Messages" class="inline-flex size-10 items-center justify-center rounded-full text-ink transition-colors duration-300 ease-(--ease-fluid) hover:bg-surface" href="account.html?tab=notifications"><svg aria-hidden="true" class="size-5" fill="none" stroke="currentColor" stroke-width="1.75" viewbox="2.5 2.5 19 19">
+<path d="M4 12C4 7.58172 7.58172 4 12 4C16.4183 4 20 7.58172 20 12V17.0909C20 17.9375 20 18.3608 19.8739 18.6989C19.6712 19.2425 19.2425 19.6712 18.6989 19.8739C18.3608 20 17.9375 20 17.0909 20H12C7.58172 20 4 16.4183 4 12Z" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"></path>
+<path d="M9 11H15" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"></path>
+<path d="M12 15H15" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"></path>
+</svg></a>
+<div class="relative hidden md:block"><button aria-expanded="false" aria-haspopup="true" class="inline-flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-medium text-ink transition-colors duration-300 ease-(--ease-fluid) hover:bg-surface" type="button"><svg aria-hidden="true" class="lucide lucide-user-round size-[19px]" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<circle cx="12" cy="8" r="5"></circle>
+<path d="M20 21a8 8 0 0 0-16 0"></path>
+</svg>Sign in<svg aria-hidden="true" class="lucide lucide-chevron-down size-3.5 transition-transform duration-300 ease-(--ease-fluid)" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="m6 9 6 6 6-6"></path>
+</svg></button></div><a class="group inline-flex items-center justify-center gap-2 rounded-full font-medium whitespace-nowrap transition-[background-color,color,border-color,transform] duration-300 ease-(--ease-fluid) active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none bg-accent text-accent-contrast hover:bg-accent/88 h-9 px-4 text-sm ml-1" href="sell.html"><svg aria-hidden="true" class="lucide lucide-plus size-4" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="M5 12h14"></path>
+<path d="M12 5v14"></path>
+</svg>Sell now</a>
+</div><button aria-expanded="false" aria-haspopup="dialog" aria-label="Menu" class="inline-flex size-10 items-center justify-center rounded-full text-ink transition-colors duration-300 ease-(--ease-fluid) hover:bg-surface md:hidden" type="button"><svg aria-hidden="true" class="lucide lucide-menu size-5" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="M4 5h16"></path>
+<path d="M4 12h16"></path>
+<path d="M4 19h16"></path>
+</svg></button>
+</nav>
+</div>
+<div class="pb-3 lg:hidden">
+<div class="relative w-full">
+<div class="">
+<form class="relative flex w-full items-center" role="search"><label class="sr-only" for="search-input-_R_17b_">Search listings</label><svg aria-hidden="true" class="lucide lucide-search pointer-events-none absolute left-3.5 size-[18px] text-muted" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="m21 21-4.34-4.34"></path>
+<circle cx="11" cy="11" r="8"></circle>
+</svg><input aria-autocomplete="list" aria-controls="search-listbox-_R_17b_" aria-expanded="false" autocomplete="off" class="h-11 w-full pl-11 pr-24 text-sm text-ink transition-[background-color,border-color,padding] duration-300 ease-(--ease-fluid) placeholder:text-muted focus:outline-none rounded-full border border-line bg-surface focus:border-accent/40 focus:bg-canvas" data-search-input="" id="search-input-_R_17b_" name="q" placeholder="Search or describe a piece" role="combobox" type="search" value=""/>
+<div class="absolute right-1.5 flex items-center gap-1"><span aria-hidden="true" class="h-5 w-px bg-line"></span><button aria-label="Search" class="inline-flex h-9 min-w-9 shrink-0 items-center justify-center rounded-full bg-accent px-0 text-sm font-medium text-accent-contrast transition-[background-color,padding,transform] duration-300 ease-(--ease-fluid) hover:bg-accent/88 active:scale-[0.98]" type="submit"><svg aria-hidden="true" class="lucide lucide-search size-4 shrink-0" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="m21 21-4.34-4.34"></path>
+<circle cx="11" cy="11" r="8"></circle>
+</svg><span class="max-w-0 overflow-hidden whitespace-nowrap opacity-0 transition-[max-width,opacity,margin] duration-300 ease-(--ease-fluid)">Search</span></button></div>
+</form>
+</div>
+</div>
+</div>
+</div>
+</header>
+<div class="sticky top-(--header-height) z-30 bg-canvas">
+<div class="mx-auto w-full max-w-[1440px] px-4 sm:px-6 lg:px-8">
+<nav aria-label="Categories" class="no-scrollbar -mx-1 flex gap-1 overflow-x-auto py-1 md:py-2.5"><a class="inline-flex min-h-11 shrink-0 items-center rounded-full px-3.5 text-sm transition-colors duration-300 ease-(--ease-fluid) md:min-h-0 md:py-1.5 font-medium text-ink hover:bg-surface" href="search.html">All</a>
+<div class="shrink-0"><button aria-expanded="false" aria-haspopup="true" class="inline-flex min-h-11 shrink-0 items-center rounded-full px-3.5 text-sm transition-colors duration-300 ease-(--ease-fluid) md:min-h-0 md:py-1.5 gap-1 hover:bg-surface hover:text-ink text-muted" type="button">Bags<svg aria-hidden="true" class="lucide lucide-chevron-down size-3.5 transition-transform duration-300 ease-(--ease-fluid)" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="m6 9 6 6 6-6"></path>
+</svg></button></div>
+<div class="shrink-0"><button aria-expanded="false" aria-haspopup="true" class="inline-flex min-h-11 shrink-0 items-center rounded-full px-3.5 text-sm transition-colors duration-300 ease-(--ease-fluid) md:min-h-0 md:py-1.5 gap-1 hover:bg-surface hover:text-ink text-muted" type="button">Womenswear<svg aria-hidden="true" class="lucide lucide-chevron-down size-3.5 transition-transform duration-300 ease-(--ease-fluid)" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="m6 9 6 6 6-6"></path>
+</svg></button></div>
+<div class="shrink-0"><button aria-expanded="false" aria-haspopup="true" class="inline-flex min-h-11 shrink-0 items-center rounded-full px-3.5 text-sm transition-colors duration-300 ease-(--ease-fluid) md:min-h-0 md:py-1.5 gap-1 hover:bg-surface hover:text-ink text-muted" type="button">Menswear<svg aria-hidden="true" class="lucide lucide-chevron-down size-3.5 transition-transform duration-300 ease-(--ease-fluid)" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="m6 9 6 6 6-6"></path>
+</svg></button></div><a class="inline-flex min-h-11 shrink-0 items-center rounded-full px-3.5 text-sm transition-colors duration-300 ease-(--ease-fluid) md:min-h-0 md:py-1.5 text-muted hover:bg-surface hover:text-ink" href="catalog-shoes.html">Shoes</a>
+<div class="shrink-0"><button aria-expanded="false" aria-haspopup="true" class="inline-flex min-h-11 shrink-0 items-center rounded-full px-3.5 text-sm transition-colors duration-300 ease-(--ease-fluid) md:min-h-0 md:py-1.5 gap-1 hover:bg-surface hover:text-ink text-muted" type="button">Watches<svg aria-hidden="true" class="lucide lucide-chevron-down size-3.5 transition-transform duration-300 ease-(--ease-fluid)" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="m6 9 6 6 6-6"></path>
+</svg></button></div><a class="inline-flex min-h-11 shrink-0 items-center rounded-full px-3.5 text-sm transition-colors duration-300 ease-(--ease-fluid) md:min-h-0 md:py-1.5 text-muted hover:bg-surface hover:text-ink" href="catalog-jewellery.html">Jewellery</a><a class="inline-flex min-h-11 shrink-0 items-center rounded-full px-3.5 text-sm transition-colors duration-300 ease-(--ease-fluid) md:min-h-0 md:py-1.5 text-muted hover:bg-surface hover:text-ink" href="catalog-accessories.html">Accessories</a><a class="inline-flex min-h-11 shrink-0 items-center rounded-full px-3.5 text-sm transition-colors duration-300 ease-(--ease-fluid) md:min-h-0 md:py-1.5 text-muted hover:bg-surface hover:text-ink" href="catalog-vintage.html">Vintage</a>
+</nav>
+</div>
+</div>
+<main id="main">
+<section>
+<div class="mx-auto w-full max-w-[1440px] px-4 sm:px-6 lg:px-8">
+<div class="mx-auto max-w-3xl pt-8 pb-8 text-center sm:pt-14 sm:pb-11">
+<div class=""><span class="inline-flex items-center gap-2 rounded-full bg-surface px-3.5 py-1.5 text-xs font-medium"><svg aria-hidden="true" class="lucide lucide-shield-check size-4 text-accent" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path>
+<path d="m9 12 2 2 4-4"></path>
+</svg>Now live in <!-- -->Jordan</span></div>
+<div class="">
+<h1 class="mt-5 text-[34px] leading-[1.05] sm:mt-6 sm:text-6xl sm:leading-[1.03] lg:text-[68px]">Buy and sell pre-owned luxury in Jordan.</h1>
+</div>
+<div class="">
+<p class="mx-auto mt-4 max-w-[52ch] text-base text-muted sm:mt-5 sm:text-lg">Every piece over <!-- -->JOD 350<!-- --> is authenticated by our experts before it reaches you.</p>
+</div>
+<div class="">
+<div class="mt-7 flex flex-col items-center justify-center gap-3 sm:mt-8 sm:flex-row"><a class="group inline-flex items-center justify-center gap-2 rounded-full font-medium whitespace-nowrap transition-[background-color,color,border-color,transform] duration-300 ease-(--ease-fluid) active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none bg-accent text-accent-contrast hover:bg-accent/88 h-12 px-6 text-base pr-2 w-full sm:w-auto" href="search.html">Browse pieces<span class="ml-1 inline-flex size-7 items-center justify-center rounded-full bg-current/12 transition-transform duration-300 ease-(--ease-fluid) group-hover:translate-x-0.5 group-hover:-translate-y-px"><svg aria-hidden="true" class="lucide lucide-arrow-right size-4" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="M5 12h14"></path>
+<path d="m12 5 7 7-7 7"></path>
+</svg></span></a><a class="group inline-flex items-center justify-center gap-2 rounded-full font-medium whitespace-nowrap transition-[background-color,color,border-color,transform] duration-300 ease-(--ease-fluid) active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none border border-line text-ink hover:border-ink/40 hover:bg-surface h-12 px-6 text-base w-full sm:w-auto" href="sell.html">Start selling</a></div>
+</div>
+</div>
+</div>
+</section>
+<section class="pb-16 pt-2 lg:pb-20 lg:pt-4">
+<div class="mx-auto w-full max-w-[1440px] px-4 sm:px-6 lg:px-8">
+<div class="mb-6 flex items-end justify-between gap-4">
+<div>
+<h2 class="text-2xl font-medium sm:text-3xl">Just listed</h2>
+<p class="mt-2 max-w-[55ch] text-sm text-muted">, added by members this week.</p>
+</div><a class="group inline-flex shrink-0 items-center gap-1 text-sm font-medium text-accent-strong hover:underline" href="search-newest.html">See all<svg aria-hidden="true" class="lucide lucide-chevron-right size-4 transition-transform duration-300 ease-(--ease-fluid) group-hover:translate-x-0.5" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="m9 18 6-6-6-6"></path>
+</svg></a>
+</div>
+</div>
+<div class="mx-auto w-full max-w-[1440px] px-4 sm:px-6 lg:px-8 no-scrollbar overflow-x-auto sm:overflow-visible">
+<div class="flex snap-x snap-mandatory gap-3 pb-1 sm:grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" data-sc-grid='{"sort":"new","limit":8}'><p class="sc-sm sc-muted" style="grid-column:1/-1;padding:26px 0">Loading listings…</p></div>
+</div>
+</section>
+<section class="py-20 lg:py-28">
+<div class="mx-auto w-full max-w-[1440px] px-4 sm:px-6 lg:px-8">
+<div class="grid grid-cols-1 gap-14 lg:grid-cols-12 lg:gap-20">
+<div class="lg:col-span-5">
+<div class="lg:sticky lg:top-32">
+<h2 class="text-3xl sm:text-4xl lg:text-[44px]">Nothing counterfeit gets through.</h2>
+<p class="mt-5 max-w-[40ch] text-base text-muted">Buying pre-owned luxury from a stranger should not be a gamble. Here is exactly what happens between your payment and your parcel.</p><a class="group inline-flex items-center justify-center gap-2 rounded-full font-medium whitespace-nowrap transition-[background-color,color,border-color,transform] duration-300 ease-(--ease-fluid) active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none border border-line text-ink hover:border-ink/40 hover:bg-surface h-11 px-5 text-sm pr-2 mt-8" href="authentication.html">How authentication works<span class="ml-1 inline-flex size-7 items-center justify-center rounded-full bg-current/12 transition-transform duration-300 ease-(--ease-fluid) group-hover:translate-x-0.5 group-hover:-translate-y-px"><svg aria-hidden="true" class="lucide lucide-arrow-right size-4" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="M5 12h14"></path>
+<path d="m12 5 7 7-7 7"></path>
+</svg></span></a>
+</div>
+</div>
+<ol class="flex flex-col gap-3 lg:col-span-7">
+<div class="">
+<li class="rounded-(--radius-card) bg-surface p-6 sm:p-7">
+<div class="flex items-center gap-3"><span class="inline-flex size-11 items-center justify-center rounded-full bg-canvas text-accent"><svg aria-hidden="true" class="lucide lucide-tag size-[22px]" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"></path>
+<circle cx="7.5" cy="7.5" fill="currentColor" r=".5"></circle>
+</svg></span><span class="font-display text-sm font-semibold text-muted tnum">0<!-- -->1</span></div>
+<h3 class="mt-4 text-lg">Listed</h3>
+<p class="mt-2 max-w-[58ch] text-sm leading-relaxed text-muted">Sellers upload the exterior, interior, hardware and serial, plus proof of purchase where they have it. Listings missing required angles never reach the feed.</p>
+</li>
+</div>
+<div class="">
+<li class="rounded-(--radius-card) bg-surface p-6 sm:p-7">
+<div class="flex items-center gap-3"><span class="inline-flex size-11 items-center justify-center rounded-full bg-canvas text-accent"><svg aria-hidden="true" class="lucide lucide-truck size-[22px]" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"></path>
+<path d="M15 18H9"></path>
+<path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"></path>
+<circle cx="17" cy="18" r="2"></circle>
+<circle cx="7" cy="18" r="2"></circle>
+</svg></span><span class="font-display text-sm font-semibold text-muted tnum">0<!-- -->2</span></div>
+<h3 class="mt-4 text-lg">Sent to us, not to you</h3>
+<p class="mt-2 max-w-[58ch] text-sm leading-relaxed text-muted">Anything over JOD 350 travels to our Amman authentication centre first, on a prepaid the buyer label. Your payment is held the whole time.</p>
+</li>
+</div>
+<div class="">
+<li class="rounded-(--radius-card) bg-surface p-6 sm:p-7">
+<div class="flex items-center gap-3"><span class="inline-flex size-11 items-center justify-center rounded-full bg-canvas text-accent"><svg aria-hidden="true" class="lucide lucide-badge-check size-[22px]" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"></path>
+<path d="m9 12 2 2 4-4"></path>
+</svg></span><span class="font-display text-sm font-semibold text-muted tnum">0<!-- -->3</span></div>
+<h3 class="mt-4 text-lg">Verified against reference</h3>
+<p class="mt-2 max-w-[58ch] text-sm leading-relaxed text-muted">Stitch density, hardware engraving, date codes, lining and leather grain, all checked against house references for that model and production year.</p>
+</li>
+</div>
+<div class="">
+<li class="rounded-(--radius-card) bg-surface p-6 sm:p-7">
+<div class="flex items-center gap-3"><span class="inline-flex size-11 items-center justify-center rounded-full bg-canvas text-accent"><svg aria-hidden="true" class="lucide lucide-banknote size-[22px]" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<rect height="12" rx="2" width="20" x="2" y="6"></rect>
+<circle cx="12" cy="12" r="2"></circle>
+<path d="M6 12h.01M18 12h.01"></path>
+</svg></span><span class="font-display text-sm font-semibold text-muted tnum">0<!-- -->4</span></div>
+<h3 class="mt-4 text-lg">Released, then paid out</h3>
+<p class="mt-2 max-w-[58ch] text-sm leading-relaxed text-muted">Verified pieces ship on with a numbered authentication card. The seller is paid once you accept. Anything that fails goes back, and you are refunded in full.</p>
+</li>
+</div>
+</ol>
+</div>
+</div>
+</section>
+<section class="py-20 lg:py-24">
+<div class="mx-auto w-full max-w-[1440px] px-4 sm:px-6 lg:px-8">
+<div class="mb-6 flex items-end justify-between gap-4">
+<div>
+<h2 class="text-2xl font-medium sm:text-3xl">Shop by category</h2>
+</div><a class="group inline-flex shrink-0 items-center gap-1 text-sm font-medium text-accent-strong hover:underline" href="catalog.html">All categories<svg aria-hidden="true" class="lucide lucide-chevron-right size-4 transition-transform duration-300 ease-(--ease-fluid) group-hover:translate-x-0.5" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="m9 18 6-6-6-6"></path>
+</svg></a>
+</div>
+<div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
+<div class=""><a class="group relative block overflow-hidden rounded-(--radius-card) bg-product" href="catalog-bags.html"><img alt="" class="aspect-square w-full object-contain p-2 pb-11 transition-transform duration-700 ease-(--ease-fluid) group-hover:scale-[1.05] sm:p-4 sm:pb-16" data-nimg="1" decoding="async" height="720" loading="lazy" sizes="(min-width: 640px) 25vw, 50vw" src="https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Fbags.png&amp;w=3840&amp;q=75" srcset="https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Fbags.png&amp;w=256&amp;q=75 256w, https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Fbags.png&amp;w=384&amp;q=75 384w, https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Fbags.png&amp;w=640&amp;q=75 640w, https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Fbags.png&amp;w=750&amp;q=75 750w, https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Fbags.png&amp;w=828&amp;q=75 828w, https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Fbags.png&amp;w=1080&amp;q=75 1080w, https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Fbags.png&amp;w=1200&amp;q=75 1200w, https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Fbags.png&amp;w=1920&amp;q=75 1920w, https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Fbags.png&amp;w=2048&amp;q=75 2048w, https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Fbags.png&amp;w=3840&amp;q=75 3840w" style="color:transparent" width="720"/>
+<h3 class="absolute inset-x-3 bottom-3 truncate text-[13px] font-medium transition-colors group-hover:text-accent-strong sm:inset-x-5 sm:bottom-4 sm:text-[15px]">Bags</h3>
+</a></div>
+<div class=""><a class="group relative block overflow-hidden rounded-(--radius-card) bg-product" href="catalog-womenswear.html"><img alt="" class="aspect-square w-full object-contain p-2 pb-11 transition-transform duration-700 ease-(--ease-fluid) group-hover:scale-[1.05] sm:p-4 sm:pb-16" data-nimg="1" decoding="async" height="720" loading="lazy" sizes="(min-width: 640px) 25vw, 50vw" src="https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Fwomenswear.png&amp;w=3840&amp;q=75" srcset="https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Fwomenswear.png&amp;w=256&amp;q=75 256w, https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Fwomenswear.png&amp;w=384&amp;q=75 384w, https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Fwomenswear.png&amp;w=640&amp;q=75 640w, https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Fwomenswear.png&amp;w=750&amp;q=75 750w, https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Fwomenswear.png&amp;w=828&amp;q=75 828w, https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Fwomenswear.png&amp;w=1080&amp;q=75 1080w, https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Fwomenswear.png&amp;w=1200&amp;q=75 1200w, https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Fwomenswear.png&amp;w=1920&amp;q=75 1920w, https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Fwomenswear.png&amp;w=2048&amp;q=75 2048w, https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Fwomenswear.png&amp;w=3840&amp;q=75 3840w" style="color:transparent" width="720"/>
+<h3 class="absolute inset-x-3 bottom-3 truncate text-[13px] font-medium transition-colors group-hover:text-accent-strong sm:inset-x-5 sm:bottom-4 sm:text-[15px]">Womenswear</h3>
+</a></div>
+<div class=""><a class="group relative block overflow-hidden rounded-(--radius-card) bg-product" href="catalog-menswear.html"><img alt="" class="aspect-square w-full object-contain p-2 pb-11 transition-transform duration-700 ease-(--ease-fluid) group-hover:scale-[1.05] sm:p-4 sm:pb-16" data-nimg="1" decoding="async" height="720" loading="lazy" sizes="(min-width: 640px) 25vw, 50vw" src="https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Fmenswear.png&amp;w=3840&amp;q=75" srcset="https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Fmenswear.png&amp;w=256&amp;q=75 256w, https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Fmenswear.png&amp;w=384&amp;q=75 384w, https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Fmenswear.png&amp;w=640&amp;q=75 640w, https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Fmenswear.png&amp;w=750&amp;q=75 750w, https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Fmenswear.png&amp;w=828&amp;q=75 828w, https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Fmenswear.png&amp;w=1080&amp;q=75 1080w, https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Fmenswear.png&amp;w=1200&amp;q=75 1200w, https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Fmenswear.png&amp;w=1920&amp;q=75 1920w, https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Fmenswear.png&amp;w=2048&amp;q=75 2048w, https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Fmenswear.png&amp;w=3840&amp;q=75 3840w" style="color:transparent" width="720"/>
+<h3 class="absolute inset-x-3 bottom-3 truncate text-[13px] font-medium transition-colors group-hover:text-accent-strong sm:inset-x-5 sm:bottom-4 sm:text-[15px]">Menswear</h3>
+</a></div>
+<div class=""><a class="group relative block overflow-hidden rounded-(--radius-card) bg-product" href="catalog-shoes.html"><img alt="" class="aspect-square w-full object-contain p-2 pb-11 transition-transform duration-700 ease-(--ease-fluid) group-hover:scale-[1.05] sm:p-4 sm:pb-16" data-nimg="1" decoding="async" height="720" loading="lazy" sizes="(min-width: 640px) 25vw, 50vw" src="https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Fshoes.png&amp;w=3840&amp;q=75" srcset="https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Fshoes.png&amp;w=256&amp;q=75 256w, https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Fshoes.png&amp;w=384&amp;q=75 384w, https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Fshoes.png&amp;w=640&amp;q=75 640w, https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Fshoes.png&amp;w=750&amp;q=75 750w, https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Fshoes.png&amp;w=828&amp;q=75 828w, https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Fshoes.png&amp;w=1080&amp;q=75 1080w, https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Fshoes.png&amp;w=1200&amp;q=75 1200w, https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Fshoes.png&amp;w=1920&amp;q=75 1920w, https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Fshoes.png&amp;w=2048&amp;q=75 2048w, https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Fshoes.png&amp;w=3840&amp;q=75 3840w" style="color:transparent" width="720"/>
+<h3 class="absolute inset-x-3 bottom-3 truncate text-[13px] font-medium transition-colors group-hover:text-accent-strong sm:inset-x-5 sm:bottom-4 sm:text-[15px]">Shoes</h3>
+</a></div>
+<div class=""><a class="group relative block overflow-hidden rounded-(--radius-card) bg-product" href="catalog-watches.html"><img alt="" class="aspect-square w-full object-contain p-2 pb-11 transition-transform duration-700 ease-(--ease-fluid) group-hover:scale-[1.05] sm:p-4 sm:pb-16" data-nimg="1" decoding="async" height="720" loading="lazy" sizes="(min-width: 640px) 25vw, 50vw" src="https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Fwatches.png&amp;w=3840&amp;q=75" srcset="https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Fwatches.png&amp;w=256&amp;q=75 256w, https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Fwatches.png&amp;w=384&amp;q=75 384w, https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Fwatches.png&amp;w=640&amp;q=75 640w, https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Fwatches.png&amp;w=750&amp;q=75 750w, https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Fwatches.png&amp;w=828&amp;q=75 828w, https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Fwatches.png&amp;w=1080&amp;q=75 1080w, https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Fwatches.png&amp;w=1200&amp;q=75 1200w, https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Fwatches.png&amp;w=1920&amp;q=75 1920w, https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Fwatches.png&amp;w=2048&amp;q=75 2048w, https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Fwatches.png&amp;w=3840&amp;q=75 3840w" style="color:transparent" width="720"/>
+<h3 class="absolute inset-x-3 bottom-3 truncate text-[13px] font-medium transition-colors group-hover:text-accent-strong sm:inset-x-5 sm:bottom-4 sm:text-[15px]">Watches</h3>
+</a></div>
+<div class=""><a class="group relative block overflow-hidden rounded-(--radius-card) bg-product" href="catalog-jewellery.html"><img alt="" class="aspect-square w-full object-contain p-2 pb-11 transition-transform duration-700 ease-(--ease-fluid) group-hover:scale-[1.05] sm:p-4 sm:pb-16" data-nimg="1" decoding="async" height="720" loading="lazy" sizes="(min-width: 640px) 25vw, 50vw" src="https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Fjewellery.png&amp;w=3840&amp;q=75" srcset="https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Fjewellery.png&amp;w=256&amp;q=75 256w, https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Fjewellery.png&amp;w=384&amp;q=75 384w, https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Fjewellery.png&amp;w=640&amp;q=75 640w, https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Fjewellery.png&amp;w=750&amp;q=75 750w, https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Fjewellery.png&amp;w=828&amp;q=75 828w, https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Fjewellery.png&amp;w=1080&amp;q=75 1080w, https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Fjewellery.png&amp;w=1200&amp;q=75 1200w, https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Fjewellery.png&amp;w=1920&amp;q=75 1920w, https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Fjewellery.png&amp;w=2048&amp;q=75 2048w, https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Fjewellery.png&amp;w=3840&amp;q=75 3840w" style="color:transparent" width="720"/>
+<h3 class="absolute inset-x-3 bottom-3 truncate text-[13px] font-medium transition-colors group-hover:text-accent-strong sm:inset-x-5 sm:bottom-4 sm:text-[15px]">Jewellery</h3>
+</a></div>
+<div class=""><a class="group relative block overflow-hidden rounded-(--radius-card) bg-product" href="catalog-accessories.html"><img alt="" class="aspect-square w-full object-contain p-2 pb-11 transition-transform duration-700 ease-(--ease-fluid) group-hover:scale-[1.05] sm:p-4 sm:pb-16" data-nimg="1" decoding="async" height="720" loading="lazy" sizes="(min-width: 640px) 25vw, 50vw" src="https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Faccessories.png&amp;w=3840&amp;q=75" srcset="https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Faccessories.png&amp;w=256&amp;q=75 256w, https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Faccessories.png&amp;w=384&amp;q=75 384w, https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Faccessories.png&amp;w=640&amp;q=75 640w, https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Faccessories.png&amp;w=750&amp;q=75 750w, https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Faccessories.png&amp;w=828&amp;q=75 828w, https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Faccessories.png&amp;w=1080&amp;q=75 1080w, https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Faccessories.png&amp;w=1200&amp;q=75 1200w, https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Faccessories.png&amp;w=1920&amp;q=75 1920w, https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Faccessories.png&amp;w=2048&amp;q=75 2048w, https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Faccessories.png&amp;w=3840&amp;q=75 3840w" style="color:transparent" width="720"/>
+<h3 class="absolute inset-x-3 bottom-3 truncate text-[13px] font-medium transition-colors group-hover:text-accent-strong sm:inset-x-5 sm:bottom-4 sm:text-[15px]">Accessories</h3>
+</a></div>
+<div class=""><a class="group relative block overflow-hidden rounded-(--radius-card) bg-product" href="catalog-vintage.html"><img alt="" class="aspect-square w-full object-contain p-2 pb-11 transition-transform duration-700 ease-(--ease-fluid) group-hover:scale-[1.05] sm:p-4 sm:pb-16" data-nimg="1" decoding="async" height="720" loading="lazy" sizes="(min-width: 640px) 25vw, 50vw" src="https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Fvintage.png&amp;w=3840&amp;q=75" srcset="https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Fvintage.png&amp;w=256&amp;q=75 256w, https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Fvintage.png&amp;w=384&amp;q=75 384w, https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Fvintage.png&amp;w=640&amp;q=75 640w, https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Fvintage.png&amp;w=750&amp;q=75 750w, https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Fvintage.png&amp;w=828&amp;q=75 828w, https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Fvintage.png&amp;w=1080&amp;q=75 1080w, https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Fvintage.png&amp;w=1200&amp;q=75 1200w, https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Fvintage.png&amp;w=1920&amp;q=75 1920w, https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Fvintage.png&amp;w=2048&amp;q=75 2048w, https://secondchance-xi.vercel.app/_next/image?url=%2Fcategories%2Fvintage.png&amp;w=3840&amp;q=75 3840w" style="color:transparent" width="720"/>
+<h3 class="absolute inset-x-3 bottom-3 truncate text-[13px] font-medium transition-colors group-hover:text-accent-strong sm:inset-x-5 sm:bottom-4 sm:text-[15px]">Vintage</h3>
+</a></div>
+</div>
+</div>
+</section>
+<section class="py-20 lg:py-24">
+<div class="mx-auto w-full max-w-[1440px] px-4 sm:px-6 lg:px-8">
+<div class="mb-6 flex items-end justify-between gap-4">
+<div>
+<h2 class="text-2xl font-medium sm:text-3xl">Shop the houses</h2>
+<p class="mt-2 max-w-[55ch] text-sm text-muted">The most-followed brands on SecondChance Collective this week.</p>
+</div><a class="group inline-flex shrink-0 items-center gap-1 text-sm font-medium text-accent-strong hover:underline" href="brands.html">All brands<svg aria-hidden="true" class="lucide lucide-chevron-right size-4 transition-transform duration-300 ease-(--ease-fluid) group-hover:translate-x-0.5" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="m9 18 6-6-6-6"></path>
+</svg></a>
+</div>
+</div>
+<div class="">
+<div class="mx-auto w-full max-w-[1440px] px-4 sm:px-6 lg:px-8 no-scrollbar overflow-x-auto sm:overflow-visible">
+<ul class="flex snap-x snap-mandatory gap-3 sm:grid sm:snap-none sm:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8">
+<li class="snap-start"><a class="flex h-full w-[132px] flex-col items-center justify-center gap-3.5 rounded-(--radius-card) bg-surface px-4 py-7 text-center transition-[background-color,transform] duration-300 ease-(--ease-fluid) hover:bg-surface-2 active:scale-[0.99] sm:w-auto sm:py-8" href="brand-chanel.html"><img alt="" class="shrink-0 rounded-lg object-contain" height="52" loading="lazy" src="https://www.google.com/s2/favicons?domain=chanel.com&amp;sz=128" style="width:52px;height:52px" width="52"/><span class="w-full truncate text-sm font-medium">Chanel</span></a></li>
+<li class="snap-start"><a class="flex h-full w-[132px] flex-col items-center justify-center gap-3.5 rounded-(--radius-card) bg-surface px-4 py-7 text-center transition-[background-color,transform] duration-300 ease-(--ease-fluid) hover:bg-surface-2 active:scale-[0.99] sm:w-auto sm:py-8" href="brand-hermes.html"><img alt="" class="shrink-0 rounded-lg object-contain" height="52" loading="lazy" src="https://www.google.com/s2/favicons?domain=hermes.com&amp;sz=128" style="width:52px;height:52px" width="52"/><span class="w-full truncate text-sm font-medium">Hermès</span></a></li>
+<li class="snap-start"><a class="flex h-full w-[132px] flex-col items-center justify-center gap-3.5 rounded-(--radius-card) bg-surface px-4 py-7 text-center transition-[background-color,transform] duration-300 ease-(--ease-fluid) hover:bg-surface-2 active:scale-[0.99] sm:w-auto sm:py-8" href="brand-prada.html"><img alt="" class="shrink-0 rounded-lg object-contain" height="52" loading="lazy" src="https://www.google.com/s2/favicons?domain=prada.com&amp;sz=128" style="width:52px;height:52px" width="52"/><span class="w-full truncate text-sm font-medium">Prada</span></a></li>
+<li class="snap-start"><a class="flex h-full w-[132px] flex-col items-center justify-center gap-3.5 rounded-(--radius-card) bg-surface px-4 py-7 text-center transition-[background-color,transform] duration-300 ease-(--ease-fluid) hover:bg-surface-2 active:scale-[0.99] sm:w-auto sm:py-8" href="brand-bottega-veneta.html"><img alt="" class="shrink-0 rounded-lg object-contain" height="52" loading="lazy" src="https://www.google.com/s2/favicons?domain=bottegaveneta.com&amp;sz=128" style="width:52px;height:52px" width="52"/><span class="w-full truncate text-sm font-medium">Bottega Veneta</span></a></li>
+<li class="snap-start"><a class="flex h-full w-[132px] flex-col items-center justify-center gap-3.5 rounded-(--radius-card) bg-surface px-4 py-7 text-center transition-[background-color,transform] duration-300 ease-(--ease-fluid) hover:bg-surface-2 active:scale-[0.99] sm:w-auto sm:py-8" href="brand-the-row.html"><img alt="" class="shrink-0 rounded-lg object-contain" height="52" loading="lazy" src="https://www.google.com/s2/favicons?domain=therow.com&amp;sz=128" style="width:52px;height:52px" width="52"/><span class="w-full truncate text-sm font-medium">The Row</span></a></li>
+<li class="snap-start"><a class="flex h-full w-[132px] flex-col items-center justify-center gap-3.5 rounded-(--radius-card) bg-surface px-4 py-7 text-center transition-[background-color,transform] duration-300 ease-(--ease-fluid) hover:bg-surface-2 active:scale-[0.99] sm:w-auto sm:py-8" href="brand-celine.html"><img alt="" class="shrink-0 rounded-lg object-contain" height="52" loading="lazy" src="https://www.google.com/s2/favicons?domain=celine.com&amp;sz=128" style="width:52px;height:52px" width="52"/><span class="w-full truncate text-sm font-medium">Celine</span></a></li>
+<li class="snap-start"><a class="flex h-full w-[132px] flex-col items-center justify-center gap-3.5 rounded-(--radius-card) bg-surface px-4 py-7 text-center transition-[background-color,transform] duration-300 ease-(--ease-fluid) hover:bg-surface-2 active:scale-[0.99] sm:w-auto sm:py-8" href="brand-loewe.html"><img alt="" class="shrink-0 rounded-lg object-contain" height="52" loading="lazy" src="https://www.google.com/s2/favicons?domain=loewe.com&amp;sz=128" style="width:52px;height:52px" width="52"/><span class="w-full truncate text-sm font-medium">Loewe</span></a></li>
+<li class="snap-start"><a class="flex h-full w-[132px] flex-col items-center justify-center gap-3.5 rounded-(--radius-card) bg-surface px-4 py-7 text-center transition-[background-color,transform] duration-300 ease-(--ease-fluid) hover:bg-surface-2 active:scale-[0.99] sm:w-auto sm:py-8" href="brand-loro-piana.html"><img alt="" class="shrink-0 rounded-lg object-contain" height="52" loading="lazy" src="https://www.google.com/s2/favicons?domain=loropiana.com&amp;sz=128" style="width:52px;height:52px" width="52"/><span class="w-full truncate text-sm font-medium">Loro Piana</span></a></li>
+<li class="snap-start"><a class="flex h-full w-[132px] flex-col items-center justify-center gap-3.5 rounded-(--radius-card) bg-surface px-4 py-7 text-center transition-[background-color,transform] duration-300 ease-(--ease-fluid) hover:bg-surface-2 active:scale-[0.99] sm:w-auto sm:py-8" href="brand-miu-miu.html"><img alt="" class="shrink-0 rounded-lg object-contain" height="52" loading="lazy" src="https://www.google.com/s2/favicons?domain=miumiu.com&amp;sz=128" style="width:52px;height:52px" width="52"/><span class="w-full truncate text-sm font-medium">Miu Miu</span></a></li>
+<li class="snap-start"><a class="flex h-full w-[132px] flex-col items-center justify-center gap-3.5 rounded-(--radius-card) bg-surface px-4 py-7 text-center transition-[background-color,transform] duration-300 ease-(--ease-fluid) hover:bg-surface-2 active:scale-[0.99] sm:w-auto sm:py-8" href="brand-saint-laurent.html"><img alt="" class="shrink-0 rounded-lg object-contain" height="52" loading="lazy" src="https://www.google.com/s2/favicons?domain=ysl.com&amp;sz=128" style="width:52px;height:52px" width="52"/><span class="w-full truncate text-sm font-medium">Saint Laurent</span></a></li>
+<li class="snap-start"><a class="flex h-full w-[132px] flex-col items-center justify-center gap-3.5 rounded-(--radius-card) bg-surface px-4 py-7 text-center transition-[background-color,transform] duration-300 ease-(--ease-fluid) hover:bg-surface-2 active:scale-[0.99] sm:w-auto sm:py-8" href="brand-cartier.html"><img alt="" class="shrink-0 rounded-lg object-contain" height="52" loading="lazy" src="https://www.google.com/s2/favicons?domain=cartier.com&amp;sz=128" style="width:52px;height:52px" width="52"/><span class="w-full truncate text-sm font-medium">Cartier</span></a></li>
+<li class="snap-start"><a class="flex h-full w-[132px] flex-col items-center justify-center gap-3.5 rounded-(--radius-card) bg-surface px-4 py-7 text-center transition-[background-color,transform] duration-300 ease-(--ease-fluid) hover:bg-surface-2 active:scale-[0.99] sm:w-auto sm:py-8" href="brand-rolex.html"><img alt="" class="shrink-0 rounded-lg object-contain" height="52" loading="lazy" src="https://www.google.com/s2/favicons?domain=rolex.com&amp;sz=128" style="width:52px;height:52px" width="52"/><span class="w-full truncate text-sm font-medium">Rolex</span></a></li>
+<li class="snap-start"><a class="flex h-full w-[132px] flex-col items-center justify-center gap-3.5 rounded-(--radius-card) bg-surface px-4 py-7 text-center transition-[background-color,transform] duration-300 ease-(--ease-fluid) hover:bg-surface-2 active:scale-[0.99] sm:w-auto sm:py-8" href="brand-maison-margiela.html"><img alt="" class="shrink-0 rounded-lg object-contain" height="52" loading="lazy" src="https://www.google.com/s2/favicons?domain=maisonmargiela.com&amp;sz=128" style="width:52px;height:52px" width="52"/><span class="w-full truncate text-sm font-medium">Maison Margiela</span></a></li>
+<li class="snap-start"><a class="flex h-full w-[132px] flex-col items-center justify-center gap-3.5 rounded-(--radius-card) bg-surface px-4 py-7 text-center transition-[background-color,transform] duration-300 ease-(--ease-fluid) hover:bg-surface-2 active:scale-[0.99] sm:w-auto sm:py-8" href="brand-jacquemus.html"><img alt="" class="shrink-0 rounded-lg object-contain" height="52" loading="lazy" src="https://www.google.com/s2/favicons?domain=jacquemus.com&amp;sz=128" style="width:52px;height:52px" width="52"/><span class="w-full truncate text-sm font-medium">Jacquemus</span></a></li>
+<li class="snap-start"><a class="flex h-full w-[132px] flex-col items-center justify-center gap-3.5 rounded-(--radius-card) bg-surface px-4 py-7 text-center transition-[background-color,transform] duration-300 ease-(--ease-fluid) hover:bg-surface-2 active:scale-[0.99] sm:w-auto sm:py-8" href="brand-khaite.html"><img alt="" class="shrink-0 rounded-lg object-contain" height="52" loading="lazy" src="https://www.google.com/s2/favicons?domain=khaite.com&amp;sz=128" style="width:52px;height:52px" width="52"/><span class="w-full truncate text-sm font-medium">Khaite</span></a></li>
+<li class="snap-start"><a class="flex h-full w-[132px] flex-col items-center justify-center gap-3.5 rounded-(--radius-card) bg-surface px-4 py-7 text-center transition-[background-color,transform] duration-300 ease-(--ease-fluid) hover:bg-surface-2 active:scale-[0.99] sm:w-auto sm:py-8" href="brand-toteme.html"><img alt="" class="shrink-0 rounded-lg object-contain" height="52" loading="lazy" src="https://www.google.com/s2/favicons?domain=toteme-studio.com&amp;sz=128" style="width:52px;height:52px" width="52"/><span class="w-full truncate text-sm font-medium">Totême</span></a></li>
+</ul>
+</div>
+</div>
+</section>
+<section class="py-20 lg:py-24">
+<div class="mx-auto w-full max-w-[1440px] px-4 sm:px-6 lg:px-8">
+<div class="mb-6 flex items-end justify-between gap-4">
+<div>
+<h2 class="text-2xl font-medium sm:text-3xl">Shop by budget</h2>
+</div>
+</div>
+<div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+<div class=""><a class="group flex h-full flex-col justify-between gap-6 rounded-(--radius-card) bg-surface p-6 transition-colors duration-300 ease-(--ease-fluid) hover:bg-surface-2" href="search-under-250.html"><span><span class="block font-display text-lg font-semibold">Under JOD 250</span><span class="mt-1.5 block text-sm text-muted">Scarves, belts, small leather goods</span></span><span class="flex items-center justify-between gap-3"><span class="text-xs text-muted tnum">7<!-- --> available</span><svg aria-hidden="true" class="lucide lucide-arrow-right size-4 text-muted transition-transform duration-300 ease-(--ease-fluid) group-hover:translate-x-0.5 group-hover:text-ink" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="M5 12h14"></path>
+<path d="m12 5 7 7-7 7"></path>
+</svg></span></a></div>
+<div class=""><a class="group flex h-full flex-col justify-between gap-6 rounded-(--radius-card) bg-surface p-6 transition-colors duration-300 ease-(--ease-fluid) hover:bg-surface-2" href="search-under-600.html"><span><span class="block font-display text-lg font-semibold">Under JOD 600</span><span class="mt-1.5 block text-sm text-muted">Shoes, knitwear, everyday pieces</span></span><span class="flex items-center justify-between gap-3"><span class="text-xs text-muted tnum">21<!-- --> available</span><svg aria-hidden="true" class="lucide lucide-arrow-right size-4 text-muted transition-transform duration-300 ease-(--ease-fluid) group-hover:translate-x-0.5 group-hover:text-ink" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="M5 12h14"></path>
+<path d="m12 5 7 7-7 7"></path>
+</svg></span></a></div>
+<div class=""><a class="group flex h-full flex-col justify-between gap-6 rounded-(--radius-card) bg-surface p-6 transition-colors duration-300 ease-(--ease-fluid) hover:bg-surface-2" href="search-under-1500.html"><span><span class="block font-display text-lg font-semibold">Under JOD 1,500</span><span class="mt-1.5 block text-sm text-muted">Outerwear and entry-level bags</span></span><span class="flex items-center justify-between gap-3"><span class="text-xs text-muted tnum">29<!-- --> available</span><svg aria-hidden="true" class="lucide lucide-arrow-right size-4 text-muted transition-transform duration-300 ease-(--ease-fluid) group-hover:translate-x-0.5 group-hover:text-ink" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="M5 12h14"></path>
+<path d="m12 5 7 7-7 7"></path>
+</svg></span></a></div>
+<div class=""><a class="group flex h-full flex-col justify-between gap-6 rounded-(--radius-card) bg-surface p-6 transition-colors duration-300 ease-(--ease-fluid) hover:bg-surface-2" href="search-investment.html"><span><span class="block font-display text-lg font-semibold">Investment pieces</span><span class="mt-1.5 block text-sm text-muted">Birkins, Cartier, vintage Chanel</span></span><span class="flex items-center justify-between gap-3"><span class="text-xs text-muted tnum">13<!-- --> available</span><svg aria-hidden="true" class="lucide lucide-arrow-right size-4 text-muted transition-transform duration-300 ease-(--ease-fluid) group-hover:translate-x-0.5 group-hover:text-ink" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="M5 12h14"></path>
+<path d="m12 5 7 7-7 7"></path>
+</svg></span></a></div>
+</div>
+</div>
+</section>
+<section class="py-20 lg:py-24" id="feed">
+<div class="mx-auto w-full max-w-[1440px] px-4 sm:px-6 lg:px-8">
+<div class="mb-8 flex flex-wrap items-end justify-between gap-5">
+<div>
+<h2 class="text-2xl sm:text-3xl">New in this week</h2>
+<p aria-live="polite" class="mt-2 text-sm text-muted tnum">42<!-- --> <!-- -->pieces<!-- --> across every category</p>
+</div>
+<div class="flex items-center gap-2.5"><label class="text-sm text-muted" for="feed-sort">Sort</label><select class="h-11 rounded-full border border-line bg-canvas px-4 text-sm font-medium text-ink focus:border-accent/40 focus:outline-none" id="feed-sort">
+<option selected="" value="popular">Most popular</option>
+<option value="newest">Newest first</option>
+<option value="price-asc">Price: low to high</option>
+<option value="price-desc">Price: high to low</option>
+</select></div>
+</div>
+<div class="no-scrollbar -mx-1 mb-10 flex gap-2 overflow-x-auto px-1 py-1"><button aria-pressed="false" class="inline-flex shrink-0 items-center gap-1.5 rounded-full border px-3.5 py-2 text-sm font-medium transition-[background-color,color,border-color,transform] duration-300 ease-(--ease-fluid) active:scale-[0.98] border-line bg-canvas text-ink hover:border-ink/40 hover:bg-surface" type="button">Authenticated only</button><span aria-hidden="true" class="my-1 w-px shrink-0 bg-line"></span><button aria-pressed="false" class="inline-flex shrink-0 items-center gap-1.5 rounded-full border px-3.5 py-2 text-sm font-medium transition-[background-color,color,border-color,transform] duration-300 ease-(--ease-fluid) active:scale-[0.98] border-line bg-canvas text-ink hover:border-ink/40 hover:bg-surface" type="button">Bags</button><button aria-pressed="false" class="inline-flex shrink-0 items-center gap-1.5 rounded-full border px-3.5 py-2 text-sm font-medium transition-[background-color,color,border-color,transform] duration-300 ease-(--ease-fluid) active:scale-[0.98] border-line bg-canvas text-ink hover:border-ink/40 hover:bg-surface" type="button">Womenswear</button><button aria-pressed="false" class="inline-flex shrink-0 items-center gap-1.5 rounded-full border px-3.5 py-2 text-sm font-medium transition-[background-color,color,border-color,transform] duration-300 ease-(--ease-fluid) active:scale-[0.98] border-line bg-canvas text-ink hover:border-ink/40 hover:bg-surface" type="button">Menswear</button><button aria-pressed="false" class="inline-flex shrink-0 items-center gap-1.5 rounded-full border px-3.5 py-2 text-sm font-medium transition-[background-color,color,border-color,transform] duration-300 ease-(--ease-fluid) active:scale-[0.98] border-line bg-canvas text-ink hover:border-ink/40 hover:bg-surface" type="button">Shoes</button><button aria-pressed="false" class="inline-flex shrink-0 items-center gap-1.5 rounded-full border px-3.5 py-2 text-sm font-medium transition-[background-color,color,border-color,transform] duration-300 ease-(--ease-fluid) active:scale-[0.98] border-line bg-canvas text-ink hover:border-ink/40 hover:bg-surface" type="button">Watches</button><button aria-pressed="false" class="inline-flex shrink-0 items-center gap-1.5 rounded-full border px-3.5 py-2 text-sm font-medium transition-[background-color,color,border-color,transform] duration-300 ease-(--ease-fluid) active:scale-[0.98] border-line bg-canvas text-ink hover:border-ink/40 hover:bg-surface" type="button">Jewellery</button><button aria-pressed="false" class="inline-flex shrink-0 items-center gap-1.5 rounded-full border px-3.5 py-2 text-sm font-medium transition-[background-color,color,border-color,transform] duration-300 ease-(--ease-fluid) active:scale-[0.98] border-line bg-canvas text-ink hover:border-ink/40 hover:bg-surface" type="button">Accessories</button><button aria-pressed="false" class="inline-flex shrink-0 items-center gap-1.5 rounded-full border px-3.5 py-2 text-sm font-medium transition-[background-color,color,border-color,transform] duration-300 ease-(--ease-fluid) active:scale-[0.98] border-line bg-canvas text-ink hover:border-ink/40 hover:bg-surface" type="button">Vintage</button></div>
+<div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" data-sc-grid='{"sort":"new","limit":8}'><p class="sc-sm sc-muted" style="grid-column:1/-1;padding:26px 0">Loading listings…</p></div>
+<div class="mt-14 flex justify-center"><button class="group inline-flex items-center justify-center gap-2 rounded-full font-medium whitespace-nowrap transition-[background-color,color,border-color,transform] duration-300 ease-(--ease-fluid) active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none border border-line text-ink hover:border-ink/40 hover:bg-surface h-12 px-6 text-base">Show <!-- -->12<!-- --> more</button></div>
+</div>
+</section>
+<section class="py-20 lg:py-24">
+<div class="mx-auto w-full max-w-[1440px] px-4 sm:px-6 lg:px-8">
+<div class="grid grid-cols-1 gap-10 lg:grid-cols-12 lg:gap-16">
+<div class="lg:col-span-4">
+<h2 class="text-2xl sm:text-3xl lg:text-[38px] lg:leading-[1.08]">Delivered across <!-- -->Jordan<!-- -->, paid for locally.</h2>
+<p class="mt-5 max-w-[42ch] text-base text-muted">Built for buying here rather than translated from somewhere else: local rails, local delivery windows, and a returns window that starts when the parcel lands.</p><a class="group inline-flex items-center justify-center gap-2 rounded-full font-medium whitespace-nowrap transition-[background-color,color,border-color,transform] duration-300 ease-(--ease-fluid) active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none border border-line text-ink hover:border-ink/40 hover:bg-surface h-9 px-4 text-sm pr-2 mt-7" href="help-handover.html">Returns<span class="ml-1 inline-flex size-7 items-center justify-center rounded-full bg-current/12 transition-transform duration-300 ease-(--ease-fluid) group-hover:translate-x-0.5 group-hover:-translate-y-px"><svg aria-hidden="true" class="lucide lucide-arrow-right size-4" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="M5 12h14"></path>
+<path d="m12 5 7 7-7 7"></path>
+</svg></span></a>
+</div>
+<ul class="grid gap-3 sm:grid-cols-3 lg:col-span-8">
+<li class="h-full">
+<div class="h-full">
+<div class="flex h-full flex-col rounded-(--radius-card) bg-surface p-5 sm:p-6"><span class="inline-flex size-11 items-center justify-center rounded-full bg-canvas text-accent"><svg aria-hidden="true" class="lucide lucide-truck size-[22px]" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"></path>
+<path d="M15 18H9"></path>
+<path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"></path>
+<circle cx="17" cy="18" r="2"></circle>
+<circle cx="7" cy="18" r="2"></circle>
+</svg></span>
+<h3 class="mt-5 text-[17px] leading-snug">1 to 2 working days in Amman</h3>
+<p class="mt-2.5 flex-1 text-sm leading-relaxed text-muted">2 to 4 working days everywhere else in the Kingdom, tracked on the buyer. Free over JOD 100.</p>
+<p class="mt-4 border-t border-line pt-3 text-xs text-muted">After authentication, which adds about one working day.</p>
+</div>
+</div>
+</li>
+<li class="h-full">
+<div class="h-full">
+<div class="flex h-full flex-col rounded-(--radius-card) bg-surface p-5 sm:p-6"><span class="inline-flex size-11 items-center justify-center rounded-full bg-canvas text-accent"><svg aria-hidden="true" class="lucide lucide-banknote size-[22px]" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<rect height="12" rx="2" width="20" x="2" y="6"></rect>
+<circle cx="12" cy="12" r="2"></circle>
+<path d="M6 12h.01M18 12h.01"></path>
+</svg></span>
+<h3 class="mt-5 text-[17px] leading-snug">Pay the way you already pay</h3>
+<p class="mt-2.5 flex-1 text-sm leading-relaxed text-muted">Visa · Mastercard · CliQ · eFAWATEERcom · Cash on delivery</p>
+<p class="mt-4 border-t border-line pt-3 text-xs text-muted">Cash on delivery included — you can pay the courier at the door.</p>
+</div>
+</div>
+</li>
+<li class="h-full">
+<div class="h-full">
+<div class="flex h-full flex-col rounded-(--radius-card) bg-surface p-5 sm:p-6"><span class="inline-flex size-11 items-center justify-center rounded-full bg-canvas text-accent"><svg aria-hidden="true" class="lucide lucide-rotate-ccw size-[22px]" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+<path d="M3 3v5h5"></path>
+</svg></span>
+<h3 class="mt-5 text-[17px] leading-snug">14 days to change your mind</h3>
+<p class="mt-2.5 flex-1 text-sm leading-relaxed text-muted">If a piece is not as described, send it back and we refund you in full. Your payment is held until you have accepted it.</p>
+<p class="mt-4 border-t border-line pt-3 text-xs text-muted">Buyer Protection is on every order, not an upsell.</p>
+</div>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</section>
+<section class="bg-invert py-20 text-invert-fg lg:py-28">
+<div class="mx-auto w-full max-w-[1440px] px-4 sm:px-6 lg:px-8">
+<div class="grid grid-cols-1 gap-14 lg:grid-cols-2 lg:items-center lg:gap-20">
+<div class="">
+<div>
+<h2 class="text-3xl sm:text-4xl lg:text-[44px]">That bag in your wardrobe is worth more than you think.</h2>
+<p class="mt-6 max-w-[44ch] text-lg text-invert-fg/70">Listing is free and takes about two minutes. We handle authentication, pickup and payment protection.</p>
+<div class="mt-10 flex flex-wrap items-center gap-5"><a class="group inline-flex items-center justify-center gap-2 rounded-full font-medium whitespace-nowrap transition-[background-color,color,border-color,transform] duration-300 ease-(--ease-fluid) active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none bg-canvas text-ink hover:bg-canvas/90 h-12 px-6 text-base pr-2" href="sell.html">Start selling<span class="ml-1 inline-flex size-7 items-center justify-center rounded-full bg-current/12 transition-transform duration-300 ease-(--ease-fluid) group-hover:translate-x-0.5 group-hover:-translate-y-px"><svg aria-hidden="true" class="lucide lucide-arrow-right size-4" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="M5 12h14"></path>
+<path d="m12 5 7 7-7 7"></path>
+</svg></span></a>
+<p class="text-sm text-invert-fg/70"><span class="font-medium text-invert-fg">No seller fees</span> on your first three listings</p>
+</div>
+</div>
+</div>
+<ol class="grid grid-cols-1 gap-8 sm:grid-cols-3">
+<div class="">
+<li><span class="inline-flex size-11 items-center justify-center rounded-full bg-invert-fg/10 text-invert-fg"><svg aria-hidden="true" class="lucide lucide-camera size-[22px]" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="M13.997 4a2 2 0 0 1 1.76 1.05l.486.9A2 2 0 0 0 18.003 7H20a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h1.997a2 2 0 0 0 1.759-1.048l.489-.904A2 2 0 0 1 10.004 4z"></path>
+<circle cx="12" cy="13" r="3"></circle>
+</svg></span>
+<h3 class="mt-4 text-[15px]">Photograph it</h3>
+<p class="mt-2 text-sm leading-relaxed text-invert-fg/70">Four photos and a few details. Two minutes on your phone.</p>
+</li>
+</div>
+<div class="">
+<li><span class="inline-flex size-11 items-center justify-center rounded-full bg-invert-fg/10 text-invert-fg"><svg aria-hidden="true" class="lucide lucide-truck size-[22px]" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"></path>
+<path d="M15 18H9"></path>
+<path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"></path>
+<circle cx="17" cy="18" r="2"></circle>
+<circle cx="7" cy="18" r="2"></circle>
+</svg></span>
+<h3 class="mt-4 text-[15px]">We collect it</h3>
+<p class="mt-2 text-sm leading-relaxed text-invert-fg/70">Direct handover from anywhere in Jordan once it sells.</p>
+</li>
+</div>
+<div class="">
+<li><span class="inline-flex size-11 items-center justify-center rounded-full bg-invert-fg/10 text-invert-fg"><svg aria-hidden="true" class="lucide lucide-banknote size-[22px]" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<rect height="12" rx="2" width="20" x="2" y="6"></rect>
+<circle cx="12" cy="12" r="2"></circle>
+<path d="M6 12h.01M18 12h.01"></path>
+</svg></span>
+<h3 class="mt-4 text-[15px]">Get paid</h3>
+<p class="mt-2 text-sm leading-relaxed text-invert-fg/70">Straight to your bank account or by CliQ, as soon as the buyer accepts.</p>
+</li>
+</div>
+</ol>
+</div>
+</div>
+</section><!--$--><!--/$-->
+</main>
+<footer class="mt-24 bg-surface">
+<div class="mx-auto w-full max-w-[1440px] px-4 sm:px-6 lg:px-8">
+<div class="grid grid-cols-2 gap-10 py-16 sm:grid-cols-3 lg:grid-cols-5">
+<div class="col-span-2 sm:col-span-3 lg:col-span-1"><span aria-hidden="true" class="inline-flex flex-col font-display font-semibold leading-[0.88]"><span class="text-[22px] tracking-[-0.03em]" data-keep-en="">SecondChance</span><span class="text-[13px] font-medium tracking-[0.22em] text-muted">collective<span class="text-accent">.</span></span></span>
+<p class="mt-4 max-w-xs text-sm text-muted">Jordan's marketplace for pre-owned luxury. Authenticated, protected, and priced by the people who own it.</p>
+<p class="mt-5 inline-flex items-center gap-1.5 rounded-full bg-accent-tint px-3 py-1.5 text-xs font-medium text-accent-strong"><svg aria-hidden="true" class="lucide lucide-badge-check size-4" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"></path>
+<path d="m9 12 2 2 4-4"></path>
+</svg><span data-sc-count="authenticated">—</span><!-- --> pieces authenticated</p>
+</div>
+<nav aria-label="Shop">
+<h3 class="text-sm">Shop</h3>
+<ul class="mt-4 space-y-2.5">
+<li><a class="text-sm text-muted transition-colors hover:text-ink" href="search-newest.html">New in</a></li>
+<li><a class="text-sm text-muted transition-colors hover:text-ink" href="catalog.html">All categories</a></li>
+<li><a class="text-sm text-muted transition-colors hover:text-ink" href="catalog-bags.html">Bags</a></li>
+<li><a class="text-sm text-muted transition-colors hover:text-ink" href="catalog-womenswear.html">Womenswear</a></li>
+<li><a class="text-sm text-muted transition-colors hover:text-ink" href="brands.html">All brands</a></li>
+</ul>
+</nav>
+<nav aria-label="Sell">
+<h3 class="text-sm">Sell</h3>
+<ul class="mt-4 space-y-2.5">
+<li><a class="text-sm text-muted transition-colors hover:text-ink" href="sell.html">List an item</a></li>
+<li><a class="text-sm text-muted transition-colors hover:text-ink" href="account/listings.html">Your listings</a></li>
+<li><a class="text-sm text-muted transition-colors hover:text-ink" href="help-fees.html">Seller fees</a></li>
+<li><a class="text-sm text-muted transition-colors hover:text-ink" href="help-pricing.html">Pricing your piece</a></li>
+<li><a class="text-sm text-muted transition-colors hover:text-ink" href="help-handover.html">Handover</a></li>
+</ul>
+</nav>
+<nav aria-label="Trust and safety">
+<h3 class="text-sm">Trust and safety</h3>
+<ul class="mt-4 space-y-2.5">
+<li><a class="text-sm text-muted transition-colors hover:text-ink" href="authentication.html">Authentication</a></li>
+<li><a class="text-sm text-muted transition-colors hover:text-ink" href="help-buyer-protection.html">Buyer Protection</a></li>
+<li><a class="text-sm text-muted transition-colors hover:text-ink" href="help-returns.html">Returns and refunds</a></li>
+<li><a class="text-sm text-muted transition-colors hover:text-ink" href="help-report.html">Report a listing</a></li>
+</ul>
+</nav>
+<nav aria-label="Help">
+<h3 class="text-sm">Help</h3>
+<ul class="mt-4 space-y-2.5">
+<li><a class="text-sm text-muted transition-colors hover:text-ink" href="help.html">Help centre</a></li>
+<li><a class="text-sm text-muted transition-colors hover:text-ink" href="help-contact.html">Contact us</a></li>
+<li><a class="text-sm text-muted transition-colors hover:text-ink" href="account.html?tab=orders">Your orders</a></li>
+<li><a class="text-sm text-muted transition-colors hover:text-ink" href="members.html">Members</a></li>
+<li><a class="text-sm text-muted transition-colors hover:text-ink" href="about.html">About us</a></li>
+</ul>
+</nav>
+</div>
+<div class="flex flex-col gap-5 border-t border-line py-7 sm:flex-row sm:items-center sm:justify-between">
+<div class="flex flex-wrap items-center gap-2"><button class="inline-flex items-center gap-1.5 rounded-full border border-line bg-canvas px-3.5 py-2 text-xs font-medium text-ink transition-colors hover:border-ink/30" type="button">Jordan<svg aria-hidden="true" class="lucide lucide-chevron-down size-3.5 text-muted" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="m6 9 6 6 6-6"></path>
+</svg></button><button class="inline-flex items-center gap-1.5 rounded-full border border-line bg-canvas px-3.5 py-2 text-xs font-medium text-ink transition-colors hover:border-ink/30" type="button">JOD (د.ا)<svg aria-hidden="true" class="lucide lucide-chevron-down size-3.5 text-muted" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="m6 9 6 6 6-6"></path>
+</svg></button><button class="inline-flex items-center gap-1.5 rounded-full border border-line bg-canvas px-3.5 py-2 text-xs font-medium text-ink transition-colors hover:border-ink/30" type="button">English / العربية<svg aria-hidden="true" class="lucide lucide-chevron-down size-3.5 text-muted" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="m6 9 6 6 6-6"></path>
+</svg></button></div>
+<div class="flex flex-wrap items-center gap-2"><span class="rounded-full border border-line bg-canvas px-2.5 py-1 text-[10px] font-medium uppercase tracking-wide text-muted" data-keep-en="">Visa</span><span class="rounded-full border border-line bg-canvas px-2.5 py-1 text-[10px] font-medium uppercase tracking-wide text-muted" data-keep-en="">Mastercard</span><span class="rounded-full border border-line bg-canvas px-2.5 py-1 text-[10px] font-medium uppercase tracking-wide text-muted" data-keep-en="">CliQ</span><span class="rounded-full border border-line bg-canvas px-2.5 py-1 text-[10px] font-medium uppercase tracking-wide text-muted" data-keep-en="">eFAWATEERcom</span><span class="rounded-full border border-line bg-canvas px-2.5 py-1 text-[10px] font-medium uppercase tracking-wide text-muted">Cash on delivery</span></div>
+</div>
+<div class="flex flex-col gap-2 border-t border-line py-7 text-xs text-muted sm:flex-row sm:items-center sm:justify-between">
+<p>© 2026 <!-- -->SecondChance Collective<!-- -->. All rights reserved.</p>
+<ul class="flex flex-wrap gap-5">
+<li><a class="hover:text-ink" href="legal-terms.html">Terms</a></li>
+<li><a class="hover:text-ink" href="legal-privacy.html">Privacy</a></li>
+<li><a class="hover:text-ink" href="legal-cookies.html">Cookies</a></li>
+</ul>
+</div>
+</div>
+<div aria-hidden="true" class="h-(--tabbar-height) md:hidden"></div>
+</footer>
+<nav aria-label="Primary" class="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-canvas/95 pb-[env(safe-area-inset-bottom,0px)] backdrop-blur md:hidden">
+<ul class="flex items-end justify-around px-2 pt-1.5 pb-1.5">
+<li><a class="inline-flex min-w-14 flex-col items-center gap-0.5 rounded-lg px-2 py-1 text-[10px] font-medium text-muted hover:text-ink" href="index.html"><svg aria-hidden="true" class="lucide lucide-house size-5" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"></path>
+<path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+</svg>Home</a></li>
+<li><a class="inline-flex min-w-14 flex-col items-center gap-0.5 rounded-lg px-2 py-1 text-[10px] font-medium text-muted hover:text-ink" href="search.html"><svg aria-hidden="true" class="lucide lucide-search size-5" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="m21 21-4.34-4.34"></path>
+<circle cx="11" cy="11" r="8"></circle>
+</svg>Search</a></li>
+<li><a aria-label="Sell an item" class="mb-0.5 inline-flex flex-col items-center gap-1" href="sell.html"><span class="inline-flex size-11 items-center justify-center rounded-full bg-accent text-accent-contrast shadow-(--shadow-lifted)"><svg aria-hidden="true" class="lucide lucide-plus size-5" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="M5 12h14"></path>
+<path d="M12 5v14"></path>
+</svg></span></a></li>
+<li><a class="inline-flex min-w-14 flex-col items-center gap-0.5 rounded-lg px-2 py-1 text-[10px] font-medium text-muted hover:text-ink" href="account.html?tab=favorites"><svg aria-hidden="true" class="lucide lucide-heart size-5" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5"></path>
+</svg>Saved</a></li>
+<li><a class="inline-flex min-w-14 flex-col items-center gap-0.5 rounded-lg px-2 py-1 text-[10px] font-medium text-muted hover:text-ink" href="signin.html"><svg aria-hidden="true" class="lucide lucide-user-round size-5" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<circle cx="12" cy="8" r="5"></circle>
+<path d="M20 21a8 8 0 0 0-16 0"></path>
+</svg>Profile</a></li>
+</ul>
+</nav><next-route-announcer style="position: absolute;"></next-route-announcer>
+<script>
+    window.SC_NEW_ORDER = ["l010","l005","l001","l006","l020","l002","l011","l014","l016","l024","l027","l030","l034","l039","l042","l028","l012","l025","l003","l018","l032","l004","l035","l013","l021","l040","l015","l036","l026","l007","l019","l008","l022","l033","l038","l009","l031","l017","l023","l029","l037","l041"];
   </script>
-</body>
+<script src="menus.js"></script>
+<script src="runtime.js"></script>
+<script src="search.js"></script>
+<script data-sc="nav" type="module">import { initNav } from './js/sc-nav.js'; initNav();</script><script data-sc="i18n" type="module">import { initI18n } from './js/sc-i18n.js'; initI18n();</script><script data-sc="menu" type="module">import { initMenu } from './js/sc-menu.js'; initMenu();</script><script data-sc="grid" type="module">import { initGrids, initCounts } from './js/sc-grid.js'; initGrids(); initCounts();</script></body>
 </html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+
+<html class="bricolage_grotesque_e01f6fad-module__frOMPG__variable poppins_ead9b0ae-module__Bvcf9q__variable" lang="en-JO">
+<head><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link data-sc="arfonts" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&amp;family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<meta content="#ffffff" name="theme-color"/>
+<title>Listing · SecondChance Collective</title>
+<link href="styles.css" rel="stylesheet"/>
+<link href="sc-app.css" rel="stylesheet"/>
+<style>
+  .it-head { border-bottom: 1px solid var(--color-line); background: var(--color-canvas); }
+  .it-bar { display: flex; align-items: center; gap: 14px; padding: 16px 0; }
+  .it-brand { font-family: var(--font-bricolage); font-size: 15px; font-weight: 600; letter-spacing: -.01em; }
+  .it-brand i { font-style: normal; color: var(--color-accent); }
+  .it-wrap { padding: 26px 0 70px; }
+  .it-grid { display: grid; gap: 30px; align-items: start; }
+  @media (min-width: 900px) { .it-grid { grid-template-columns: 1.15fr .85fr; gap: 44px; } }
+  .it-gallery { display: grid; gap: 10px; }
+  .it-main-img { width: 100%; aspect-ratio: 4/5; object-fit: cover;
+    border-radius: var(--radius-card); background: var(--color-product); }
+  .it-thumbs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  .it-thumbs button { padding: 0; border: 2px solid transparent; background: none;
+    border-radius: 12px; overflow: hidden; cursor: pointer; }
+  .it-thumbs button.is-active { border-color: var(--color-accent); }
+  .it-thumbs img { width: 100%; aspect-ratio: 1; object-fit: cover; display: block;
+    background: var(--color-product); }
+  .it-side { position: sticky; top: 24px; }
+  .it-price { font-family: var(--font-bricolage); font-size: 30px; font-weight: 600;
+    font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
+  .it-retail { color: var(--color-muted); text-decoration: line-through; font-size: 14px; margin-left: 8px; }
+</style>
+<link href="sc-rtl.css" rel="stylesheet"/></head>
+<body class="sc">
+<header class="it-head">
+<div class="sc-shell it-bar">
+<a class="it-brand" href="index.html">SecondChance collective<i>.</i></a>
+<nav class="sc-row-tight sc-right" style="gap:4px">
+<a class="sc-btn sc-btn-ghost sc-btn-sm" href="index.html">Shop</a>
+<a class="sc-btn sc-btn-ghost sc-btn-sm" href="account.html">Account</a>
+<a class="sc-btn sc-btn-primary sc-btn-sm" href="sell.html">List an item</a>
+</nav>
+</div>
+</header>
+<main class="sc-shell it-wrap" id="item-root">
+<div class="it-grid">
+<div class="sc-skeleton" style="aspect-ratio:4/5;border-radius:22px"></div>
+<div class="sc-stack">
+<div class="sc-skeleton" style="height:30px;width:70%"></div>
+<div class="sc-skeleton" style="height:20px;width:40%"></div>
+<div class="sc-skeleton" style="height:120px"></div>
+</div>
+</div>
+</main>
+<script type="module">
+  import { initItem } from './js/sc-item.js';
+  initItem();
+</script>
+<script data-sc="i18n" type="module">import { initI18n } from './js/sc-i18n.js'; initI18n();</script></body>
+</html>
