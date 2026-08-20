@@ -120,32 +120,77 @@ they land.
 1. Make sure **Email** is enabled (it is by default)
 2. Enable **Confirm email** — without it the whole gate above does nothing
 
+### Set up custom SMTP — the templates are locked without it
+
+Supabase will not let you edit the email templates while it sends through its
+own shared mailer (an anti-phishing rule), and that mailer is capped at a
+couple of emails an hour anyway. So your own sender comes first, then the
+templates.
+
+Any transactional SMTP provider works. Two good free options:
+
+**Resend — if you own a domain** (3,000 emails/month free)
+
+1. [resend.com](https://resend.com) → **Domains → Add Domain**, add the DNS
+   records it shows you at your registrar, wait for **Verified**
+2. **API Keys → Create API Key**, copy it
+3. In Supabase: **Project Settings → Authentication → SMTP Settings**
+   (newer dashboards: **Authentication → Emails → SMTP Settings**) →
+   enable **Custom SMTP** and fill in:
+
+| Field | Value |
+|---|---|
+| Sender email | `codes@yourdomain.com` |
+| Sender name | SecondChance Collective |
+| Host | `smtp.resend.com` |
+| Port | `465` |
+| Username | `resend` |
+| Password | the API key |
+
+**Brevo — if you have no domain yet** (300 emails/day free)
+
+1. [brevo.com](https://www.brevo.com) → create the free account
+2. **Settings → Senders, Domains & Dedicated IPs → Senders → Add a sender** —
+   an address you can receive mail at; click the confirmation link it sends you
+3. **Settings → SMTP & API → SMTP tab** — note the **login** shown there and
+   generate an **SMTP key**
+4. Same Supabase screen as above: Host `smtp-relay.brevo.com`, Port `587`,
+   Username = the login from the SMTP tab, Password = the SMTP key,
+   Sender email = the address you verified in step 2
+
+A sender on a domain you own always reaches inboxes more reliably than a
+personal address relayed through a third party — plan to move to your own
+domain before launch even if you start on Brevo.
+
+After saving, open **Authentication → Rate Limits** and raise the emails-per-
+hour limit — it unlocks once custom SMTP is on (the default becomes 30/hour).
+
 ### Put the code in the emails
 
-Supabase's default templates send a confirmation **link**. The site verifies
-six-digit **codes**, so the templates must contain one.
+Now that the templates are editable: Supabase's defaults send a confirmation
+**link**, but the site verifies six-digit **codes**, so the templates must
+contain one.
 
 **Authentication → Email Templates** — in both **Confirm signup** and
-**Magic Link**, make sure the body includes:
+**Magic Link**, make the body:
 
 ```html
-<p>Your SecondChance code is:</p>
-<h2>{{ .Token }}</h2>
+<div style="font-family:Arial,sans-serif;max-width:420px;margin:0 auto">
+  <h2 style="margin:0 0 4px">SecondChance Collective</h2>
+  <p>Enter this code to continue:</p>
+  <p style="font-size:32px;letter-spacing:8px;font-weight:bold;margin:16px 0">{{ .Token }}</p>
+  <p style="color:#666">The code expires in 60 minutes.
+     If you didn't request it, you can ignore this email.</p>
+</div>
 ```
 
 You can delete `{{ .ConfirmationURL }}` for codes only, or leave both —
 `auth-callback.html` still handles old-style links gracefully.
 
-### Two defaults worth checking
+### One default worth checking
 
 **OTP expiry** defaults to 3600 seconds for email. Fine as it is — codes live
 an hour, and the resend button on the code page enforces its own cooldown.
-
-**Built-in email is rate-limited.** Supabase sends only a handful of auth
-emails per hour through its own sender — enough while building, not for
-launch. Before real members arrive, set your own sender under **Project
-Settings → Authentication → SMTP Settings**. Resend, Postmark and Amazon SES
-all work.
 
 ### Test it
 
@@ -266,7 +311,8 @@ All of these are editable in **Admin → Settings** and take effect immediately.
 ## Before you launch
 
 - [ ] Turn **Confirm email** back on
-- [ ] Set up real SMTP — the default sender will not cope
+- [ ] Custom SMTP on a domain you own (Step 4) — without it the templates are
+      locked and email is capped to a handful an hour
 - [ ] Solve OTP delivery (Step 6) before switching on admin 2FA
 - [ ] Run the Security Advisor and clear anything it flags
 - [ ] Rotate the `anon` key if it was ever pasted somewhere public
