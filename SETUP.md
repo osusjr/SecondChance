@@ -61,6 +61,7 @@ Open **SQL Editor** in the Supabase dashboard. Run the files in `supabase/`
 | 7 | `07_remove_delivery.sql` | Removes shipping columns and rebuilds `place_order` |
 | 8 | `08_phone_identity.sql` | (superseded by 09, still run it) phone-identity era |
 | 9 | `09_email_identity.sql` | Makes email the identity; the mobile number stays as a contact field |
+| 10 | `10_fix_signup_columns.sql` | Adds the `profiles.email` column that 08/09 assumed — **sign-up fails with "Database error saving new user" until this runs** |
 
 Paste the whole file each time and press **Run**. Green means it worked.
 
@@ -325,6 +326,10 @@ All of these are editable in **Admin → Settings** and take effect immediately.
 ---
 
 ## If something breaks
+
+**"Database error saving new user" at sign-up** — `10_fix_signup_columns.sql`
+has not been run. The sign-up trigger writes to `profiles.email`, which only
+that file creates. Run it once; nothing else needs re-running.
 
 **"Could not load listings"** — the anon key in `js/config.js` is wrong or missing.
 
