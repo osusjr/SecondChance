@@ -39,7 +39,7 @@ export const PAYMENT_METHODS = [
   { value: 'card',         label: 'Card',            note: 'Visa or Mastercard' },
   { value: 'cliq',         label: 'CliQ',            note: 'Instant bank transfer' },
   { value: 'efawateercom', label: 'eFAWATEERcom',    note: 'Pay through your bank' },
-  { value: 'cod',          label: 'Cash on delivery', note: 'Pay the courier' },
+  { value: 'cod',          label: 'Cash on handover', note: 'Pay in person when you meet' },
 ];
 
 export const PHOTO_SLOTS = [
@@ -47,7 +47,17 @@ export const PHOTO_SLOTS = [
   { slot: 'back',   label: 'Back',   note: 'Including the base' },
   { slot: 'detail', label: 'Detail', note: 'Hardware or stitching' },
   { slot: 'label',  label: 'Label',  note: 'Interior stamp or serial' },
+  { slot: 'extra1', label: 'Extra',  note: 'Inside or lining' },
+  { slot: 'extra2', label: 'Extra',  note: 'Corners and edges' },
+  { slot: 'extra3', label: 'Extra',  note: 'Any flaws, up close' },
+  { slot: 'extra4', label: 'Extra',  note: 'Worn or styled' },
+  { slot: 'extra5', label: 'Extra',  note: 'Box or receipt' },
+  { slot: 'extra6', label: 'Extra',  note: 'Anything else' },
 ];
+
+// One optional video per listing, shown last in the gallery.
+export const VIDEO_SLOT = { slot: 'video', label: 'Video', note: 'A slow pan in good light, optional' };
+export const MAX_VIDEO_MB = 50;
 
 // Every permission the admin panel understands, grouped for the roles screen.
 export const PERMISSIONS = {

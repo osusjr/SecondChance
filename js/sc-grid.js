@@ -12,7 +12,8 @@ import { sb, money, esc, publicUrl, getSettings, withTimeout } from './sc-core.j
 let currency = 'JOD';
 
 const card = l => {
-  const photo = (l.images || []).sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))[0];
+  const photo = (l.images || []).filter(p => p.slot !== 'video')
+    .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))[0];
   const off = l.original_retail && l.original_retail > l.price
     ? Math.round((1 - l.price / l.original_retail) * 100) : 0;
 
@@ -32,7 +33,7 @@ const card = l => {
             ? `<span class="sc-badge sc-badge-accent" style="position:absolute;top:9px;left:9px">Featured</span>`
             : ''}
       </div>
-      <p class="sc-xs sc-muted" style="margin-top:9px">${esc(l.brand?.name || '')}</p>
+      <p class="sc-xs sc-muted" style="margin-top:9px">${esc(l.brand?.name || l.custom_brand || '')}</p>
       <p class="sc-sm sc-truncate" style="font-weight:500;margin-top:2px">${esc(l.title)}</p>
       <p class="sc-sm sc-money" style="margin-top:3px">${money(l.price, currency)}
         ${off > 0
@@ -50,11 +51,11 @@ async function fill(grid) {
   const limit = filter.limit || 12;
 
   let q = sb.from('listings')
-    .select(`id, title, price, original_retail, is_featured, authentication_status,
+    .select(`id, title, price, original_retail, is_featured, authentication_status, custom_brand,
              brand:brands${filter.brand ? '!inner' : ''}(name, slug),
              category:categories${filter.category ? '!inner' : ''}(name, slug),
              condition:conditions(label),
-             images:listing_images(storage_path, sort_order)`)
+             images:listing_images(storage_path, slot, sort_order)`)
     .eq('status', 'active')
     .limit(limit);
 

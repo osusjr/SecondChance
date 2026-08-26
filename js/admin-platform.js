@@ -157,8 +157,7 @@ async function createCode(reload, ctx) {
           <select class="sc-select" name="type">
             <option value="percent">Percentage off</option>
             <option value="fixed">Fixed amount off</option>
-            <option value="free_shipping">Free shipping</option>
-          </select></div>
+                      </select></div>
         <div class="sc-field"><label class="sc-label">Value</label>
           <input class="sc-input" name="value" type="number" step="0.01" required value="10"></div>
       </div>
@@ -589,29 +588,106 @@ async function admins({ setContent, setTitle }) {
       });
       if (result?.value !== true) return;
 
-      const who = result.values.who.trim().replace('@', '');
-      const { data: profile } = await sb.from('profiles')
-        .select('id').eq('username', who).maybeSingle();
-      if (!profile) return toast('No member with that username. They need to sign up first.', 'danger');
+      // Strip only a leading @ so emails survive; try username first, then email.
+      const raw = result.values.who.trim();
+      const who = raw.replace(/^@/, '');
+      let { data: profile } = await sb.from('profiles')
+        .select('id, username, full_name').eq('username', who).maybeSingle();
+      if (!profile && raw.includes('@')) {
+        ({ data: profile } = await sb.from('profiles')
+          .select('id, username, full_name').eq('email', raw).maybeSingle());
+      }
+      if (!profile) return toast('No member with that username or email. They need to sign up first.', 'danger');
 
-      await adminAction(() => sb.from('admin_users').insert({
-        user_id: profile.id, role_id: result.values.role_id, created_by: session.user.id,
-      }), 'Admin added.');
+      // If they already hold a role, offer to change it instead of failing
+      // on the one-admin-row-per-person constraint.
+      const { data: existing } = await sb.from('admin_users')
+        .select('id, is_active, role:admin_roles(name)').eq('user_id', profile.id).maybeSingle();
+
+      if (existing) {
+        const newRole = (roles || []).find(r => r.id === result.values.role_id);
+        const newRoleName = newRole?.name || 'the new role';
+        const person = profile.full_name || profile.username || 'They';
+
+        // Same lockout guard as the change-role handler: never demote the
+        // last active full-access admin through this side door.
+        const row = (staff || []).find(s => s.id === existing.id);
+        const losesFull = row?.role?.permissions?.includes('*') && !newRole?.permissions?.includes('*');
+        if (losesFull && existing.is_active) {
+          const otherFull = (staff || []).filter(s =>
+            s.id !== existing.id && s.is_active && s.role?.permissions?.includes('*'));
+          if (!otherFull.length)
+            return toast('That is the only account with full access. Make someone else Super Admin first.', 'danger');
+          if (profile.id === session.user.id &&
+              !await confirmAction('Give up full access?',
+                'You are changing your own role — the panel will narrow to the new role when it next loads.',
+                'Change my role', true)) return;
+        }
+
+        if (!await confirmAction('Already an admin',
+          `${person} ${existing.is_active ? 'already has' : 'previously had'} admin access as ` +
+          `${existing.role?.name || 'another role'}. Change them to ${newRoleName}?`, 'Change role')) return;
+        let res;
+        try {
+          res = await adminAction(() => sb.from('admin_users')
+            .update({ role_id: result.values.role_id, is_active: true })
+            .eq('id', existing.id).select('id'));
+        } catch { return; }
+        if (!res?.data?.length)
+          return toast('You do not have permission to change roles.', 'danger');
+        toast(`Role changed to ${newRoleName}.`, 'ok');
+        render();
+        return;
+      }
+
+      try {
+        await adminAction(() => sb.from('admin_users').insert({
+          user_id: profile.id, role_id: result.values.role_id, created_by: session.user.id,
+        }), 'Admin added.');
+      } catch { return; }
       render();
     });
 
     root.querySelectorAll('[data-role]').forEach(b => b.addEventListener('click', async () => {
+      const row = (staff || []).find(s => s.id === b.dataset.role);
       const result = await modal({
         title: 'Change role',
-        body: `<form><div class="sc-field"><label class="sc-label">Role</label>
+        body: `${row ? `<p class="sc-lead" style="margin-bottom:14px">
+            ${esc(row.user?.full_name || row.user?.username || 'This admin')} is currently
+            <strong>${esc(row.role?.name || '—')}</strong>.</p>` : ''}
+          <form><div class="sc-field"><label class="sc-label">Role</label>
           <select class="sc-select" name="role_id">
-            ${(roles || []).map(r => `<option value="${r.id}">${esc(r.name)}</option>`).join('')}
+            ${(roles || []).map(r =>
+              `<option value="${r.id}" ${r.id === row?.role?.id ? 'selected' : ''}>${esc(r.name)}</option>`).join('')}
           </select></div></form>`,
         actions: [{ label: 'Cancel', value: false }, { label: 'Save', value: true, kind: 'sc-btn-primary' }],
       });
       if (result?.value !== true) return;
-      await adminAction(() => sb.from('admin_users')
-        .update({ role_id: result.values.role_id }).eq('id', b.dataset.role), 'Role changed.');
+      if (result.values.role_id === row?.role?.id) return toast('They already have that role.');
+
+      // Never let the last active full-access account be demoted into a
+      // lockout. Disabled rows can be re-roled freely.
+      const newRole = (roles || []).find(r => r.id === result.values.role_id);
+      const losesFull = row?.role?.permissions?.includes('*') && !newRole?.permissions?.includes('*');
+      if (losesFull && row?.is_active !== false) {
+        const otherFull = (staff || []).filter(s =>
+          s.id !== row?.id && s.is_active && s.role?.permissions?.includes('*'));
+        if (!otherFull.length)
+          return toast('That is the only account with full access. Make someone else Super Admin first.', 'danger');
+        if (row?.user?.id === session.user.id &&
+            !await confirmAction('Give up full access?',
+              'You are changing your own role — the panel will narrow to the new role when it next loads.',
+              'Change my role', true)) return;
+      }
+
+      let res;
+      try {
+        res = await adminAction(() => sb.from('admin_users')
+          .update({ role_id: result.values.role_id }).eq('id', b.dataset.role).select('id'));
+      } catch { return; }
+      if (!res?.data?.length)
+        return toast('You do not have permission to change roles.', 'danger');
+      toast(`Role changed to ${newRole?.name || 'the new role'}. It takes effect when they next open the panel.`, 'ok');
       render();
     }));
 
@@ -814,7 +890,7 @@ async function settings({ setContent, setTitle, ctx }) {
           <div class="sc-prefix"><span class="sc-prefix-tag">${esc(s.currency)}</span>
             <input class="sc-input" name="authentication_threshold" type="number" step="1"
                    value="${s.authentication_threshold}"></div>
-          <p class="sc-hint">Anything at or above this price gets checked before it ships.</p></div>
+          <p class="sc-hint">Anything at or above this price gets checked before it changes hands.</p></div>
         <div class="sc-field"><label class="sc-label">Payout hold</label>
           <div class="sc-prefix"><span class="sc-prefix-tag">days</span>
             <input class="sc-input" name="payout_hold_days" type="number"

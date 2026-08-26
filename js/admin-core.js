@@ -208,7 +208,7 @@ async function listings({ setContent, setTitle, setActions, ctx }) {
 
     let q = sb.from('listings')
       .select(`id, reference, title, status, price, created_at, is_featured, is_flagged,
-               authentication_status, rejection_reason,
+               authentication_status, rejection_reason, custom_brand,
                brand:brands(name), category:categories(name),
                seller:profiles!listings_seller_id_fkey(id, username, full_name, seller_status),
                images:listing_images(storage_path, slot)`)
@@ -234,7 +234,7 @@ async function listings({ setContent, setTitle, setActions, ctx }) {
           <td><div class="sc-row-tight">
             <img class="sc-thumb" src="${front ? publicUrl('listing-photos', front.storage_path) : ''}" alt="" loading="lazy">
             <div style="min-width:0"><p style="font-weight:500" class="sc-truncate">${esc(l.title)}</p>
-              <p class="sc-xs sc-muted">${esc(l.reference || '')} · ${esc(l.brand?.name || 'No brand')} · ${esc(l.category?.name || '—')}</p>
+              <p class="sc-xs sc-muted">${esc(l.reference || '')} · ${esc(l.brand?.name || l.custom_brand || 'No brand')} · ${esc(l.category?.name || '—')}</p>
               ${l.is_flagged ? '<span class="sc-badge sc-badge-danger" style="margin-top:3px">Flagged</span>' : ''}
             </div></div></td>
           <td><p class="sc-sm">${esc(l.seller?.username || l.seller?.full_name || '—')}</p>
@@ -258,7 +258,7 @@ async function listings({ setContent, setTitle, setActions, ctx }) {
 
   document.querySelector('[data-export]')?.addEventListener('click', () => {
     downloadCsv('secondchance-listings.csv', rowsCache.map(l => ({
-      reference: l.reference, title: l.title, brand: l.brand?.name, category: l.category?.name,
+      reference: l.reference, title: l.title, brand: l.brand?.name || l.custom_brand, category: l.category?.name,
       seller: l.seller?.username, status: l.status, price: l.price, listed: l.created_at,
     })));
   });
@@ -287,14 +287,18 @@ async function openListing(id, ctx, reload) {
       </div>
 
       <div class="sc-photos">${photos.length
-        ? photos.map(p => `<a href="${publicUrl('listing-photos', p.storage_path)}" target="_blank" rel="noopener">
+        ? photos.map(p => p.slot === 'video' || /\.(mp4|mov|webm)$/i.test(p.storage_path)
+            ? `<video src="${esc(publicUrl('listing-photos', p.storage_path))}" controls playsinline preload="metadata"
+                 style="width:100%;border-radius:10px;background:#101114"></video>`
+            : `<a href="${publicUrl('listing-photos', p.storage_path)}" target="_blank" rel="noopener">
             <img src="${publicUrl('listing-photos', p.storage_path)}" alt="${esc(p.slot || '')}" loading="lazy"></a>`).join('')
         : '<p class="sc-sm sc-muted">No photos uploaded.</p>'}</div>
 
       <dl class="sc-kv" style="margin-top:18px">
         <dt>Seller</dt><dd>${esc(l.seller?.username || l.seller?.full_name || '—')}
           ${l.seller?.seller_status === 'approved' ? '<span class="sc-badge sc-badge-ok">Verified</span>' : ''}</dd>
-        <dt>Brand</dt><dd>${esc(l.brand?.name || '—')}</dd>
+        <dt>Brand</dt><dd>${esc(l.brand?.name || l.custom_brand || '—')}
+          ${!l.brand && l.custom_brand ? '<span class="sc-badge sc-badge-warn">Typed by seller</span>' : ''}</dd>
         <dt>Category</dt><dd>${esc(l.category?.name || '—')}</dd>
         <dt>Condition</dt><dd>${esc(l.condition?.label || l.condition_code || '—')}</dd>
         <dt>Size</dt><dd>${esc(l.size_label || '—')}</dd>
@@ -405,7 +409,7 @@ async function openListing(id, ctx, reload) {
 // 4. AUTHENTICATION / QUALITY CONTROL
 // ---------------------------------------------------------------------------
 async function verification({ setContent, setTitle, ctx }) {
-  setTitle('Authentication', `Everything priced over ${money(ctx.settings?.authentication_threshold, cur(ctx))} is checked before it ships`);
+  setTitle('Authentication', `Everything priced over ${money(ctx.settings?.authentication_threshold, cur(ctx))} is checked before it changes hands`);
 
   const tabs = [
     { value: 'pending', label: 'Waiting', active: true, count: ctx.counts.pending_auth },
@@ -422,7 +426,7 @@ async function verification({ setContent, setTitle, ctx }) {
     host.innerHTML = '<div class="sc-skeleton" style="height:180px"></div>';
 
     let q = sb.from('listings')
-      .select(`id, reference, title, price, authentication_status, created_at,
+      .select(`id, reference, title, price, authentication_status, created_at, custom_brand,
                brand:brands(name), seller:profiles!listings_seller_id_fkey(username, full_name),
                images:listing_images(storage_path, slot),
                checks:authentication_checks(id, status, verdict, notes, certificate_no, completed_at)`)
@@ -446,7 +450,7 @@ async function verification({ setContent, setTitle, ctx }) {
           <td><div class="sc-row-tight">
             <img class="sc-thumb" src="${front ? publicUrl('listing-photos', front.storage_path) : ''}" alt="" loading="lazy">
             <div><p style="font-weight:500">${esc(l.title)}</p>
-              <p class="sc-xs sc-muted">${esc(l.reference || '')} · ${esc(l.brand?.name || '—')}</p></div>
+              <p class="sc-xs sc-muted">${esc(l.reference || '')} · ${esc(l.brand?.name || l.custom_brand || '—')}</p></div>
           </div></td>
           <td class="sc-sm">${esc(l.seller?.username || l.seller?.full_name || '—')}</td>
           <td class="sc-cell-num sc-money">${money(l.price, cur(ctx))}</td>
@@ -480,7 +484,7 @@ const CHECKLIST = [
 
 async function runCheck(listingId, ctx, reload) {
   const { data: l } = await sb.from('listings')
-    .select(`id, title, reference, price, description, condition_code,
+    .select(`id, title, reference, price, description, condition_code, custom_brand,
              brand:brands(name), images:listing_images(storage_path, slot),
              seller:profiles!listings_seller_id_fkey(username, full_name)`)
     .eq('id', listingId).single();
@@ -492,11 +496,14 @@ async function runCheck(listingId, ctx, reload) {
     size: 'lg',
     title: `Authenticate: ${l.title}`,
     body: `
-      <p class="sc-sm sc-muted">${esc(l.reference || '')} · ${esc(l.brand?.name || '—')} ·
+      <p class="sc-sm sc-muted">${esc(l.reference || '')} · ${esc(l.brand?.name || l.custom_brand || '—')} ·
         ${money(l.price, cur(ctx))} · from ${esc(l.seller?.username || l.seller?.full_name || '—')}</p>
 
       <div class="sc-photos" style="margin-top:14px">
-        ${(l.images || []).map(p => `<a href="${publicUrl('listing-photos', p.storage_path)}" target="_blank" rel="noopener">
+        ${(l.images || []).map(p => p.slot === 'video' || /\.(mp4|mov|webm)$/i.test(p.storage_path)
+          ? `<video src="${esc(publicUrl('listing-photos', p.storage_path))}" controls playsinline preload="metadata"
+               style="width:100%;border-radius:10px;background:#101114"></video>`
+          : `<a href="${publicUrl('listing-photos', p.storage_path)}" target="_blank" rel="noopener">
           <img src="${publicUrl('listing-photos', p.storage_path)}" alt="${esc(p.slot || '')}" loading="lazy"></a>`).join('')}
       </div>
 

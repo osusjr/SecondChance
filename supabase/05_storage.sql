@@ -4,7 +4,7 @@
 
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 values
-  ('listing-photos', 'listing-photos', true,  10485760, array['image/jpeg','image/png','image/webp','image/avif']),
+  ('listing-photos', 'listing-photos', true,  52428800, array['image/jpeg','image/png','image/webp','image/avif','video/mp4','video/quicktime','video/webm']),
   ('avatars',        'avatars',        true,   2097152, array['image/jpeg','image/png','image/webp']),
   ('banners',        'banners',        true,   5242880, array['image/jpeg','image/png','image/webp','image/svg+xml']),
   ('kyc-documents',  'kyc-documents',  false, 10485760, array['image/jpeg','image/png','application/pdf']),
@@ -12,7 +12,8 @@ values
   ('dispute-files',  'dispute-files',  false, 10485760, array['image/jpeg','image/png','application/pdf'])
 on conflict (id) do nothing;
 
--- Path convention: listing-photos/{user_id}/{listing_id}/{slot}.jpg
+-- Path convention: listing-photos/{user_id}/{listing_id}/{slot}.{ext}
+-- Photos are jpg/png/webp; one optional video per listing (mp4/mov/webm, 50 MB).
 -- The first folder segment is always the owner's uid, which is what these
 -- policies check against.
 

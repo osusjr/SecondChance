@@ -18,7 +18,10 @@
 // the seller after a sale — but it is a contact field, not the identity.
 // ============================================================================
 
-import { sb, session, loadSession, toast, esc, errorMessage, param } from './sc-core.js';
+import {
+  sb, session, loadSession, toast, esc, errorMessage, param,
+  USERNAME_RE, USERNAME_RULE,
+} from './sc-core.js';
 
 const PENDING = 'sc-pending-email';
 const RESEND_WAIT = 45;
@@ -96,8 +99,9 @@ export function initSignUp() {
     if (!phone) return showError(form,
       'That does not look like a Jordanian mobile number. It should start 077, 078 or 079.');
     if (!f.full_name?.trim()) return showError(form, 'We need your name.');
-    if (f.username && !/^[a-z0-9_]{3,20}$/i.test(f.username))
-      return showError(form, 'Usernames are 3-20 letters, numbers or underscores.');
+    f.username = f.username?.trim() || '';
+    if (f.username && !USERNAME_RE.test(f.username))
+      return showError(form, USERNAME_RULE);
     const pwProblem = passwordProblem(f.password);
     if (pwProblem) return showError(form, pwProblem);
     if (f.password !== f.confirm) return showError(form, 'The two passwords do not match.');
