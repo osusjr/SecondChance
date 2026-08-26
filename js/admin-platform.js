@@ -509,7 +509,7 @@ async function admins({ setContent, setTitle }) {
   const render = async () => {
     const [{ data: staff }, { data: roles }] = await Promise.all([
       sb.from('admin_users')
-        .select('*, user:profiles(id, username, full_name), role:admin_roles(id, key, name, permissions)')
+        .select('*, user:profiles!admin_users_user_id_fkey(id, username, full_name), role:admin_roles(id, key, name, permissions)')
         .order('created_at'),
       sb.from('admin_roles').select('*').order('key'),
     ]);

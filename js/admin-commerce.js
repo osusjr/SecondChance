@@ -88,7 +88,7 @@ async function users({ setContent, setTitle, setActions, ctx }) {
 
 async function loadApplications(host, ctx, reload) {
   const { data } = await sb.from('seller_applications')
-    .select('*, user:profiles(id, username, full_name, phone, city, created_at)')
+    .select('*, user:profiles!seller_applications_user_id_fkey(id, username, full_name, phone, city, created_at)')
     .eq('status', 'pending').order('created_at', { ascending: false });
 
   host.innerHTML = table({
@@ -529,7 +529,7 @@ async function returns({ setContent, setTitle, ctx }) {
 
     if (filter === 'returns') {
       const { data } = await sb.from('returns')
-        .select('*, order:orders(order_no, total, listing:listings(title)), buyer:profiles(username, full_name)')
+        .select('*, order:orders(order_no, total, listing:listings(title)), buyer:profiles!returns_buyer_id_fkey(username, full_name)')
         .order('created_at', { ascending: false }).limit(80);
 
       host.innerHTML = table({
@@ -790,7 +790,7 @@ async function payouts({ setContent, setTitle, setActions, ctx }) {
     host.innerHTML = '<div class="sc-skeleton" style="height:200px"></div>';
 
     let q = sb.from('payouts')
-      .select('*, seller:profiles(id, username, full_name, phone)')
+      .select('*, seller:profiles!payouts_seller_id_fkey(id, username, full_name, phone)')
       .order('scheduled_for', { ascending: true }).limit(120);
     if (filter !== 'all') q = q.eq('status', filter);
 
