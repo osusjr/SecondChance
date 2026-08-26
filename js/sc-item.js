@@ -12,6 +12,17 @@ import { CITIES, PAYMENT_METHODS } from './config.js';
 let listing = null;
 let settings = null;
 
+// A listing carries up to ten photos and one optional video (slot 'video').
+const isVideoMedia = p => p?.slot === 'video' || /\.(mp4|mov|webm)$/i.test(p?.storage_path || '');
+
+function mainMediaHtml(p) {
+  if (!p) return '<img class="it-main-img" id="it-main" alt="" src="">';
+  const url = esc(publicUrl('listing-photos', p.storage_path));
+  return isVideoMedia(p)
+    ? `<video class="it-main-img" id="it-main" controls playsinline preload="metadata" src="${url}"></video>`
+    : `<img class="it-main-img" id="it-main" alt="${esc(listing?.title || '')}" src="${url}">`;
+}
+
 export async function initItem() {
   const id = param('id');
   const root = document.getElementById('item-root');
@@ -68,12 +79,13 @@ function render(root) {
 
     <div class="it-grid">
       <div class="it-gallery">
-        <img class="it-main-img" id="it-main" alt="${esc(l.title)}"
-             src="${photos[0] ? publicUrl('listing-photos', photos[0].storage_path) : ''}">
+        <div id="it-main-wrap">${mainMediaHtml(photos[0])}</div>
         ${photos.length > 1 ? `<div class="it-thumbs">${photos.map((p, i) =>
           `<button type="button" data-photo="${i}" class="${i === 0 ? 'is-active' : ''}"
-             aria-label="${esc(p.slot || 'Photo ' + (i + 1))}">
-             <img src="${publicUrl('listing-photos', p.storage_path)}" alt="" loading="lazy"></button>`
+             aria-label="${esc(isVideoMedia(p) ? 'Video' : p.slot || 'Photo ' + (i + 1))}">
+             ${isVideoMedia(p)
+               ? '<span class="it-thumb-video" aria-hidden="true">▶</span>'
+               : `<img src="${esc(publicUrl('listing-photos', p.storage_path))}" alt="" loading="lazy">`}</button>`
         ).join('')}</div>` : ''}
       </div>
 
@@ -84,7 +96,7 @@ function render(root) {
             ${l.is_featured ? '<span class="sc-badge sc-badge-accent">Featured</span>' : ''}
             ${!available ? badge(l.status) : ''}
           </div>
-          ${l.brand ? `<p class="sc-eyebrow">${esc(l.brand.name)}</p>` : ''}
+          ${l.brand || l.custom_brand ? `<p class="sc-eyebrow">${esc(l.brand?.name || l.custom_brand)}</p>` : ''}
           <h1 class="sc-h1" style="margin-top:5px">${esc(l.title)}</h1>
           <p class="it-price" style="margin-top:12px">${money(l.price, c)}
             ${l.original_retail ? `<span class="it-retail">${money(l.original_retail, c)}</span>` : ''}</p>
@@ -159,7 +171,7 @@ function wire(root) {
 
   root.querySelectorAll('[data-photo]').forEach(btn => btn.addEventListener('click', () => {
     const photo = photos[Number(btn.dataset.photo)];
-    document.getElementById('it-main').src = publicUrl('listing-photos', photo.storage_path);
+    document.getElementById('it-main-wrap').innerHTML = mainMediaHtml(photo);
     root.querySelectorAll('[data-photo]').forEach(b => b.classList.toggle('is-active', b === btn));
   }));
 
@@ -223,7 +235,7 @@ async function checkout() {
       <div class="sc-panel" style="margin-bottom:18px">
         <div class="sc-between">
           <div><p class="sc-sm" style="font-weight:500">${esc(listing.title)}</p>
-            <p class="sc-xs sc-muted">${esc(listing.brand?.name || '')} · ${esc(listing.reference || '')}</p></div>
+            <p class="sc-xs sc-muted">${esc(listing.brand?.name || listing.custom_brand || '')} · ${esc(listing.reference || '')}</p></div>
           <p class="sc-money-lg">${money(total, c)}</p>
         </div>
       </div>
@@ -257,7 +269,7 @@ async function checkout() {
         <div class="sc-note sc-note-info">
           Your payment is held until the piece reaches you and you accept it.
           ${listing.price >= Number(settings.authentication_threshold || 350)
-            ? ' This piece is authenticated in Amman before delivery, which adds a day or two.' : ''}
+            ? ' This piece is authenticated in Amman before the handover, which adds a day or two.' : ''}
         </div>
       </form>`,
     actions: [

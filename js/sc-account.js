@@ -6,6 +6,7 @@ import {
   sb, session, requireAuth, getSettings, signOut,
   money, num, date, ago, esc, badge, initials, titleCase,
   toast, modal, confirmAction, empty, errorMessage, publicUrl, param, setParam,
+  USERNAME_RE, USERNAME_RULE,
 } from './sc-core.js';
 import { CITIES } from './config.js';
 
@@ -448,9 +449,11 @@ function wireSettings(root) {
   root.querySelector('#profile-form')?.addEventListener('submit', async e => {
     e.preventDefault();
     const f = Object.fromEntries(new FormData(e.target));
+    if (f.username && !USERNAME_RE.test(f.username.trim()))
+      return toast(USERNAME_RULE, 'danger');
     const { error } = await sb.from('profiles').update({
       full_name: f.full_name || null,
-      username: f.username?.toLowerCase() || null,
+      username: f.username?.trim().toLowerCase() || null,
       phone: f.phone || null,
       city: f.city || null,
       area: f.area || null,

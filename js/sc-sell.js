@@ -11,9 +11,33 @@ import {
   sb, session, loadSession, getSettings, toast, esc, money,
   compressImage, errorMessage, modal,
 } from './sc-core.js';
-import { PHOTO_SLOTS } from './config.js';
+import { PHOTO_SLOTS, VIDEO_SLOT, MAX_VIDEO_MB } from './config.js';
 
-const files = new Map();          // slot -> File
+const ALL_SLOTS = [...PHOTO_SLOTS, VIDEO_SLOT];
+const files = new Map();          // tile key (front/back/…/extra1…/video) -> File
+
+// The exact types the storage bucket accepts — the file-picker `accept`
+// attribute is advisory and never applies to drag-and-drop, so both paths
+// check against these before attaching.
+const PHOTO_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+const VIDEO_TYPES = ['video/mp4', 'video/quicktime', 'video/webm'];
+
+// Photos run through compressImage first (it converts anything the browser
+// can decode into a 1600px JPEG), so the check sees what would actually
+// upload. Returns the vetted file, or null after showing a toast.
+async function vetMedia(file, isVideo) {
+  if (isVideo) {
+    if (!VIDEO_TYPES.includes(file.type)) { toast('Videos need to be MP4, MOV or WEBM.', 'danger'); return null; }
+    if (file.size > MAX_VIDEO_MB * 1024 * 1024) {
+      toast(`That video is over ${MAX_VIDEO_MB} MB. Trim it or lower the quality.`, 'danger'); return null;
+    }
+    return file;
+  }
+  const processed = await compressImage(file);
+  if (!PHOTO_TYPES.includes(processed.type)) { toast('Photos need to be JPG, PNG or WEBP.', 'danger'); return null; }
+  if (processed.size > 10 * 1024 * 1024) { toast('That photo is over 10 MB. Try a smaller one.', 'danger'); return null; }
+  return processed;
+}
 let settings = null;
 let taxonomy = { brands: [], categories: [], conditions: [] };
 
@@ -35,7 +59,9 @@ export async function initSell() {
 
   if (!session.isAuthed) return showSignInGate(form);
 
-  await loadTaxonomy();
+  // Without the live brand/category lists the form would submit names where
+  // the database expects ids — keep it locked and offer a reload instead.
+  if (!await loadTaxonomy()) return showTaxonomyError(form);
   enableForm(form);
   buildPhotoTiles(form);
   wireConditions(form);
@@ -68,23 +94,54 @@ async function loadTaxonomy() {
     sb.from('categories').select('id,name,slug').eq('is_active', true).order('sort_order'),
     sb.from('conditions').select('code,label').eq('is_active', true).order('sort_order'),
   ]);
+  if (brands.error || categories.error || conditions.error) return false;
   taxonomy = {
     brands: brands.data || [],
     categories: categories.data || [],
     conditions: conditions.data || [],
   };
 
-  // Replace the hard-coded option lists with what is actually in the database
-  const brandSelect = document.getElementById('brand');
-  if (brandSelect && taxonomy.brands.length) {
-    brandSelect.innerHTML = '<option value="">Choose one</option>' +
-      taxonomy.brands.map(b => `<option value="${b.id}">${esc(b.name)}</option>`).join('');
+  // Replace the hard-coded suggestion lists with what is actually in the database.
+  // The brand field is a free-text input backed by a datalist, so sellers can
+  // type a brand that is not listed yet.
+  const brandList = document.getElementById('brand-options');
+  if (brandList && taxonomy.brands.length) {
+    brandList.innerHTML = taxonomy.brands
+      .map(b => `<option value="${esc(b.name)}"></option>`).join('');
   }
   const catSelect = document.getElementById('category');
   if (catSelect && taxonomy.categories.length) {
     catSelect.innerHTML = '<option value="">Choose one</option>' +
       taxonomy.categories.map(c => `<option value="${c.id}">${esc(c.name)}</option>`).join('');
   }
+  return taxonomy.categories.length > 0;
+}
+
+function showTaxonomyError(form) {
+  const notice = document.createElement('div');
+  notice.className = 'sc';
+  notice.innerHTML = `
+    <div class="sc-note sc-note-warn" style="margin-bottom:20px">
+      <strong>Could not load the listing form.</strong>
+      The brand and category lists did not load — check your connection and
+      <a href="sell.html" style="text-decoration:underline">reload the page</a>.
+    </div>`;
+  form.parentNode.insertBefore(notice, form);
+  form.style.opacity = '.5';
+  form.style.pointerEvents = 'none';
+}
+
+// Case- and accent-insensitive match of typed text against the known brands,
+// so "toteme", "TOTÊME" and "Totême" all resolve to the same row.
+function normalizeBrand(text) {
+  return String(text || '').normalize('NFD').replace(/[̀-ͯ]/g, '')
+    .toLowerCase().replace(/[^a-z0-9]+/g, '');
+}
+function matchBrand(text) {
+  const wanted = normalizeBrand(text);
+  if (!wanted) return null;
+  return taxonomy.brands.find(b =>
+    normalizeBrand(b.name) === wanted || normalizeBrand(b.slug) === wanted) || null;
 }
 
 function enableForm(form) {
@@ -104,11 +161,12 @@ function enableForm(form) {
 // Photos — turn the four static tiles into upload targets
 // ---------------------------------------------------------------------------
 function buildPhotoTiles(form) {
-  const tiles = [...form.querySelectorAll('div[class*="aspect-square"]')].slice(0, 4);
+  const tiles = [...form.querySelectorAll('div[class*="aspect-square"]')].slice(0, ALL_SLOTS.length);
   if (!tiles.length) return;
 
   tiles.forEach((tile, index) => {
-    const spec = PHOTO_SLOTS[index] || { slot: `extra${index}`, label: 'Photo', note: '' };
+    const spec = ALL_SLOTS[index] || { slot: `extra${index}`, label: 'Photo', note: '' };
+    const isVideo = spec.slot === 'video';
     tile.classList.add('sc');
     tile.style.position = 'relative';
     tile.style.cursor = 'pointer';
@@ -116,8 +174,8 @@ function buildPhotoTiles(form) {
 
     const input = document.createElement('input');
     input.type = 'file';
-    input.accept = 'image/jpeg,image/png,image/webp';
-    input.setAttribute('aria-label', `${spec.label} photo`);
+    input.accept = isVideo ? 'video/mp4,video/quicktime,video/webm' : 'image/jpeg,image/png,image/webp';
+    input.setAttribute('aria-label', `${spec.label} ${isVideo ? 'video' : 'photo'}`);
     Object.assign(input.style, {
       position: 'absolute', inset: '0', width: '100%', height: '100%',
       opacity: '0', cursor: 'pointer', zIndex: '3',
@@ -127,8 +185,8 @@ function buildPhotoTiles(form) {
     input.addEventListener('change', async () => {
       const file = input.files?.[0];
       if (!file) return;
-      if (file.size > 10 * 1024 * 1024) return toast('That photo is over 10 MB. Try a smaller one.', 'danger');
-      await attachPhoto(tile, spec, await compressImage(file));
+      const vetted = await vetMedia(file, isVideo);
+      if (vetted) await attachPhoto(tile, spec, vetted);
     });
 
     tile.addEventListener('dragover', e => { e.preventDefault(); tile.style.borderColor = 'var(--color-accent)'; });
@@ -137,7 +195,9 @@ function buildPhotoTiles(form) {
       e.preventDefault();
       tile.style.borderColor = '';
       const file = e.dataTransfer.files?.[0];
-      if (file?.type.startsWith('image/')) await attachPhoto(tile, spec, await compressImage(file));
+      if (!file) return;
+      const vetted = await vetMedia(file, isVideo);
+      if (vetted) await attachPhoto(tile, spec, vetted);
     });
   });
 }
@@ -149,9 +209,13 @@ async function attachPhoto(tile, spec, file) {
   const preview = document.createElement('div');
   preview.setAttribute('data-preview', '');
   Object.assign(preview.style, { position: 'absolute', inset: '0', zIndex: '2' });
+  const mediaTag = file.type.startsWith('video/')
+    ? `<video src="${URL.createObjectURL(file)}" muted playsinline
+         style="width:100%;height:100%;object-fit:cover;border-radius:inherit"></video>`
+    : `<img src="${URL.createObjectURL(file)}" alt="${esc(spec.label)}"
+         style="width:100%;height:100%;object-fit:cover;border-radius:inherit">`;
   preview.innerHTML = `
-    <img src="${URL.createObjectURL(file)}" alt="${esc(spec.label)}"
-         style="width:100%;height:100%;object-fit:cover;border-radius:inherit">
+    ${mediaTag}
     <button type="button" data-clear aria-label="Remove ${esc(spec.label)} photo"
       style="position:absolute;top:8px;right:8px;width:26px;height:26px;border:0;border-radius:999px;
              background:rgba(16,17,20,.72);color:#fff;cursor:pointer;font-size:14px;line-height:1;z-index:4">✕</button>
@@ -209,8 +273,8 @@ function wirePayoutPreview(form) {
         <dt>You receive</dt><dd class="sc-money-lg" style="color:var(--color-accent)">${money(takeHome, settings.currency)}</dd>
       </dl>
       <p class="sc-hint" style="margin-top:10px">${needsAuth
-        ? 'Over the authentication threshold, so we collect and check this piece in Amman first.'
-        : 'Under the authentication threshold. It ships straight to the buyer.'}</p>`;
+        ? 'Over the authentication threshold, so it is checked in Amman before the handover.'
+        : 'Under the authentication threshold. You hand it to the buyer directly.'}</p>`;
   };
 
   price.addEventListener('input', update);
@@ -222,8 +286,11 @@ function wirePayoutPreview(form) {
 // ---------------------------------------------------------------------------
 function readForm(form) {
   const get = id => form.querySelector('#' + id)?.value?.trim() || '';
+  const typedBrand = get('brand');
+  const brandMatch = matchBrand(typedBrand);
   return {
-    brand_id: get('brand') || null,
+    brand_id: brandMatch ? brandMatch.id : null,
+    custom_brand: brandMatch || !typedBrand ? null : typedBrand.slice(0, 80),
     category_id: get('category') || null,
     title: get('title'),
     size_label: get('size') || null,
@@ -239,7 +306,7 @@ function validate(data, { draft }) {
   const problems = [];
   if (!data.title) problems.push('Add a model or description so buyers can find it.');
   if (!draft) {
-    if (!data.brand_id) problems.push('Choose a brand.');
+    if (!data.brand_id && !data.custom_brand) problems.push('Choose a brand — or type it if it is not in the list.');
     if (!data.category_id) problems.push('Choose a category.');
     if (!data.condition_code) problems.push('Choose a condition.');
     if (!data.price || data.price <= 0) problems.push('Set an asking price.');
@@ -282,6 +349,16 @@ async function submit(form, button, isDraft) {
   button.disabled = true;
   button.innerHTML = `<span class="sc-spinner"></span>${isDraft ? 'Saving' : 'Publishing'}`;
 
+  // If the media upload fails after the listings row exists, remove the row
+  // again — otherwise every retry would create another copy in the queue.
+  let created = null;
+  const discardStranded = async id => {
+    try {
+      await sb.from('listings').update({ status: 'draft' }).eq('id', id);
+      await sb.from('listings').delete().eq('id', id);
+    } catch { /* best effort */ }
+  };
+
   try {
     const { data: listing, error } = await sb.from('listings').insert({
       seller_id: session.user.id,
@@ -290,14 +367,27 @@ async function submit(form, button, isDraft) {
       status: isDraft ? 'draft' : 'pending_review',
     }).select('id, reference').single();
     if (error) throw error;
+    created = listing;
 
-    // upload the photos under {uid}/{listing}/… so the storage policy matches
-    const uploads = [...files.entries()].map(async ([slot, file], index) => {
-      const path = `${session.user.id}/${listing.id}/${slot}.jpg`;
+    // upload the media under {uid}/{listing}/… so the storage policy matches
+    const EXT = {
+      'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp',
+      'video/mp4': 'mp4', 'video/quicktime': 'mov', 'video/webm': 'webm',
+    };
+    const uploads = [...files.entries()].map(async ([key, file], index) => {
+      const ext = EXT[file.type] || (file.type.startsWith('video/') ? 'mp4' : 'jpg');
+      const path = `${session.user.id}/${listing.id}/${key}.${ext}`;
       const { error: upErr } = await sb.storage.from('listing-photos')
         .upload(path, file, { upsert: true, contentType: file.type });
       if (upErr) throw upErr;
-      return { listing_id: listing.id, storage_path: path, slot, sort_order: index };
+      // The DB slot check allows front/back/detail/label/extra/video —
+      // the numbered extra tiles all store as 'extra'. The video sorts last.
+      return {
+        listing_id: listing.id,
+        storage_path: path,
+        slot: /^extra\d+$/.test(key) ? 'extra' : key,
+        sort_order: key === 'video' ? 99 : index,
+      };
     });
 
     const rows = await Promise.all(uploads);
@@ -322,6 +412,7 @@ async function submit(form, button, isDraft) {
       else location.reload();
     });
   } catch (err) {
+    if (created) await discardStranded(created.id);
     button.disabled = false;
     button.innerHTML = original;
     toast(errorMessage(err), 'danger');
@@ -335,7 +426,10 @@ async function restoreDraft(form) {
     const set = (id, value) => { const el = form.querySelector('#' + id); if (el && value) el.value = value; };
     set('title', saved.title); set('size', saved.size_label); set('colour', saved.color);
     set('notes', saved.description); set('price', saved.price); set('retail', saved.original_retail);
-    set('brand', saved.brand_id); set('category', saved.category_id);
+    // The brand field shows the name; older drafts stored only the id.
+    const brandName = saved.custom_brand
+      || taxonomy.brands.find(b => b.id === saved.brand_id)?.name || '';
+    set('brand', brandName); set('category', saved.category_id);
     if (saved.condition_code) {
       const radio = form.querySelector(`input[name=condition][value="${saved.condition_code}"]`);
       if (radio) radio.checked = true;

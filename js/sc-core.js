@@ -370,10 +370,17 @@ export function skeletonRows(rows = 5, cols = 4) {
 }
 
 /** Friendly wording for the Postgres/Supabase errors users can actually hit. */
+// One username rule for sign-up and settings, so the two can never drift.
+// Letters, numbers, underscores and ™ — keep this whitelist tight: it is the
+// only charset control, and every render site relies on esc() plus this.
+export const USERNAME_RE = /^[a-z0-9_™]{3,20}$/i;
+export const USERNAME_RULE = 'Usernames are 3-20 characters — letters, numbers, underscores or ™.';
+
 export function errorMessage(error) {
   if (!error) return 'Something went wrong.';
   const msg = error.message || String(error);
   if (/duplicate key.*username/i.test(msg)) return 'That username is taken.';
+  if (/duplicate key.*admin_users/i.test(msg)) return 'They are already an admin — use “Change role” on their row instead.';
   if (/duplicate key/i.test(msg)) return 'That already exists.';
   if (/row-level security|not authorised|Not authorised/i.test(msg)) return 'You do not have permission to do that.';
   if (/Invalid login credentials/i.test(msg)) return 'That email and password do not match.';

@@ -142,11 +142,13 @@ async function load(reset) {
     countEl.textContent = 'Loading…';
   }
 
+  // Only force the brand join when filtering by brand — listings with a
+  // seller-typed brand (custom_brand, no brand_id) must still appear.
   let q = sb.from('listings')
-    .select(`id, title, price, original_retail, status, is_featured, authentication_status, view_count,
-             brand:brands!inner(name, slug), category:categories!inner(name, slug),
+    .select(`id, title, price, original_retail, status, is_featured, authentication_status, view_count, custom_brand,
+             brand:brands${state.brands.size ? '!inner' : ''}(name, slug), category:categories!inner(name, slug),
              condition:conditions(code, label),
-             images:listing_images(storage_path, sort_order)`, { count: 'exact' })
+             images:listing_images(storage_path, slot, sort_order)`, { count: 'exact' })
     .eq('status', 'active');
 
   if (state.categories.size) q = q.in('category.slug', [...state.categories]);
@@ -186,7 +188,8 @@ async function load(reset) {
   state.total = count || 0;
 
   const cards = (data || []).map(l => {
-    const photo = (l.images || []).sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))[0];
+    const photo = (l.images || []).filter(p => p.slot !== 'video')
+      .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))[0];
     const off = l.original_retail
       ? Math.round((1 - l.price / l.original_retail) * 100) : 0;
     return `<a class="br-card" href="item.html?id=${esc(l.id)}">
@@ -198,7 +201,7 @@ async function load(reset) {
           ? '<span class="sc-badge sc-badge-ok br-tag">Authenticated</span>'
           : l.is_featured ? '<span class="sc-badge sc-badge-accent br-tag">Featured</span>' : ''}
       </div>
-      <p class="sc-xs sc-muted" style="margin-top:9px">${esc(l.brand?.name || '')}</p>
+      <p class="sc-xs sc-muted" style="margin-top:9px">${esc(l.brand?.name || l.custom_brand || '')}</p>
       <p class="sc-sm sc-truncate" style="font-weight:500;margin-top:2px">${esc(l.title)}</p>
       <p class="sc-sm sc-money" style="margin-top:3px">${money(l.price, state.currency)}
         ${off > 0 ? `<span class="sc-xs" style="color:var(--sc-ok);margin-left:5px">${off}% off</span>` : ''}</p>

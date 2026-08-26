@@ -139,6 +139,8 @@ create trigger trg_payout_no before insert on payouts
 
 -- ---------------------------------------------------------------------------
 -- Listing search vector + authentication requirement
+-- NOTE: 11_brands_and_media.sql replaces this function with a brand-aware
+-- version — if you ever re-run this file, run 11 again afterwards.
 -- ---------------------------------------------------------------------------
 create or replace function listing_before_save() returns trigger
 language plpgsql as $$
