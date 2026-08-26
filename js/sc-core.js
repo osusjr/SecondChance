@@ -376,6 +376,13 @@ export function skeletonRows(rows = 5, cols = 4) {
 export const USERNAME_RE = /^[a-z0-9_™]{3,20}$/i;
 export const USERNAME_RULE = 'Usernames are 3-20 characters — letters, numbers, underscores or ™.';
 
+// Phone keyboards insert ™ in its emoji form — the character followed by an
+// invisible variation selector — which would fail the rule above. Strip the
+// selectors (and stray whitespace) before validating or saving.
+export function cleanUsername(u) {
+  return String(u || '').trim().replace(/[\uFE0E\uFE0F]/g, '');
+}
+
 export function errorMessage(error) {
   if (!error) return 'Something went wrong.';
   const msg = error.message || String(error);

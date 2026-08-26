@@ -20,7 +20,7 @@
 
 import {
   sb, session, loadSession, toast, esc, errorMessage, param,
-  USERNAME_RE, USERNAME_RULE,
+  USERNAME_RE, USERNAME_RULE, cleanUsername,
 } from './sc-core.js';
 
 const PENDING = 'sc-pending-email';
@@ -99,7 +99,7 @@ export function initSignUp() {
     if (!phone) return showError(form,
       'That does not look like a Jordanian mobile number. It should start 077, 078 or 079.');
     if (!f.full_name?.trim()) return showError(form, 'We need your name.');
-    f.username = f.username?.trim() || '';
+    f.username = cleanUsername(f.username);
     if (f.username && !USERNAME_RE.test(f.username))
       return showError(form, USERNAME_RULE);
     const pwProblem = passwordProblem(f.password);

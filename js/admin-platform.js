@@ -507,12 +507,13 @@ async function admins({ setContent, setTitle }) {
   setTitle('Admins & roles', 'Who can get in, and what they can touch');
 
   const render = async () => {
-    const [{ data: staff }, { data: roles }] = await Promise.all([
+    const [staffRes, { data: roles }] = await Promise.all([
       sb.from('admin_users')
         .select('*, user:profiles!admin_users_user_id_fkey(id, username, full_name), role:admin_roles(id, key, name, permissions)')
         .order('created_at'),
       sb.from('admin_roles').select('*').order('key'),
     ]);
+    const staff = staffRes.data;
 
     const root = setContent(`
       <div class="sc-card sc-card-flush">
@@ -522,7 +523,12 @@ async function admins({ setContent, setTitle }) {
         </div>
         <div class="sc-table-wrap" style="border:0;border-radius:0"><table class="sc-table">
           <thead><tr><th>Person</th><th>Role</th><th>Two-factor</th><th>Last signed in</th><th>Status</th><th></th></tr></thead>
-          <tbody>${(staff || []).map(a => `<tr>
+          <tbody>${staffRes.error
+            ? `<tr><td colspan="6"><div class="sc-note sc-note-danger" style="margin:12px 0">
+                 Could not load the admin list — ${esc(errorMessage(staffRes.error))}</div></td></tr>`
+            : !(staff || []).length
+              ? '<tr><td colspan="6" class="sc-sm sc-muted" style="padding:18px">No admin accounts yet.</td></tr>'
+              : (staff || []).map(a => `<tr>
             <td><div class="sc-row-tight">
               <span class="sc-avatar">${esc(initials(a.user?.full_name || a.user?.username))}</span>
               <div><p style="font-weight:500">${esc(a.user?.full_name || a.user?.username || '—')}</p>
