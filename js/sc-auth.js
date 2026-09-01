@@ -20,7 +20,7 @@
 
 import {
   sb, session, loadSession, toast, esc, errorMessage, param,
-  USERNAME_RE, USERNAME_RULE, cleanUsername,
+  USERNAME_RE, USERNAME_RULE, cleanUsername, usernameTooSimilar,
 } from './sc-core.js';
 
 const PENDING = 'sc-pending-email';
@@ -102,6 +102,8 @@ export function initSignUp() {
     f.username = cleanUsername(f.username);
     if (f.username && !USERNAME_RE.test(f.username))
       return showError(form, USERNAME_RULE);
+    if (usernameTooSimilar(f.username, f.full_name))
+      return showError(form, 'Your username cannot be the same as your name — pick something distinct.');
     const pwProblem = passwordProblem(f.password);
     if (pwProblem) return showError(form, pwProblem);
     if (f.password !== f.confirm) return showError(form, 'The two passwords do not match.');

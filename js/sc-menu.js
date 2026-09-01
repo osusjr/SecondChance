@@ -120,10 +120,10 @@ function build() {
   const p = session.profile;
   const who = session.isAuthed
     ? `<div class="scm-who">
-         <span class="scm-av">${esc((p?.full_name || p?.username || '?').trim()[0]?.toUpperCase() || '?')}</span>
+         <span class="scm-av">${esc((p?.full_name || p?.username || session.user?.email || '?').trim()[0]?.toUpperCase() || '?')}</span>
          <div style="min-width:0">
            <p style="font-size:13.5px;font-weight:500;margin:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
-             ${esc(p?.full_name || p?.username || 'Your account')}</p>
+             ${esc(p?.full_name || p?.username || (session.user?.email || '').split('@')[0] || 'Your account')}</p>
            <p style="font-size:11.5px;margin:2px 0 0;color:var(--color-muted,#62666f)">
              ${session.isAdmin ? 'Admin' : session.isSeller ? 'Seller' : 'Member'}</p>
          </div></div>`

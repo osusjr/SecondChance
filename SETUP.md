@@ -261,6 +261,40 @@ clean. Run it again any time you add a table.
 
 ---
 
+## Step 8 — Email copies of notifications (optional)
+
+Everything that lands in a member's on-site notifications inbox can also
+reach their email, through the same Brevo account you set up in Step 4.
+
+1. **Deploy the function.** Dashboard → **Edge Functions → Deploy a new
+   function** (the in-browser editor is fine) → name it exactly
+   `notify-email` → paste the whole of
+   `supabase/functions/notify-email/index.ts` → Deploy.
+
+2. **Set its secrets** on the function's page:
+
+| Secret | Value |
+|---|---|
+| `BREVO_API_KEY` | Brevo → Settings → SMTP & API → **API Keys** tab. Starts `xkeysib-` — this is the API key, *not* the SMTP key from Step 4 |
+| `SENDER_EMAIL` | the sender address you verified in Brevo |
+| `SITE_URL` | your deployed site, e.g. `https://secondchance-xi.vercel.app` |
+| `WEBHOOK_SECRET` | any long random string (optional, recommended) |
+
+3. **Create the webhook.** Dashboard → **Database → Webhooks → Create a new
+   hook**: name `email-notifications`, table `notifications`, event
+   **Insert** only, type **Supabase Edge Function** → `notify-email`. If you
+   set `WEBHOOK_SECRET`, add an HTTP header `x-webhook-secret` with the same
+   value.
+
+4. **Test it.** Admin panel → Notifications → send yourself one, or trigger
+   any order event — the email should arrive within seconds.
+
+Every in-app notification then goes out by email too — order updates,
+listing decisions, admin messages. Brevo's free plan sends 300 emails a
+day, which is plenty until launch scales.
+
+---
+
 ## What is in the box
 
 ### Pages
