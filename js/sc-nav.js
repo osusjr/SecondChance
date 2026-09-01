@@ -66,6 +66,9 @@ export async function initNav() {
   }
 
   await loadSession();
+  // A transient failure loading the profile would leave the menu showing the
+  // "Your account" fallback (initials "YA") — retry once before rendering.
+  if (session.user && !session.profile) await loadSession({ force: true });
   const anchors = findSignInControls();
 
   if (!session.isAuthed) {
@@ -102,7 +105,10 @@ async function unreadCount() {
 
 function buildMenu(unread) {
   const p = session.profile || {};
-  const name = p.full_name || p.username || 'Your account';
+  // Prefer real identity; the email's local part beats a literal
+  // "Your account" (whose initials read as "YA" in the avatar).
+  const name = p.full_name || p.username
+    || (session.user?.email || '').split('@')[0] || 'Your account';
   const wrap = document.createElement('div');
   wrap.className = 'sc-usermenu sc';
 

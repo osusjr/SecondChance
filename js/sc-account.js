@@ -6,7 +6,7 @@ import {
   sb, session, requireAuth, getSettings, signOut,
   money, num, date, ago, esc, badge, initials, titleCase,
   toast, modal, confirmAction, empty, errorMessage, publicUrl, param, setParam,
-  USERNAME_RE, USERNAME_RULE, cleanUsername,
+  USERNAME_RE, USERNAME_RULE, cleanUsername, usernameTooSimilar,
 } from './sc-core.js';
 import { CITIES } from './config.js';
 
@@ -39,7 +39,8 @@ export async function initAccount() {
 // ---------------------------------------------------------------------------
 function renderHero() {
   const p = session.profile || {};
-  const name = p.full_name || p.username || 'Your account';
+  const name = p.full_name || p.username
+    || (session.user?.email || '').split('@')[0] || 'Your account';
   const sellerBadge =
     p.seller_status === 'approved' ? '<span class="sc-badge sc-badge-ok sc-badge-dot">Verified seller</span>'
     : p.seller_status === 'pending' ? '<span class="sc-badge sc-badge-warn sc-badge-dot">Seller review pending</span>'
@@ -162,7 +163,8 @@ async function renderOverview() {
 async function renderListings() {
   const { data } = await sb.from('listings')
     .select('id, reference, title, status, price, view_count, favorite_count, created_at, rejection_reason, authentication_status, images:listing_images(storage_path, slot)')
-    .eq('seller_id', session.user.id).order('created_at', { ascending: false });
+    .eq('seller_id', session.user.id).neq('status', 'removed')
+    .order('created_at', { ascending: false });
 
   if (!data?.length) {
     return empty('No listings yet', 'List a piece and it goes to our team for review.',
@@ -193,8 +195,12 @@ async function renderListings() {
           <td class="sc-cell-num">${num(l.view_count)}</td>
           <td class="sc-cell-num">${num(l.favorite_count)}</td>
           <td class="sc-cell-actions">
+            ${['draft', 'rejected', 'pending_review', 'active'].includes(l.status)
+              ? `<button class="sc-btn sc-btn-ghost sc-btn-xs" data-edit-listing="${l.id}">Edit</button>` : ''}
             ${['draft', 'rejected'].includes(l.status)
               ? `<button class="sc-btn sc-btn-ghost sc-btn-xs" data-submit-listing="${l.id}">Submit</button>` : ''}
+            ${['active', 'pending_review'].includes(l.status)
+              ? `<button class="sc-btn sc-btn-ghost sc-btn-xs" data-unlist-listing="${l.id}">Unlist</button>` : ''}
             ${['draft', 'rejected'].includes(l.status)
               ? `<button class="sc-btn sc-btn-danger sc-btn-xs" data-delete-listing="${l.id}">Delete</button>` : ''}
             ${l.status === 'active'
@@ -417,6 +423,20 @@ function wire(tab, root) {
     show('listings');
   }));
 
+  root.querySelectorAll('[data-edit-listing]').forEach(b =>
+    b.addEventListener('click', () => editListing(b.dataset.editListing)));
+
+  root.querySelectorAll('[data-unlist-listing]').forEach(b => b.addEventListener('click', async () => {
+    if (!await confirmAction('Unlist this piece?',
+      'It comes off the feed and moves back to your drafts, where you can edit and resubmit it any time.',
+      'Unlist')) return;
+    const { error } = await sb.from('listings')
+      .update({ status: 'draft' }).eq('id', b.dataset.unlistListing);
+    if (error) return toast(errorMessage(error), 'danger');
+    toast('Unlisted — it is in your drafts now.', 'ok');
+    show('listings');
+  }));
+
   root.querySelectorAll('[data-delete-listing]').forEach(b => b.addEventListener('click', async () => {
     if (!await confirmAction('Delete this listing?', 'This cannot be undone.', 'Delete', true)) return;
     const { error } = await sb.from('listings').delete().eq('id', b.dataset.deleteListing);
@@ -452,6 +472,8 @@ function wireSettings(root) {
     const uname = cleanUsername(f.username);
     if (uname && !USERNAME_RE.test(uname))
       return toast(USERNAME_RULE, 'danger');
+    if (usernameTooSimilar(uname, f.full_name || session.profile?.full_name))
+      return toast('Your username cannot be the same as your name — pick something distinct.', 'danger');
     const { error } = await sb.from('profiles').update({
       full_name: f.full_name || null,
       username: uname.toLowerCase() || null,
@@ -520,6 +542,71 @@ function wireSettings(root) {
     toast('Account closed.');
     setTimeout(signOut, 900);
   });
+}
+
+// ---------------------------------------------------------------------------
+// Edit a listing after it exists. Review rules are enforced by the database:
+// a live listing cannot be changed in place, so saving one sends it back
+// through review; a rejected one moves to drafts for resubmission.
+async function editListing(id) {
+  const { data: l, error: loadErr } = await sb.from('listings')
+    .select('id, title, price, original_retail, size_label, color, description, status')
+    .eq('id', id).single();
+  if (loadErr || !l) return toast('Could not load that listing.', 'danger');
+
+  const note =
+    l.status === 'active'
+      ? 'This piece is live — saving changes takes it off the feed and sends it for a quick re-review.'
+      : l.status === 'rejected'
+        ? 'Saving moves it to your drafts; submit it again when it is ready.'
+        : null;
+
+  const result = await modal({
+    title: 'Edit listing',
+    body: `${note ? `<div class="sc-note sc-note-info" style="margin-bottom:14px">${esc(note)}</div>` : ''}
+      <form class="sc-stack">
+        <div class="sc-field"><label class="sc-label">Model or description</label>
+          <input class="sc-input" name="title" required value="${esc(l.title || '')}"></div>
+        <div class="sc-field"><label class="sc-label">Asking price</label>
+          <input class="sc-input" name="price" inputmode="decimal" required value="${esc(l.price ?? '')}"></div>
+        <div class="sc-field"><label class="sc-label">Original retail <span class="sc-muted sc-xs">optional</span></label>
+          <input class="sc-input" name="original_retail" inputmode="decimal" value="${esc(l.original_retail ?? '')}"></div>
+        <div class="sc-field"><label class="sc-label">Size <span class="sc-muted sc-xs">optional</span></label>
+          <input class="sc-input" name="size_label" value="${esc(l.size_label || '')}"></div>
+        <div class="sc-field"><label class="sc-label">Colour <span class="sc-muted sc-xs">optional</span></label>
+          <input class="sc-input" name="color" value="${esc(l.color || '')}"></div>
+        <div class="sc-field"><label class="sc-label">Notes for buyers <span class="sc-muted sc-xs">optional</span></label>
+          <textarea class="sc-textarea" name="description">${esc(l.description || '')}</textarea></div>
+      </form>`,
+    actions: [{ label: 'Cancel', value: false }, { label: 'Save changes', value: true, kind: 'sc-btn-primary' }],
+  });
+  if (result?.value !== true) return;
+
+  const v = result.values;
+  const price = parseFloat(String(v.price).replace(/[^\d.]/g, ''));
+  if (!v.title?.trim()) return toast('The listing needs a title.', 'danger');
+  if (!price || price <= 0) return toast('Set a valid asking price.', 'danger');
+
+  const nextStatus =
+    l.status === 'active' ? 'pending_review'
+    : l.status === 'rejected' ? 'draft'
+    : l.status; // draft stays draft, pending_review stays pending_review
+
+  const { error } = await sb.from('listings').update({
+    title: v.title.trim(),
+    price,
+    original_retail: parseFloat(String(v.original_retail).replace(/[^\d.]/g, '')) || null,
+    size_label: v.size_label?.trim() || null,
+    color: v.color?.trim() || null,
+    description: v.description?.trim() || null,
+    status: nextStatus,
+  }).eq('id', id);
+  if (error) return toast(errorMessage(error), 'danger');
+
+  toast(l.status === 'active' ? 'Saved — it is back in the review queue.'
+    : l.status === 'rejected' ? 'Saved to your drafts.'
+    : 'Saved.', 'ok');
+  show('listings');
 }
 
 // ---------------------------------------------------------------------------

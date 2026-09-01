@@ -379,6 +379,14 @@ export const USERNAME_RULE = 'Usernames are 3-20 characters — letters, numbers
 // Phone keyboards insert ™ in its emoji form — the character followed by an
 // invisible variation selector — which would fail the rule above. Strip the
 // selectors (and stray whitespace) before validating or saving.
+// A username may not simply be the person's name — compare ignoring case
+// and spacing ("Raya Shobaki" vs "rayashobaki" vs "raya").
+export function usernameTooSimilar(username, fullName) {
+  const norm = s => String(s || '').toLowerCase().replace(/[\s\u{FE0E}\u{FE0F}]+/gu, '');
+  const u = norm(username), n = norm(fullName);
+  return !!u && !!n && u === n;
+}
+
 export function cleanUsername(u) {
   return String(u || '').trim().replace(/[\uFE0E\uFE0F]/g, '');
 }

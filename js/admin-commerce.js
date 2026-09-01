@@ -219,7 +219,9 @@ async function openUser(id, ctx, reload) {
     actions: canManage ? [
       { label: 'Close', value: 'close' },
       ...(u.seller_status === 'approved'
-        ? [{ label: 'Revoke seller status', value: 'revoke' }] : []),
+        ? [{ label: 'Revoke seller status', value: 'revoke' }]
+        : u.account_status === 'active'
+          ? [{ label: 'Approve as seller', value: 'approve-seller', kind: 'sc-btn-primary' }] : []),
       ...(u.account_status === 'active'
         ? [{ label: 'Suspend', value: 'suspend' },
            { label: 'Block', value: 'block', kind: 'sc-btn-danger' }]
@@ -228,6 +230,21 @@ async function openUser(id, ctx, reload) {
   });
 
   if (!result || result.value === 'close') return;
+
+  if (result.value === 'approve-seller') {
+    if (!await confirmAction('Approve as seller?',
+      `${u.full_name || u.username || 'This member'} will be able to receive payouts and their listings show the Verified seller badge.`,
+      'Approve')) return;
+    await adminAction(() => sb.from('profiles')
+      .update({ seller_status: 'approved', is_seller: true }).eq('id', id), 'Seller approved.');
+    // Best effort — needs the notifications.send permission; the approval stands either way.
+    await sb.from('notifications').insert({
+      user_id: id, type: 'seller',
+      title: 'You are now a verified seller',
+      body: 'Your seller account is approved — your listings carry the Verified seller badge and payouts are enabled.',
+      link_url: 'account.html?tab=listings',
+    }).then(() => {}, () => {});
+  }
 
   if (result.value === 'reinstate') {
     await adminAction(() => sb.rpc('admin_set_user_status',
