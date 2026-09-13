@@ -145,7 +145,7 @@ insert into content_blocks (key, label, value, block_type) values
 ('homepage_hero_title','Homepage hero title','A Second Chance for pieces worth finding','text'),
 ('homepage_hero_subtitle','Homepage hero subtitle','Jordan''s buy-and-sell fashion marketplace.','text'),
 ('announcement_bar','Announcement bar','Payment protected until you accept the piece.','text'),
-('sell_cta','Sell page call to action','Free to list, and no seller fees on your first three sales.','text'),
+('sell_cta','Sell page call to action','Free listings, and no seller fees on your first two listings.','text'),
 ('footer_note','Footer note','Jordan''s marketplace for pre-owned luxury.','text')
 on conflict (key) do nothing;
 

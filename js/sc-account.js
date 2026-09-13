@@ -180,7 +180,7 @@ async function renderOverview() {
 // ---------------------------------------------------------------------------
 async function renderListings() {
   const { data } = await sb.from('listings')
-    .select('id, reference, title, status, price, view_count, favorite_count, created_at, rejection_reason, authentication_status, images:listing_images(storage_path, slot)')
+    .select('id, reference, title, status, price, view_count, favorite_count, created_at, rejection_reason, authentication_status, images:listing_images(storage_path, slot, sort_order)')
     .eq('seller_id', session.user.id).neq('status', 'removed')
     .order('created_at', { ascending: false });
 
@@ -198,7 +198,9 @@ async function renderListings() {
       <thead><tr><th>Piece</th><th>Status</th><th class="sc-cell-num">Price</th>
         <th class="sc-cell-num">Views</th><th class="sc-cell-num">Saved</th><th></th></tr></thead>
       <tbody>${data.map(l => {
-        const front = l.images?.find(i => i.slot === 'front') || l.images?.[0];
+        // the cover is whatever sorts first, matching the cards on the feed
+        const front = (l.images || []).filter(i => i.slot !== 'video')
+          .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))[0];
         return `<tr>
           <td><div class="acct-listing">
             <img src="${front ? publicUrl('listing-photos', front.storage_path) : ''}" alt="" loading="lazy">
@@ -598,21 +600,45 @@ const MEDIA_EXT = {
   'video/mp4': 'mp4', 'video/quicktime': 'mov', 'video/webm': 'webm',
 };
 
+// Case- and accent-insensitive brand matching, same rules as the sell form,
+// so "toteme" and "Totême" resolve to the same row when editing too.
+function normalizeBrandText(text) {
+  return String(text || '').normalize('NFD').replace(/[̀-ͯ]/g, '')
+    .toLowerCase().replace(/[^a-z0-9]+/g, '');
+}
+
 async function editListing(id) {
-  const [{ data: l, error: loadErr }, conditionsRes, colorsRes] = await Promise.all([
+  const [{ data: l, error: loadErr }, conditionsRes, colorsRes, brandsRes, categoriesRes] = await Promise.all([
     sb.from('listings')
-      .select('id, title, price, original_retail, size_label, color, description, status, condition_code, images:listing_images(id, storage_path, slot, sort_order)')
+      .select('id, title, price, original_retail, size_label, color, description, status, condition_code, brand_id, custom_brand, category_id, images:listing_images(id, storage_path, slot, sort_order)')
       .eq('id', id).single(),
     sb.from('conditions').select('code,label').eq('is_active', true).order('sort_order'),
     sb.from('colors').select('name').eq('is_active', true).order('sort_order'),
+    sb.from('brands').select('id,name,slug').eq('is_active', true).order('sort_order'),
+    sb.from('categories').select('id,name').eq('is_active', true).order('sort_order'),
   ]);
   if (loadErr || !l) return toast('Could not load that listing.', 'danger');
   const conditions = conditionsRes.data || [];
   const colors = colorsRes.data || [];
+  const brands = brandsRes.data || [];
+  const categories = categoriesRes.data || [];
 
-  const images = (l.images || []).sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
-  const removals = new Set();   // listing_images ids marked for deletion
-  const additions = [];         // { file, isVideo } staged for upload
+  const matchBrand = text => {
+    const wanted = normalizeBrandText(text);
+    if (!wanted) return null;
+    return brands.find(b =>
+      normalizeBrandText(b.name) === wanted || normalizeBrandText(b.slug) === wanted) || null;
+  };
+  const brandName = l.custom_brand || brands.find(b => b.id === l.brand_id)?.name || '';
+
+  // Media are staged in the dialog and only applied on Save, so cancelling
+  // leaves the listing exactly as it was. Photos keep their order in this
+  // array — the first one is the cover everywhere on the site — and the
+  // video sits apart from that order.
+  const sorted = (l.images || []).sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
+  const photos = sorted.filter(i => i.slot !== 'video').map(img => ({ kind: 'existing', img }));
+  const videos = sorted.filter(i => i.slot === 'video').map(img => ({ kind: 'existing', img }));
+  const removedIds = [];            // listing_images ids to delete on save
 
   const note =
     l.status === 'active'
@@ -635,13 +661,24 @@ async function editListing(id) {
       <form class="sc-stack">
         <div class="sc-field"><label class="sc-label">Photos and video</label>
           <div data-media-grid style="display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:8px"></div>
-          <p class="sc-hint">Tap ✕ to remove one. New photos upload when you save.</p>
+          <p class="sc-hint">The photo marked Cover is the one buyers see first — tap “Make cover” on another photo to use that instead. Tap ✕ to remove one. Changes upload when you save.</p>
           <div class="sc-row-tight" style="margin-top:8px;flex-wrap:wrap">
             <label class="sc-btn sc-btn-ghost sc-btn-sm" style="cursor:pointer">Add photos
               <input type="file" accept="image/jpeg,image/png,image/webp" multiple hidden data-add-photos></label>
             <label class="sc-btn sc-btn-ghost sc-btn-sm" style="cursor:pointer" data-add-video-wrap>Add a video
               <input type="file" accept="video/mp4,video/quicktime,video/webm" hidden data-add-video></label>
           </div></div>
+        <div class="sc-field"><label class="sc-label">Brand</label>
+          <input class="sc-input" name="brand" list="edit-brand-options" autocomplete="off" value="${esc(brandName)}">
+          <datalist id="edit-brand-options">
+            ${brands.map(b => `<option value="${esc(b.name)}"></option>`).join('')}
+          </datalist>
+          <p class="sc-hint">Type it if it is not in the list.</p></div>
+        <div class="sc-field"><label class="sc-label">Category</label>
+          <select class="sc-select" name="category_id">
+            <option value="">Choose one</option>
+            ${categories.map(c => `<option value="${esc(c.id)}" ${c.id === l.category_id ? 'selected' : ''}>${esc(c.name)}</option>`).join('')}
+          </select></div>
         <div class="sc-field"><label class="sc-label">Model or description</label>
           <input class="sc-input" name="title" required value="${esc(l.title || '')}"></div>
         <div class="sc-field"><label class="sc-label">Condition</label>
@@ -665,53 +702,54 @@ async function editListing(id) {
       const grid = dialog.querySelector('[data-media-grid]');
       const videoWrap = dialog.querySelector('[data-add-video-wrap]');
 
-      const photoCount = () =>
-        images.filter(i => i.slot !== 'video' && !removals.has(i.id)).length
-        + additions.filter(a => !a.isVideo).length;
-      const hasVideo = () =>
-        images.some(i => i.slot === 'video' && !removals.has(i.id))
-        || additions.some(a => a.isVideo);
-
       const draw = () => {
-        const tile = (inner, onRemove) => {
+        const tile = (entry, index, isVideo) => {
+          const url = entry.kind === 'existing'
+            ? publicUrl('listing-photos', entry.img.storage_path)
+            : URL.createObjectURL(entry.file);
           const cell = document.createElement('div');
           cell.style.cssText = 'position:relative;aspect-ratio:1/1.15;border-radius:10px;overflow:hidden;background:var(--color-product)';
-          cell.innerHTML = inner + `<button type="button" aria-label="Remove"
-            style="position:absolute;top:5px;right:5px;width:24px;height:24px;border:0;border-radius:999px;
-                   background:rgba(16,17,20,.78);color:#fff;cursor:pointer;font-size:12px;line-height:1">✕</button>`;
-          cell.querySelector('button').addEventListener('click', onRemove);
+          const isCover = !isVideo && index === 0;
+          cell.innerHTML = (isVideo
+              ? `<video src="${esc(url)}" muted playsinline style="width:100%;height:100%;object-fit:cover"></video>`
+              : `<img src="${esc(url)}" alt="" style="width:100%;height:100%;object-fit:cover">`)
+            + `<button type="button" data-x aria-label="Remove"
+                 style="position:absolute;top:5px;right:5px;width:24px;height:24px;border:0;border-radius:999px;
+                        background:rgba(16,17,20,.78);color:#fff;cursor:pointer;font-size:12px;line-height:1">✕</button>`
+            + (isVideo ? '' : isCover
+              ? `<span style="position:absolute;left:5px;bottom:5px;background:var(--color-accent);color:#fff;
+                              font-size:9.5px;font-weight:600;padding:3px 8px;border-radius:999px">Cover</span>`
+              : `<button type="button" data-cover
+                   style="position:absolute;left:5px;bottom:5px;border:0;background:rgba(16,17,20,.78);color:#fff;
+                          font-size:9.5px;font-weight:500;padding:3px 8px;border-radius:999px;cursor:pointer">Make cover</button>`);
+          cell.querySelector('[data-x]').addEventListener('click', () => {
+            const list = isVideo ? videos : photos;
+            list.splice(list.indexOf(entry), 1);
+            if (entry.kind === 'existing') removedIds.push(entry.img.id);
+            draw();
+          });
+          cell.querySelector('[data-cover]')?.addEventListener('click', () => {
+            photos.splice(photos.indexOf(entry), 1);
+            photos.unshift(entry);
+            draw();
+          });
           return cell;
         };
         grid.innerHTML = '';
-        for (const img of images) {
-          if (removals.has(img.id)) continue;
-          const url = esc(publicUrl('listing-photos', img.storage_path));
-          grid.appendChild(tile(
-            img.slot === 'video'
-              ? `<video src="${url}" muted playsinline style="width:100%;height:100%;object-fit:cover"></video>`
-              : `<img src="${url}" alt="" style="width:100%;height:100%;object-fit:cover">`,
-            () => { removals.add(img.id); draw(); }));
-        }
-        for (const add of additions) {
-          const url = URL.createObjectURL(add.file);
-          grid.appendChild(tile(
-            add.isVideo
-              ? `<video src="${url}" muted playsinline style="width:100%;height:100%;object-fit:cover"></video>`
-              : `<img src="${url}" alt="" style="width:100%;height:100%;object-fit:cover">`,
-            () => { additions.splice(additions.indexOf(add), 1); draw(); }));
-        }
-        videoWrap.hidden = hasVideo();
+        photos.forEach((p, i) => grid.appendChild(tile(p, i, false)));
+        videos.forEach(v => grid.appendChild(tile(v, -1, true)));
+        videoWrap.hidden = videos.length > 0;
       };
 
       dialog.querySelector('[data-add-photos]').addEventListener('change', async e => {
         for (const raw of [...(e.target.files || [])]) {
-          if (photoCount() >= 10) { toast('Ten photos is the limit.', 'danger'); break; }
+          if (photos.length >= 10) { toast('Ten photos is the limit.', 'danger'); break; }
           const file = await compressImage(raw);
           if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
             toast('Photos need to be JPG, PNG or WEBP.', 'danger'); continue;
           }
           if (file.size > 10 * 1024 * 1024) { toast('That photo is over 10 MB.', 'danger'); continue; }
-          additions.push({ file, isVideo: false });
+          photos.push({ kind: 'new', file });
         }
         e.target.value = '';
         draw();
@@ -721,12 +759,12 @@ async function editListing(id) {
         const file = e.target.files?.[0];
         e.target.value = '';
         if (!file) return;
-        if (hasVideo()) return toast('One video per listing.', 'danger');
+        if (videos.length) return toast('One video per listing.', 'danger');
         if (!['video/mp4', 'video/quicktime', 'video/webm'].includes(file.type))
           return toast('Videos need to be MP4, MOV or WEBM.', 'danger');
         if (file.size > MAX_VIDEO_MB * 1024 * 1024)
           return toast(`That video is over ${MAX_VIDEO_MB} MB.`, 'danger');
-        additions.push({ file, isVideo: true });
+        videos.push({ kind: 'new', file });
         draw();
       });
 
@@ -737,18 +775,21 @@ async function editListing(id) {
 
   const v = result.values;
   const price = parseFloat(String(v.price).replace(/[^\d.]/g, ''));
+  const typedBrand = v.brand?.trim() || '';
+  const brandMatch = matchBrand(typedBrand);
   if (!v.title?.trim()) return toast('The listing needs a title.', 'danger');
   if (!price || price <= 0) return toast('Set a valid asking price.', 'danger');
   // Everything on a listing is required, matching the sell form.
+  if (!typedBrand) return toast('Add the brand — or type it if it is not in the list.', 'danger');
+  if (!v.category_id) return toast('Choose a category.', 'danger');
   if (!v.condition_code) return toast('Choose a condition.', 'danger');
   if (!v.size_label?.trim()) return toast('Add the size as marked on the item.', 'danger');
   if (!v.color?.trim()) return toast('Pick a colour.', 'danger');
   if (!v.description?.trim()) return toast('Tell buyers a little more in the notes.', 'danger');
   if (!parseFloat(String(v.original_retail).replace(/[^\d.]/g, '')))
     return toast('Add the original retail price.', 'danger');
-  if (images.filter(i => i.slot !== 'video' && !removals.has(i.id)).length
-      + additions.filter(a => !a.isVideo).length === 0)
-    return toast('Keep at least one photo on the listing.', 'danger');
+  if (!photos.length) return toast('Keep at least one photo on the listing.', 'danger');
+  if (!videos.length) return toast('Every listing needs a short video — add one before saving.', 'danger');
 
   const nextStatus =
     l.status === 'active' ? 'pending_review'
@@ -763,36 +804,57 @@ async function editListing(id) {
     color: v.color?.trim() || null,
     condition_code: v.condition_code || null,
     description: v.description?.trim() || null,
+    brand_id: brandMatch ? brandMatch.id : null,
+    custom_brand: brandMatch ? null : typedBrand.slice(0, 80),
+    category_id: v.category_id,
     status: nextStatus,
   }).eq('id', id);
   if (error) return toast(errorMessage(error), 'danger');
 
-  // Apply the staged photo changes. The listing row is already saved, so a
+  // Apply the staged media changes. The listing row is already saved, so a
   // media failure is reported but does not lose the rest of the edit.
   let mediaProblem = null;
-  if (removals.size) {
-    const gone = images.filter(i => removals.has(i.id));
-    const { error: delErr } = await sb.from('listing_images').delete().in('id', [...removals]);
+  if (removedIds.length) {
+    const gone = sorted.filter(i => removedIds.includes(i.id));
+    const { error: delErr } = await sb.from('listing_images').delete().in('id', removedIds);
     if (delErr) mediaProblem = delErr;
     else sb.storage.from('listing-photos').remove(gone.map(i => i.storage_path)).then(() => {}, () => {});
   }
-  if (additions.length && !mediaProblem) {
-    const baseOrder = Math.max(0, ...images.map(i => i.sort_order ?? 0)) + 1;
+
+  if (!mediaProblem) {
     try {
-      const rows = await Promise.all(additions.map(async (add, i) => {
-        const ext = MEDIA_EXT[add.file.type] || (add.isVideo ? 'mp4' : 'jpg');
-        const path = `${session.user.id}/${id}/${add.isVideo ? 'video' : `extra-${Date.now()}-${i}`}.${ext}`;
+      // Uploads first, then the order, so a failed upload never leaves the
+      // order half-written. The photo order in the dialog (cover first)
+      // becomes sort_order 0..n; the video always sorts last.
+      const inserts = [];
+      for (const [i, entry] of photos.entries()) {
+        if (entry.kind !== 'new') continue;
+        const ext = MEDIA_EXT[entry.file.type] || 'jpg';
+        const path = `${session.user.id}/${id}/extra-${Date.now()}-${i}.${ext}`;
         const { error: upErr } = await sb.storage.from('listing-photos')
-          .upload(path, add.file, { upsert: true, contentType: add.file.type });
+          .upload(path, entry.file, { upsert: true, contentType: entry.file.type });
         if (upErr) throw upErr;
-        return {
-          listing_id: id, storage_path: path,
-          slot: add.isVideo ? 'video' : 'extra',
-          sort_order: add.isVideo ? 99 : baseOrder + i,
-        };
-      }));
-      const { error: insErr } = await sb.from('listing_images').insert(rows);
-      if (insErr) throw insErr;
+        inserts.push({ listing_id: id, storage_path: path, slot: 'extra', sort_order: i });
+      }
+      for (const entry of videos) {
+        if (entry.kind !== 'new') continue;
+        const ext = MEDIA_EXT[entry.file.type] || 'mp4';
+        const path = `${session.user.id}/${id}/video.${ext}`;
+        const { error: upErr } = await sb.storage.from('listing-photos')
+          .upload(path, entry.file, { upsert: true, contentType: entry.file.type });
+        if (upErr) throw upErr;
+        inserts.push({ listing_id: id, storage_path: path, slot: 'video', sort_order: 99 });
+      }
+      if (inserts.length) {
+        const { error: insErr } = await sb.from('listing_images').insert(inserts);
+        if (insErr) throw insErr;
+      }
+      for (const [i, entry] of photos.entries()) {
+        if (entry.kind !== 'existing' || entry.img.sort_order === i) continue;
+        const { error: ordErr } = await sb.from('listing_images')
+          .update({ sort_order: i }).eq('id', entry.img.id);
+        if (ordErr) throw ordErr;
+      }
     } catch (err) {
       mediaProblem = err;
     }

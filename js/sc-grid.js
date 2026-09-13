@@ -160,18 +160,30 @@ export async function initCounts() {
       : null,
   ].filter(Boolean));
 
-  // per-brand counts, one query each but only for brands actually on the page
+  // per-brand and per-category counts, one query each but only for the slugs
+  // actually on the page
   const brandSlots = slots.filter(s => s.dataset.scBrand);
   const brandCounts = {};
-  await Promise.all([...new Set(brandSlots.map(s => s.dataset.scBrand))].map(async slug => {
-    brandCounts[slug] = await countOf(() => sb.from('listings')
-      .select('id, brand:brands!inner(slug)', { count: 'exact', head: true })
-      .eq('status', 'active').eq('brand.slug', slug));
-  }));
+  const categorySlots = slots.filter(s => s.dataset.scCategory);
+  const categoryCounts = {};
+  await Promise.all([
+    ...[...new Set(brandSlots.map(s => s.dataset.scBrand))].map(async slug => {
+      brandCounts[slug] = await countOf(() => sb.from('listings')
+        .select('id, brand:brands!inner(slug)', { count: 'exact', head: true })
+        .eq('status', 'active').eq('brand.slug', slug));
+    }),
+    ...[...new Set(categorySlots.map(s => s.dataset.scCategory))].map(async slug => {
+      categoryCounts[slug] = await countOf(() => sb.from('listings')
+        .select('id, category:categories!inner(slug)', { count: 'exact', head: true })
+        .eq('status', 'active').eq('category.slug', slug));
+    }),
+  ]);
 
   for (const slot of slots) {
     const kind = slot.dataset.scCount;
-    const n = kind === 'brand' ? brandCounts[slot.dataset.scBrand] : totals[kind];
+    const n = kind === 'brand' ? brandCounts[slot.dataset.scBrand]
+      : kind === 'category' ? categoryCounts[slot.dataset.scCategory]
+      : totals[kind];
 
     // Unknown or zero: say nothing rather than boast about an empty shelf.
     if (n === null || n === undefined || n === 0) {
@@ -182,6 +194,9 @@ export async function initCounts() {
     }
 
     slot.hidden = false;
-    slot.textContent = kind === 'brand' ? `${compact(n)} pieces` : compact(n);
+    // A slot with data-sc-bare holds only the number; the sentence around it
+    // is part of the page.
+    slot.textContent = kind === 'brand' && !('scBare' in slot.dataset)
+      ? `${compact(n)} pieces` : compact(n);
   }
 }

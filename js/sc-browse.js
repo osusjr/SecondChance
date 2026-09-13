@@ -40,13 +40,30 @@ export async function initBrowse() {
   if (param('min') && !isNaN(Number(param('min')))) state.min = Number(param('min'));
   if (param('max') && !isNaN(Number(param('max')))) state.max = Number(param('max'));
 
+  // These two live outside the filter panel, so they bind once here —
+  // renderFilters can re-run (clear, retry) without stacking listeners.
+  document.getElementById('br-sort').addEventListener('change', e => {
+    state.sort = e.target.value;
+    load(true);
+  });
+  document.getElementById('br-more').addEventListener('click', () => {
+    state.page += 1;
+    load(false);
+  });
+
   await renderFilters();
   await load(true);
 }
 
 // ---------------------------------------------------------------------------
-async function renderFilters() {
-  let brands = [], categories = [], conditions = [], colors = [], sizes = [];
+// The option lists are fetched once and kept — in memory for this page view,
+// and in localStorage across visits — so a slow or failed refetch (the panel
+// re-renders on "Clear filters") can never blank the filters out again.
+let taxonomy = null;
+
+async function loadFilterTaxonomy() {
+  if (taxonomy) return taxonomy;
+
   try {
     const res = await withTimeout(Promise.all([
       sb.from('brands').select('slug, name').eq('is_active', true).order('name'),
@@ -57,17 +74,33 @@ async function renderFilters() {
       sb.from('listings').select('size_label').eq('status', 'active')
         .not('size_label', 'is', null).limit(400),
     ]), 8000, 'filters');
-    [brands, categories, conditions, colors] = res.slice(0, 4).map(r => r.data || []);
+    if (res.slice(0, 3).some(r => r.error)) throw res.find(r => r.error).error;
+    const [brands, categories, conditions, colors] = res.slice(0, 4).map(r => r.data || []);
+    // categories are seeded and never legitimately empty, so an empty answer
+    // is a failed fetch in disguise — fall back to the cache instead
+    if (!categories.length) throw new Error('empty taxonomy');
     const counts = {};
     for (const row of res[4].data || []) {
       const label = String(row.size_label || '').trim();
       if (label) counts[label] = (counts[label] || 0) + 1;
     }
-    sizes = Object.keys(counts).sort((a, b) => counts[b] - counts[a]).slice(0, 24)
+    const sizes = Object.keys(counts).sort((a, b) => counts[b] - counts[a]).slice(0, 24)
       .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
+    taxonomy = { brands, categories, conditions, colors, sizes };
+    try { localStorage.setItem('sc_filter_options', JSON.stringify(taxonomy)); } catch {}
   } catch (err) {
     console.error('[SecondChance] filters failed:', err);
+    try {
+      const cached = JSON.parse(localStorage.getItem('sc_filter_options') || 'null');
+      if (cached?.categories?.length) taxonomy = cached;
+    } catch {}
   }
+  return taxonomy;
+}
+
+async function renderFilters() {
+  const t = await loadFilterTaxonomy();
+  const { brands = [], categories = [], conditions = [], colors = [], sizes = [] } = t || {};
 
   const host = document.getElementById('br-filters');
   host.innerHTML = `
@@ -75,26 +108,32 @@ async function renderFilters() {
       <input class="sc-input" id="br-q" placeholder="Search pieces" value="${esc(state.q)}">
     </div>
 
-    <div class="br-group">
+    ${t ? '' : `<div class="sc-note sc-note-warn" style="margin:10px 0">
+      The filter lists did not load.
+      <button class="sc-btn sc-btn-ghost sc-btn-xs" id="br-retry" type="button"
+        style="margin-top:8px">Try again</button>
+    </div>`}
+
+    ${categories.length ? `<div class="br-group">
       <p>Category</p>
-      <div class="br-opts">${(categories || []).map(c => `
+      <div class="br-opts">${categories.map(c => `
         <label><input type="checkbox" data-f="categories" value="${esc(c.slug)}"
           ${state.categories.has(c.slug) ? 'checked' : ''}>${esc(c.name)}</label>`).join('')}</div>
-    </div>
+    </div>` : ''}
 
-    <div class="br-group">
+    ${brands.length ? `<div class="br-group">
       <p>Brand</p>
-      <div class="br-opts">${(brands || []).map(b => `
+      <div class="br-opts">${brands.map(b => `
         <label><input type="checkbox" data-f="brands" value="${esc(b.slug)}"
           ${state.brands.has(b.slug) ? 'checked' : ''}>${esc(b.name)}</label>`).join('')}</div>
-    </div>
+    </div>` : ''}
 
-    <div class="br-group">
+    ${conditions.length ? `<div class="br-group">
       <p>Condition</p>
-      <div class="br-opts">${(conditions || []).map(c => `
+      <div class="br-opts">${conditions.map(c => `
         <label><input type="checkbox" data-f="conditions" value="${esc(c.code)}"
           ${state.conditions.has(c.code) ? 'checked' : ''}>${esc(c.label)}</label>`).join('')}</div>
-    </div>
+    </div>` : ''}
 
     ${sizes.length ? `<div class="br-group">
       <p>Size</p>
@@ -149,15 +188,7 @@ async function renderFilters() {
     load(true);
   });
 
-  document.getElementById('br-sort').addEventListener('change', e => {
-    state.sort = e.target.value;
-    load(true);
-  });
-
-  document.getElementById('br-more').addEventListener('click', () => {
-    state.page += 1;
-    load(false);
-  });
+  host.querySelector('#br-retry')?.addEventListener('click', () => renderFilters());
 }
 
 // ---------------------------------------------------------------------------
