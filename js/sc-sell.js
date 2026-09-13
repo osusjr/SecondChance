@@ -72,20 +72,27 @@ export async function initSell() {
 
 // ---------------------------------------------------------------------------
 function showSignInGate(form) {
-  const notice = document.createElement('div');
-  notice.className = 'sc';
-  notice.innerHTML = `
-    <div class="sc-note sc-note-info" style="margin-bottom:20px">
-      <strong>Sign in to list a piece.</strong>
-      Your listing, photos and payout details stay with your account.
-      <p style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
-        <a class="sc-btn sc-btn-primary sc-btn-sm" href="signin.html?next=sell.html">Sign in</a>
-        <a class="sc-btn sc-btn-ghost sc-btn-sm" href="signup.html">Create an account</a>
+  // The whole form-and-sidebar grid goes away; in its place a single card
+  // sits centred in the page, large enough to be the point of the page.
+  const grid = form.closest('.grid') || form.parentNode;
+  const gate = document.createElement('div');
+  gate.className = 'sc';
+  gate.innerHTML = `
+    <div style="max-width:560px;margin:6vh auto;text-align:center;padding:clamp(36px,6vw,60px) clamp(20px,5vw,44px);
+                border:1px solid var(--color-line);border-radius:var(--radius-card,20px);background:var(--color-canvas)">
+      <p class="sc-eyebrow">Start selling</p>
+      <h2 style="font-family:var(--font-bricolage),sans-serif;font-weight:600;letter-spacing:-.02em;
+                 font-size:clamp(26px,4.5vw,36px);line-height:1.18;margin:14px auto 0;max-width:16ch">
+        A Second Chance for pieces worth finding.</h2>
+      <p style="color:var(--color-muted);font-size:15px;line-height:1.65;max-width:38ch;margin:14px auto 0">
+        Sign in to list a piece — your listing, photos and payout details stay with your account.</p>
+      <p style="margin-top:28px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        <a class="sc-btn sc-btn-primary" href="signin.html?next=sell.html">Sign in</a>
+        <a class="sc-btn sc-btn-ghost" href="signup.html">Create an account</a>
       </p>
     </div>`;
-  form.parentNode.insertBefore(notice, form);
-  form.style.opacity = '.5';
-  form.style.pointerEvents = 'none';
+  grid.parentNode.insertBefore(gate, grid);
+  grid.style.display = 'none';
 }
 
 async function loadTaxonomy() {
@@ -403,6 +410,7 @@ function validate(data, { draft }) {
     if (!files.has('back')) problems.push('Add the back photo.');
     if (!files.has('detail')) problems.push('Add the detail photo.');
     if (!files.has('label')) problems.push('Add the label photo — buyers look for it first.');
+    if (!files.has('video')) problems.push('Add a short video — a slow pan in good light.');
   }
   return problems;
 }
