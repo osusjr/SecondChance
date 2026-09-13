@@ -11,6 +11,7 @@ import { CITIES, PAYMENT_METHODS } from './config.js';
 
 let listing = null;
 let settings = null;
+let sellerStats = null;   // { avg, count } from seller_reviews, or null
 
 // A listing carries up to ten photos and one optional video (slot 'video').
 const isVideoMedia = p => p?.slot === 'video' || /\.(mp4|mov|webm)$/i.test(p?.storage_path || '');
@@ -53,8 +54,30 @@ export async function initItem() {
   listing = data;
   document.title = `${data.title} · SecondChance Collective`;
 
+  // The seller's rating renders with the page when it loads fast, and slots
+  // in afterwards when it does not — either way the page never waits on it.
+  const ratingReady = sb.from('seller_reviews').select('rating')
+    .eq('seller_id', data.seller_id).limit(200)
+    .then(({ data: rows }) => {
+      if (rows?.length) {
+        sellerStats = {
+          count: rows.length,
+          avg: rows.reduce((a, r) => a + r.rating, 0) / rows.length,
+        };
+      }
+    }, () => {});
+
   render(root);
+  ratingReady.then(() => { if (sellerStats) renderSellerRating(root); });
+  loadSuggestions(root).catch(() => {});
   sb.rpc('bump_listing_view', { p_listing: id }).then(() => {}, () => {});
+}
+
+function renderSellerRating(root) {
+  const slot = root.querySelector('[data-seller-rating]');
+  if (!slot || !sellerStats) return;
+  slot.hidden = false;
+  slot.textContent = `⭐ ${sellerStats.avg.toFixed(1)} · ${sellerStats.count} review${sellerStats.count === 1 ? '' : 's'}`;
 }
 
 // ---------------------------------------------------------------------------
@@ -121,11 +144,12 @@ function render(root) {
           <p class="sc-eyebrow">What you pay</p>
           <dl class="sc-kv" style="margin-top:10px">
             <dt>Item</dt><dd class="sc-money">${money(l.price, c)}</dd>
-            <dt>Buyer Protection</dt><dd class="sc-money">${money(protection, c)}</dd>
+            ${protection > 0 ? `<dt>Buyer Protection</dt><dd class="sc-money">${money(protection, c)}</dd>` : ''}
             <dt>Total</dt><dd class="sc-money-lg">${money(l.price + protection, c)}</dd>
           </dl>
           <p class="sc-hint" style="margin-top:10px">
-            Buyer Protection holds your payment until you have the piece and accept it.<br>
+            ${protection > 0 ? '' : '<strong>Free Buyer Protection.</strong> Every eligible purchase is covered at no additional cost.<br>'}
+            Your payment is held until you have the piece and accept it.
             You arrange the handover with the seller once the order is confirmed.</p>
         </div>
 
@@ -134,6 +158,7 @@ function render(root) {
           <div class="sc-row-tight">
             <button class="sc-btn sc-btn-ghost sc-grow" data-save>
               ${session.isAuthed ? 'Save this piece' : 'Sign in to save'}</button>
+            <button class="sc-btn sc-btn-ghost sc-grow" data-share>Share</button>
             <button class="sc-btn sc-btn-ghost sc-grow" data-report>Report</button>
           </div>`
         : isMine ? `<div class="sc-note sc-note-info">This is your listing.
@@ -150,8 +175,9 @@ function render(root) {
                    ${esc(initials(l.seller?.full_name || l.seller?.username))}</span>`}
             <div class="sc-grow">
               <p class="sc-sm" style="font-weight:500">${esc(l.seller?.username || l.seller?.full_name || 'Member')}</p>
+              <p class="sc-xs" style="color:var(--color-accent-strong);margin-top:1px" data-seller-rating hidden></p>
               <p class="sc-xs sc-muted">${esc([l.seller?.area, l.seller?.city].filter(Boolean).join(', ') || 'Jordan')}
-                · joined ${date(l.seller?.created_at)}</p>
+                · member since ${date(l.seller?.created_at)}</p>
             </div>
             ${l.seller?.seller_status === 'approved'
               ? '<span class="sc-badge sc-badge-ok">Verified</span>' : ''}
@@ -176,6 +202,23 @@ function wire(root) {
   }));
 
   root.querySelector('[data-buy]')?.addEventListener('click', checkout);
+
+  // Native share sheet on phones (Instagram, WhatsApp, Snapchat, TikTok…);
+  // copy-the-link everywhere else.
+  root.querySelector('[data-share]')?.addEventListener('click', async () => {
+    const url = location.href;
+    const payload = { title: `${listing.title} · SecondChance Collective`, url };
+    if (navigator.share) {
+      try { await navigator.share(payload); } catch { /* user closed the sheet */ }
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(url);
+      toast('Link copied — paste it anywhere.', 'ok');
+    } catch {
+      toast(url);
+    }
+  });
 
   root.querySelector('[data-save]')?.addEventListener('click', async () => {
     if (!session.isAuthed) { location.href = `signin.html?next=item.html`; return; }
@@ -212,6 +255,73 @@ function wire(root) {
     });
     toast(error ? errorMessage(error) : 'Report sent. Thank you.', error ? 'danger' : 'ok');
   });
+}
+
+// ---------------------------------------------------------------------------
+// "You may also like" + "Complete the look" — filled in after the page
+// renders, and simply absent when there is nothing good to show.
+// ---------------------------------------------------------------------------
+const suggestCard = (l, c) => {
+  const photo = (l.images || []).filter(p => p.slot !== 'video')
+    .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))[0];
+  return `<a href="item.html?id=${esc(l.id)}" style="display:block;color:inherit;text-decoration:none">
+      ${photo
+        ? `<img src="${esc(publicUrl('listing-photos', photo.storage_path))}" alt="${esc(l.title)}" loading="lazy"
+               style="width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:12px;background:var(--color-product)">`
+        : '<div style="width:100%;aspect-ratio:4/5;border-radius:12px;background:var(--color-product)"></div>'}
+      <p class="sc-xs sc-muted" style="margin-top:7px">${esc(l.brand?.name || l.custom_brand || '')}</p>
+      <p class="sc-sm sc-truncate" style="font-weight:500;margin-top:1px">${esc(l.title)}</p>
+      <p class="sc-sm sc-money" style="margin-top:2px">${money(l.price, c)}</p>
+    </a>`;
+};
+
+async function loadSuggestions(root) {
+  const l = listing;
+  const c = settings.currency || 'JOD';
+  const base = () => sb.from('listings')
+    .select(`id, title, price, custom_brand, category_id, brand:brands(name),
+             images:listing_images(storage_path, slot, sort_order)`)
+    .eq('status', 'active').neq('id', l.id);
+
+  // similar: same category, closest in price
+  const similar = l.category_id || l.category
+    ? await base().eq('category_id', l.category_id).order('published_at', { ascending: false }).limit(12)
+    : { data: [] };
+  const alike = (similar.data || [])
+    .sort((a, b) => Math.abs(a.price - l.price) - Math.abs(b.price - l.price))
+    .slice(0, 4);
+
+  // complete the look: one piece from up to three other categories, priced at
+  // or below this piece — an outfit, not an upsell
+  const others = await base().neq('category_id', l.category_id || '00000000-0000-0000-0000-000000000000')
+    .lte('price', Math.max(l.price * 1.5, 30)).order('published_at', { ascending: false }).limit(24);
+  const look = [];
+  const seenCats = new Set();
+  for (const item of others.data || []) {
+    if (seenCats.has(item.category_id)) continue;
+    seenCats.add(item.category_id);
+    look.push(item);
+    if (look.length === 3) break;
+  }
+
+  const grid = 'display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px;margin-top:14px';
+  let html = '';
+  if (alike.length >= 2) {
+    html += `<section class="sc" style="margin-top:40px">
+        <p class="sc-eyebrow">You may also like</p>
+        <div style="${grid}">${alike.map(x => suggestCard(x, c)).join('')}</div>
+      </section>`;
+  }
+  if (look.length >= 2) {
+    const total = l.price + look.reduce((a, x) => a + Number(x.price), 0);
+    html += `<section class="sc" style="margin-top:40px">
+        <p class="sc-eyebrow">Complete the look</p>
+        <div style="${grid}">${look.map(x => suggestCard(x, c)).join('')}</div>
+        <p class="sc-sm" style="margin-top:12px">This piece + the look:
+          <span class="sc-money" style="font-weight:600">${money(total, c)}</span></p>
+      </section>`;
+  }
+  if (html) root.insertAdjacentHTML('beforeend', html);
 }
 
 // ---------------------------------------------------------------------------
@@ -267,8 +377,12 @@ async function checkout() {
           <input class="sc-input" name="discount" placeholder="Enter a code"></div>
 
         <div class="sc-note sc-note-info">
+          ${protection > 0 ? '' : '<strong>Free Buyer Protection.</strong> Every eligible purchase is covered at no additional cost. '}
           Your payment is held until the piece reaches you and you accept it.
         </div>
+        <label class="sc-check"><input type="checkbox" name="bp_agree">
+          <span class="sc-sm">I have read and agree to the
+            <a href="help-buyer-protection.html" target="_blank" style="text-decoration:underline">Buyer Protection Policy</a>.</span></label>
       </form>`,
     actions: [
       { label: 'Cancel', value: false },
@@ -281,6 +395,9 @@ async function checkout() {
 
   if (!v.name || !v.phone) {
     return toast('We need your name and mobile number.', 'danger');
+  }
+  if (!v.bp_agree) {
+    return toast('Please agree to the Buyer Protection Policy first.', 'danger');
   }
 
   const { data: orderId, error } = await sb.rpc('place_order', {

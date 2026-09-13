@@ -13,6 +13,8 @@ const state = {
   brands: new Set(),
   categories: new Set(),
   conditions: new Set(),
+  colors: new Set(),
+  sizes: new Set(),
   min: null,
   max: null,
   q: '',
@@ -28,13 +30,15 @@ export async function initBrowse() {
   loadSession().catch(() => {});
   getSettings().then(s => { state.currency = s.currency || 'JOD'; }).catch(() => {});
 
-  // deep links from the existing catalog-*.html and brand-*.html pages
+  // deep links from the catalog/brand pages and the homepage edits
   const cat = param('category');
   const brand = param('brand');
   const q = param('q');
   if (cat) state.categories.add(cat);
   if (brand) state.brands.add(brand);
   if (q) state.q = q;
+  if (param('min') && !isNaN(Number(param('min')))) state.min = Number(param('min'));
+  if (param('max') && !isNaN(Number(param('max')))) state.max = Number(param('max'));
 
   await renderFilters();
   await load(true);
@@ -42,14 +46,25 @@ export async function initBrowse() {
 
 // ---------------------------------------------------------------------------
 async function renderFilters() {
-  let brands = [], categories = [], conditions = [];
+  let brands = [], categories = [], conditions = [], colors = [], sizes = [];
   try {
     const res = await withTimeout(Promise.all([
       sb.from('brands').select('slug, name').eq('is_active', true).order('name'),
       sb.from('categories').select('slug, name').eq('is_active', true).order('sort_order'),
       sb.from('conditions').select('code, label').order('sort_order'),
+      sb.from('colors').select('name').eq('is_active', true).order('sort_order'),
+      // sizes are seller-typed, so the filter offers whatever is actually live
+      sb.from('listings').select('size_label').eq('status', 'active')
+        .not('size_label', 'is', null).limit(400),
     ]), 8000, 'filters');
-    [brands, categories, conditions] = res.map(r => r.data || []);
+    [brands, categories, conditions, colors] = res.slice(0, 4).map(r => r.data || []);
+    const counts = {};
+    for (const row of res[4].data || []) {
+      const label = String(row.size_label || '').trim();
+      if (label) counts[label] = (counts[label] || 0) + 1;
+    }
+    sizes = Object.keys(counts).sort((a, b) => counts[b] - counts[a]).slice(0, 24)
+      .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
   } catch (err) {
     console.error('[SecondChance] filters failed:', err);
   }
@@ -81,11 +96,27 @@ async function renderFilters() {
           ${state.conditions.has(c.code) ? 'checked' : ''}>${esc(c.label)}</label>`).join('')}</div>
     </div>
 
+    ${sizes.length ? `<div class="br-group">
+      <p>Size</p>
+      <div class="br-opts">${sizes.map(s => `
+        <label><input type="checkbox" data-f="sizes" value="${esc(s)}"
+          ${state.sizes.has(s) ? 'checked' : ''}>${esc(s)}</label>`).join('')}</div>
+    </div>` : ''}
+
+    ${colors.length ? `<div class="br-group">
+      <p>Colour</p>
+      <div class="br-opts">${colors.map(c => `
+        <label><input type="checkbox" data-f="colors" value="${esc(c.name)}"
+          ${state.colors.has(c.name) ? 'checked' : ''}>${esc(c.name)}</label>`).join('')}</div>
+    </div>` : ''}
+
     <div class="br-group">
       <p>Price (${esc(state.currency)})</p>
       <div class="sc-row-tight">
-        <input class="sc-input" id="br-min" type="number" placeholder="Min" min="0" style="width:50%">
-        <input class="sc-input" id="br-max" type="number" placeholder="Max" min="0" style="width:50%">
+        <input class="sc-input" id="br-min" type="number" placeholder="Min" min="0" style="width:50%"
+          value="${state.min ?? ''}">
+        <input class="sc-input" id="br-max" type="number" placeholder="Max" min="0" style="width:50%"
+          value="${state.max ?? ''}">
       </div>
     </div>
 
@@ -112,6 +143,7 @@ async function renderFilters() {
 
   host.querySelector('#br-clear').addEventListener('click', () => {
     state.brands.clear(); state.categories.clear(); state.conditions.clear();
+    state.colors.clear(); state.sizes.clear();
     state.min = state.max = null; state.q = '';
     renderFilters();
     load(true);
@@ -155,6 +187,8 @@ async function load(reset) {
   if (state.categories.size) q = q.in('category.slug', [...state.categories]);
   if (state.brands.size) q = q.in('brand.slug', [...state.brands]);
   if (state.conditions.size) q = q.in('condition_code', [...state.conditions]);
+  if (state.colors.size) q = q.in('color', [...state.colors]);
+  if (state.sizes.size) q = q.in('size_label', [...state.sizes]);
   if (state.min != null) q = q.gte('price', state.min);
   if (state.max != null) q = q.lte('price', state.max);
   if (state.q) q = q.textSearch('search_vector', state.q, { type: 'websearch', config: 'english' });

@@ -218,6 +218,7 @@ async function openUser(id, ctx, reload) {
       </div>` : ''}`,
     actions: canManage ? [
       { label: 'Close', value: 'close' },
+      { label: 'Send message', value: 'message' },
       ...(u.seller_status === 'approved'
         ? [{ label: 'Revoke seller status', value: 'revoke' }]
         : u.account_status === 'active'
@@ -230,6 +231,27 @@ async function openUser(id, ctx, reload) {
   });
 
   if (!result || result.value === 'close') return;
+
+  // A direct line to any member — lands in their inbox and goes out by email.
+  if (result.value === 'message') {
+    const mres = await modal({
+      title: `Message ${u.username || u.full_name || 'member'}`,
+      body: `<form class="sc-stack">
+        <div class="sc-field"><label class="sc-label">Subject</label>
+          <input class="sc-input" name="title" required maxlength="80"></div>
+        <div class="sc-field"><label class="sc-label">Message</label>
+          <textarea class="sc-textarea" name="body" required rows="6"
+            placeholder="Sent from SecondChance — the member sees it in their notifications and by email."></textarea></div>
+      </form>`,
+      actions: [{ label: 'Cancel', value: false }, { label: 'Send', value: true, kind: 'sc-btn-primary' }],
+    });
+    if (mres?.value !== true || !mres.values.title || !mres.values.body) return;
+    await adminAction(() => sb.from('notifications').insert({
+      user_id: id, type: 'admin_message',
+      title: mres.values.title, body: mres.values.body,
+    }), 'Message sent.');
+    return;
+  }
 
   if (result.value === 'approve-seller') {
     if (!await confirmAction('Approve as seller?',

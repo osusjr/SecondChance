@@ -229,9 +229,13 @@ async function renderListings() {
 
 // ---------------------------------------------------------------------------
 async function renderOrders() {
-  const { data } = await sb.from('orders')
-    .select('id, order_no, status, payment_status, total, created_at, listing:listings(title), seller:profiles!orders_seller_id_fkey(username, full_name)')
-    .eq('buyer_id', session.user.id).order('created_at', { ascending: false });
+  const [{ data }, reviewedRes] = await Promise.all([
+    sb.from('orders')
+      .select('id, order_no, status, payment_status, total, seller_id, created_at, listing:listings(title), seller:profiles!orders_seller_id_fkey(username, full_name)')
+      .eq('buyer_id', session.user.id).order('created_at', { ascending: false }),
+    sb.from('seller_reviews').select('order_id').eq('buyer_id', session.user.id),
+  ]);
+  const reviewed = new Set((reviewedRes.data || []).map(r => r.order_id));
 
   if (!data?.length) return empty('No purchases yet', 'Orders appear here with tracking and Buyer Protection status.',
     '<a class="sc-btn sc-btn-primary" href="index.html">Browse listings</a>');
@@ -247,12 +251,15 @@ async function renderOrders() {
           <p class="sc-money-lg">${money(o.total, settings.currency)}</p>
           <div class="sc-row-tight" style="justify-content:flex-end;margin-top:6px">${badge(o.status)}</div></div>
       </div>
-      <div class="sc-row-tight" style="margin-top:14px">
+      <div class="sc-row-tight" style="margin-top:14px;flex-wrap:wrap">
         ${o.status === 'delivered'
           ? `<button class="sc-btn sc-btn-primary sc-btn-sm" data-accept-order="${o.id}">Accept the piece</button>
              <button class="sc-btn sc-btn-ghost sc-btn-sm" data-return-order="${o.id}">Open a return</button>` : ''}
         ${['placed', 'confirmed'].includes(o.status)
           ? `<button class="sc-btn sc-btn-ghost sc-btn-sm" data-cancel-order="${o.id}">Request cancellation</button>` : ''}
+        ${o.status === 'accepted' && !reviewed.has(o.id)
+          ? `<button class="sc-btn sc-btn-primary sc-btn-sm" data-review-order="${o.id}" data-review-seller="${o.seller_id}">Leave a review</button>` : ''}
+        ${reviewed.has(o.id) ? '<span class="sc-xs sc-muted" style="align-self:center">Reviewed ✓</span>' : ''}
         <button class="sc-btn sc-btn-ghost sc-btn-sm" data-report-order="${o.id}">Report a problem</button>
       </div>
     </div>`).join('')}</div>`;
@@ -313,23 +320,39 @@ async function renderPayouts() {
 // ---------------------------------------------------------------------------
 async function renderFavorites() {
   const { data } = await sb.from('favorites')
-    .select('listing_id, created_at, listing:listings(id, title, price, status, images:listing_images(storage_path, slot))')
+    .select('listing_id, created_at, listing:listings(id, title, price, status, published_at, favorite_count, images:listing_images(storage_path, slot))')
     .eq('user_id', session.user.id).order('created_at', { ascending: false });
 
   const items = (data || []).filter(f => f.listing);
   if (!items.length) return empty('Nothing saved', 'Tap the heart on a listing to keep it here.',
     '<a class="sc-btn sc-btn-primary" href="index.html">Browse listings</a>');
 
-  return `<div class="sc-grid sc-grid-cards">${items.map(f => {
+  // The saved tab reads like a collection, and each card says why to act now.
+  const urgency = l => {
+    if (l.status === 'reserved') return '<span class="sc-badge sc-badge-warn">Almost gone</span>';
+    if (l.status === 'sold') return '<span class="sc-badge sc-badge-danger">Gone</span>';
+    if (l.status !== 'active') return badge(l.status);
+    if ((l.favorite_count || 0) >= 2) return '<span class="sc-badge sc-badge-accent">Others interested 👀</span>';
+    if (l.published_at && Date.now() - new Date(l.published_at) < 72 * 3600 * 1000)
+      return '<span class="sc-badge sc-badge-ok">Just added</span>';
+    return '';
+  };
+
+  return `
+    <div style="margin-bottom:16px">
+      <h2 class="sc-h2">My saved</h2>
+      <p class="sc-sm sc-muted" style="margin-top:3px">${items.length} piece${items.length === 1 ? '' : 's'} saved</p>
+    </div>
+    <div class="sc-grid sc-grid-cards">${items.map(f => {
     const front = f.listing.images?.find(i => i.slot === 'front') || f.listing.images?.[0];
     return `<a class="sc-card sc-card-flush" href="item.html?id=${f.listing.id}" style="display:block">
       <img src="${front ? publicUrl('listing-photos', front.storage_path) : ''}" alt=""
            style="width:100%;aspect-ratio:4/5;object-fit:cover;background:var(--color-product)" loading="lazy">
       <div style="padding:12px">
         <p class="sc-sm sc-truncate">${esc(f.listing.title)}</p>
-        <div class="sc-between" style="margin-top:6px">
+        <div class="sc-between" style="margin-top:6px;flex-wrap:wrap;gap:6px">
           <span class="sc-money">${money(f.listing.price, settings.currency)}</span>
-          ${f.listing.status !== 'active' ? badge(f.listing.status) : ''}
+          ${urgency(f.listing)}
         </div>
       </div></a>`;
   }).join('')}</div>`;
@@ -472,6 +495,8 @@ function wire(tab, root) {
     show('orders');
   }));
 
+  root.querySelectorAll('[data-review-order]').forEach(b =>
+    b.addEventListener('click', () => leaveReview(b.dataset.reviewOrder, b.dataset.reviewSeller)));
   root.querySelectorAll('[data-return-order]').forEach(b =>
     b.addEventListener('click', () => openReturn(b.dataset.returnOrder)));
   root.querySelectorAll('[data-cancel-order]').forEach(b =>
@@ -824,6 +849,49 @@ async function applyToSell() {
   await sb.from('profiles').update({ seller_status: 'pending' }).eq('id', session.user.id);
   toast('Application sent. We will let you know within a day.', 'ok');
   location.reload();
+}
+
+// One review per order, buyer to seller, after acceptance — it feeds the
+// rating shown on every listing, so it is deliberately short.
+async function leaveReview(orderId, sellerId) {
+  const result = await modal({
+    title: 'How was it?',
+    body: `<form class="sc-stack">
+      <div class="sc-field"><label class="sc-label">Your rating</label>
+        <div class="sc-row-tight" style="gap:4px" data-stars>
+          ${[1, 2, 3, 4, 5].map(n => `
+            <label style="cursor:pointer;font-size:26px;line-height:1">
+              <input type="radio" name="rating" value="${n}" style="position:absolute;opacity:0"
+                ${n === 5 ? 'checked' : ''}>
+              <span data-star="${n}">★</span></label>`).join('')}
+        </div></div>
+      <div class="sc-field"><label class="sc-label">A few words <span class="sc-muted sc-xs">optional</span></label>
+        <textarea class="sc-textarea" name="comment"
+          placeholder="How was the piece, and how was the handover?"></textarea></div>
+    </form>
+    <p class="sc-hint" style="margin-top:10px">Your rating is shown on the seller's listings.</p>`,
+    actions: [{ label: 'Cancel', value: false }, { label: 'Send review', value: true, kind: 'sc-btn-primary' }],
+    onMount(dialog) {
+      const stars = [...dialog.querySelectorAll('[data-star]')];
+      const paint = n => stars.forEach(s =>
+        s.style.color = Number(s.dataset.star) <= n ? 'var(--color-accent)' : 'var(--color-line)');
+      paint(5);
+      dialog.querySelectorAll('input[name=rating]').forEach(r =>
+        r.addEventListener('change', () => paint(Number(r.value))));
+    },
+  });
+  if (result?.value !== true) return;
+
+  const { error } = await sb.from('seller_reviews').insert({
+    order_id: orderId,
+    seller_id: sellerId,
+    buyer_id: session.user.id,
+    rating: Number(result.values.rating) || 5,
+    comment: result.values.comment?.trim() || null,
+  });
+  if (error) return toast(errorMessage(error), 'danger');
+  toast('Thank you — your review is live.', 'ok');
+  show('orders');
 }
 
 async function openReturn(orderId) {

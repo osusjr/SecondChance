@@ -124,7 +124,7 @@
 </nav>
 <p class="text-xs font-medium uppercase tracking-[0.14em] text-accent-strong">Start selling</p>
 <h1 class="mt-3 max-w-3xl text-3xl sm:text-4xl lg:text-5xl">List a piece</h1>
-<p class="mt-5 max-w-2xl text-lg text-muted">Free to list, and no seller fees on your first three sales. You arrange the handover, and we pay you once the buyer accepts.</p>
+<p class="mt-5 max-w-2xl text-lg text-muted">List in about 60 seconds. Free to list, no seller fees on your first three sales — you arrange the handover, and we pay you once the buyer accepts.</p>
 </div>
 </div>
 </div>
@@ -137,11 +137,12 @@
 </aside>
 <form aria-describedby="sell-disabled" class="mt-10 space-y-12">
 <p class="sr-only" id="sell-disabled">This form is a non-functional prototype and cannot be submitted.</p>
+<p class="-mt-6 text-sm text-muted">Fields marked <span class="text-accent">*</span> are required to publish. Drafts can be saved half-finished.</p>
 <section>
 <div class="flex items-center gap-3"><span class="inline-flex size-8 items-center justify-center rounded-full bg-surface font-display text-xs font-semibold tnum">1</span>
 <h2 class="text-xl sm:text-2xl">Photos</h2>
 </div>
-<p class="mt-2 text-sm text-muted">Up to ten photos, shot in good lighting — daylight near a window works best, no flash. Four angles minimum; listings missing the label shot are held back from the feed — buyers look for the label first. You can also add one short video. Once a photo is in, tap ✕ to remove it or ⇄ to swap it into another box.</p>
+<p class="mt-2 text-sm text-muted">Up to ten photos, shot in good lighting — daylight near a window works best, no flash. Four angles minimum; listings missing the label shot are held back from the feed — buyers look for the label first. You can also add one short video. Once a photo is in, tap ✕ to remove it or ⇄ to swap it into another box. The front, back, detail and label boxes are required<span class="text-accent"> *</span>.</p>
 <div class="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
 <div class="flex aspect-square cursor-not-allowed flex-col items-center justify-center gap-2 rounded-(--radius-card) border border-dashed border-line bg-product p-3 text-center"><svg aria-hidden="true" class="lucide lucide-camera size-6 text-muted" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
 <path d="M13.997 4a2 2 0 0 1 1.76 1.05l.486.9A2 2 0 0 0 18.003 7H20a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h1.997a2 2 0 0 0 1.759-1.048l.489-.904A2 2 0 0 1 10.004 4z"></path>
@@ -194,7 +195,7 @@
 <h2 class="text-xl sm:text-2xl">What it is</h2>
 </div>
 <div class="mt-6 grid gap-5 sm:grid-cols-2">
-<div><label class="block text-sm font-medium" for="brand">Brand</label><input autocomplete="off" class="mt-2 h-11 w-full rounded-full border border-line bg-surface px-4 text-sm disabled:cursor-not-allowed" disabled="" id="brand" list="brand-options" name="brand" placeholder="Start typing…" type="text"/>
+<div><label class="block text-sm font-medium" for="brand">Brand<span class="text-accent" aria-hidden="true"> *</span></label><input autocomplete="off" class="mt-2 h-11 w-full rounded-full border border-line bg-surface px-4 text-sm disabled:cursor-not-allowed" disabled="" id="brand" list="brand-options" name="brand" placeholder="Start typing…" type="text"/>
 <datalist id="brand-options">
 <option value="Hermès"></option><option value="Chanel"></option><option value="Rolex"></option><option value="Cartier"></option>
 <option value="Bottega Veneta"></option><option value="Prada"></option><option value="Celine"></option><option value="Loewe"></option>
@@ -246,7 +247,7 @@
 <option value="Burberry Kids"></option><option value="Gucci Kids"></option><option value="Moncler Kids"></option>
 </datalist>
 <p class="mt-1.5 text-xs text-muted">Not in the list? Just type the brand name.</p></div>
-<div><label class="block text-sm font-medium" for="category">Category</label><select class="mt-2 h-11 w-full rounded-full border border-line bg-surface px-4 text-sm disabled:cursor-not-allowed" disabled="" id="category" name="category">
+<div><label class="block text-sm font-medium" for="category">Category<span class="text-accent" aria-hidden="true"> *</span></label><select class="mt-2 h-11 w-full rounded-full border border-line bg-surface px-4 text-sm disabled:cursor-not-allowed" disabled="" id="category" name="category">
 <option selected="" value="">Choose one</option>
 <option value="Bags">Bags</option>
 <option value="Womenswear">Womenswear</option>
@@ -257,37 +258,37 @@
 <option value="Accessories">Accessories</option>
 <option value="Vintage">Vintage</option>
 </select></div>
-<div class="sm:col-span-2"><label class="block text-sm font-medium" for="title">Model or description</label><input class="mt-2 h-11 w-full rounded-full border border-line bg-surface px-4 text-sm disabled:cursor-not-allowed" disabled="" id="title" name="title" type="text"/>
+<div class="sm:col-span-2"><label class="block text-sm font-medium" for="title">Model or description<span class="text-accent" aria-hidden="true"> *</span></label><input class="mt-2 h-11 w-full rounded-full border border-line bg-surface px-4 text-sm disabled:cursor-not-allowed" disabled="" id="title" name="title" type="text"/>
 <p class="mt-1.5 text-xs text-muted">How a buyer would search for it, for example Birkin 30 Togo leather.</p>
 </div>
-<div class=""><label class="block text-sm font-medium" for="size">Size</label><input class="mt-2 h-11 w-full rounded-full border border-line bg-surface px-4 text-sm disabled:cursor-not-allowed" disabled="" id="size" name="size" type="text"/>
+<div class=""><label class="block text-sm font-medium" for="size">Size<span class="text-accent" aria-hidden="true"> *</span></label><input class="mt-2 h-11 w-full rounded-full border border-line bg-surface px-4 text-sm disabled:cursor-not-allowed" disabled="" id="size" name="size" type="text"/>
 <p class="mt-1.5 text-xs text-muted">As marked on the item.</p>
 </div>
-<div class=""><label class="block text-sm font-medium" for="colour">Colour</label><input class="mt-2 h-11 w-full rounded-full border border-line bg-surface px-4 text-sm disabled:cursor-not-allowed" disabled="" id="colour" name="colour" type="text"/>
+<div class=""><label class="block text-sm font-medium" for="colour">Colour<span class="text-accent" aria-hidden="true"> *</span></label><input class="mt-2 h-11 w-full rounded-full border border-line bg-surface px-4 text-sm disabled:cursor-not-allowed" disabled="" id="colour" name="colour" type="text"/>
 <p class="mt-1.5 text-xs text-muted">The house name for it, if you know it.</p>
 </div>
 </div>
 </section>
 <section>
 <div class="flex items-center gap-3"><span class="inline-flex size-8 items-center justify-center rounded-full bg-surface font-display text-xs font-semibold tnum">3</span>
-<h2 class="text-xl sm:text-2xl">Condition</h2>
+<h2 class="text-xl sm:text-2xl">Condition<span class="text-accent" aria-hidden="true"> *</span></h2>
 </div>
 <p class="mt-2 text-sm text-muted">Describe flaws rather than hiding them. An accurately described mark still sells; an undisclosed one comes back as a return.</p>
 <fieldset class="mt-6 space-y-2.5">
 <legend class="sr-only">Choose a condition</legend><label class="flex cursor-not-allowed items-center gap-3 rounded-(--radius-card) border border-line p-4 text-sm"><input class="size-4 shrink-0 accent-accent" disabled="" name="condition" type="radio"/><span class="font-medium">New with tags</span><span class="ml-auto text-right text-xs text-muted">Unworn, tags attached</span></label><label class="flex cursor-not-allowed items-center gap-3 rounded-(--radius-card) border border-line p-4 text-sm"><input class="size-4 shrink-0 accent-accent" disabled="" name="condition" type="radio"/><span class="font-medium">New without tags</span><span class="ml-auto text-right text-xs text-muted">Unworn, no tags</span></label><label class="flex cursor-not-allowed items-center gap-3 rounded-(--radius-card) border border-line p-4 text-sm"><input checked="" class="size-4 shrink-0 accent-accent" disabled="" name="condition" type="radio"/><span class="font-medium">Very good</span><span class="ml-auto text-right text-xs text-muted">Light use, no visible flaws</span></label><label class="flex cursor-not-allowed items-center gap-3 rounded-(--radius-card) border border-line p-4 text-sm"><input class="size-4 shrink-0 accent-accent" disabled="" name="condition" type="radio"/><span class="font-medium">Good</span><span class="ml-auto text-right text-xs text-muted">Some wear, nothing structural</span></label><label class="flex cursor-not-allowed items-center gap-3 rounded-(--radius-card) border border-line p-4 text-sm"><input class="size-4 shrink-0 accent-accent" disabled="" name="condition" type="radio"/><span class="font-medium">Fair</span><span class="ml-auto text-right text-xs text-muted">Visible wear, described in full</span></label>
 </fieldset>
-<div class="mt-5"><label class="block text-sm font-medium" for="notes">Anything else a buyer should know</label><textarea class="mt-2 w-full rounded-(--radius-card) border border-line bg-surface px-4 py-3 text-sm disabled:cursor-not-allowed" disabled="" id="notes" name="notes" rows="4"></textarea></div>
+<div class="mt-5"><label class="block text-sm font-medium" for="notes">Anything else a buyer should know<span class="text-accent" aria-hidden="true"> *</span></label><textarea class="mt-2 w-full rounded-(--radius-card) border border-line bg-surface px-4 py-3 text-sm disabled:cursor-not-allowed" disabled="" id="notes" name="notes" rows="4"></textarea></div>
 </section>
 <section>
 <div class="flex items-center gap-3"><span class="inline-flex size-8 items-center justify-center rounded-full bg-surface font-display text-xs font-semibold tnum">4</span>
 <h2 class="text-xl sm:text-2xl">Price</h2>
 </div>
 <div class="mt-6 grid gap-5 sm:grid-cols-2">
-<div><label class="block text-sm font-medium" for="price">Your asking price</label>
+<div><label class="block text-sm font-medium" for="price">Your asking price<span class="text-accent" aria-hidden="true"> *</span></label>
 <div class="mt-2 flex items-center gap-2"><span class="inline-flex h-11 shrink-0 items-center rounded-full bg-surface px-3.5 text-sm text-muted">JOD</span><input class="h-11 w-full rounded-full border border-line bg-surface px-4 text-sm tnum disabled:cursor-not-allowed" disabled="" id="price" inputmode="numeric" name="price" type="text"/></div>
 <p class="mt-1.5 text-xs text-muted">We suggest a range from recent sales of the same model.</p>
 </div>
-<div class=""><label class="block text-sm font-medium" for="retail">Original retail price</label><input class="mt-2 h-11 w-full rounded-full border border-line bg-surface px-4 text-sm disabled:cursor-not-allowed" disabled="" id="retail" name="retail" type="text"/>
+<div class=""><label class="block text-sm font-medium" for="retail">Original retail price<span class="text-accent" aria-hidden="true"> *</span></label><input class="mt-2 h-11 w-full rounded-full border border-line bg-surface px-4 text-sm disabled:cursor-not-allowed" disabled="" id="retail" name="retail" type="text"/>
 <p class="mt-1.5 text-xs text-muted">What it cost new. Buyers see the saving on the card.</p>
 </div>
 </div>
@@ -321,6 +322,10 @@
 </div>
 </dl>
 <p class="mt-4 text-xs text-muted">Buyer Protection is paid by the buyer on top of your price, so it never comes out of your payout.<!-- --> <a class="text-accent-strong hover:underline" href="help-fees.html">How fees work</a></p>
+</div>
+<div class="rounded-(--radius-card) border border-line p-5">
+<h2 class="text-base">Why 12%?</h2>
+<p class="mt-2.5 text-sm leading-relaxed text-muted">Most platforms like ours take around 15%. We take 12%, so you keep 88% — and you see the exact figure before you publish. The fee runs Buyer Protection, listing review and payouts. No other seller fees, ever.</p>
 </div>
 <div class="rounded-(--radius-card) bg-surface p-5">
 <h2 class="text-base">After it sells</h2>
@@ -384,6 +389,7 @@
 <li><a class="text-sm text-muted transition-colors hover:text-ink" href="account.html?tab=orders">Your orders</a></li>
 <li><a class="text-sm text-muted transition-colors hover:text-ink" href="members.html">Members</a></li>
 <li><a class="text-sm text-muted transition-colors hover:text-ink" href="about.html">About us</a></li>
+<li><a class="text-sm text-muted transition-colors hover:text-ink" href="why-us.html">Why us</a></li>
 </ul>
 </nav>
 </div>
