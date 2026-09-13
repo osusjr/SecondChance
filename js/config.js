@@ -26,8 +26,9 @@ export const DEFAULTS = {
   currency: 'JOD',
   commissionRate: 0.12,
   authThreshold: 350,
-  buyerProtectionRate: 0.05,
-  buyerProtectionMin: 3,
+  // Buyer Protection is free for buyers — nothing is added at checkout.
+  buyerProtectionRate: 0,
+  buyerProtectionMin: 0,
 };
 
 export const CITIES = [

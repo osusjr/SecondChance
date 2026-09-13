@@ -354,9 +354,9 @@ function wirePayoutPreview(form) {
     box.innerHTML = `
       <p class="sc-eyebrow">On this price</p>
       <dl class="sc-kv" style="margin-top:10px">
-        <dt>Buyer pays</dt><dd class="sc-money">${money(value, settings.currency)}</dd>
+        <dt>Your listing price</dt><dd class="sc-money">${money(value, settings.currency)}</dd>
         <dt>Platform fee (${(rate * 100).toFixed(0)}%)</dt><dd class="sc-money">− ${money(commission, settings.currency)}</dd>
-        <dt>You receive</dt><dd class="sc-money-lg" style="color:var(--color-accent)">${money(takeHome, settings.currency)}</dd>
+        <dt>You'll receive</dt><dd class="sc-money-lg" style="color:var(--color-accent)">${money(takeHome, settings.currency)}</dd>
       </dl>
       <p class="sc-hint" style="margin-top:10px">You hand it to the buyer directly, and the payout is released once they accept.</p>`;
   };

@@ -65,6 +65,7 @@ Open **SQL Editor** in the Supabase dashboard. Run the files in `supabase/`
 | 11 | `11_brands_and_media.sql` | Typed brands on listings, 48 more seeded brands, a video slot, and the bucket config for video (50 MB) |
 | 12 | `12_copy_platform_fees.sql` | Wording refresh in seeded FAQs: "platform fee" instead of "commission", 3-day returns, CliQ + cash only |
 | 13 | `13_remove_authentication_claims.sql` | Drops the authentication FAQ, refreshes seeded hero/announcement copy, and parks the authentication threshold so nothing new enters that queue |
+| 14 | `14_reviews_notifications_free_protection.sql` | Free Buyer Protection, seller reviews + ratings, sold/accepted/review notifications, newsletter signups |
 
 Paste the whole file each time and press **Run**. Green means it worked.
 
