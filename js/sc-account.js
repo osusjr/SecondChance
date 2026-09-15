@@ -789,7 +789,6 @@ async function editListing(id) {
   if (!parseFloat(String(v.original_retail).replace(/[^\d.]/g, '')))
     return toast('Add the original retail price.', 'danger');
   if (!photos.length) return toast('Keep at least one photo on the listing.', 'danger');
-  if (!videos.length) return toast('Every listing needs a short video — add one before saving.', 'danger');
 
   const nextStatus =
     l.status === 'active' ? 'pending_review'

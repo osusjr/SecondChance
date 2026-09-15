@@ -16,6 +16,50 @@ import { PHOTO_SLOTS, VIDEO_SLOT, MAX_VIDEO_MB } from './config.js';
 const ALL_SLOTS = [...PHOTO_SLOTS, VIDEO_SLOT];
 const files = new Map();          // tile key (front/back/…/extra1…/video) -> File
 
+// ---------------------------------------------------------------------------
+// Draft media persistence. The text fields survive a refresh via localStorage,
+// but File objects cannot live there — they go to IndexedDB, keyed by slot, so
+// closing the tab, refreshing or pressing back loses nothing. Every helper
+// swallows its errors: a browser without IndexedDB (or a private window that
+// blocks it) just falls back to the in-memory behaviour.
+const DRAFT_DB = 'sc-draft-media';
+function draftStore(mode, run) {
+  return new Promise(resolve => {
+    let settled = false;
+    const done = value => { if (!settled) { settled = true; resolve(value); } };
+    try {
+      const open = indexedDB.open(DRAFT_DB, 1);
+      open.onupgradeneeded = () => open.result.createObjectStore('files');
+      open.onerror = () => done(undefined);
+      open.onsuccess = () => {
+        try {
+          const db = open.result;
+          const tx = db.transaction('files', mode);
+          const result = run(tx.objectStore('files'));
+          tx.oncomplete = () => { db.close(); done(result && 'result' in result ? result.result : undefined); };
+          tx.onerror = () => { db.close(); done(undefined); };
+        } catch { done(undefined); }
+      };
+    } catch { done(undefined); }
+  });
+}
+const draftMediaSave = (slot, file) => draftStore('readwrite', s => s.put(file, slot));
+const draftMediaDelete = slot => draftStore('readwrite', s => s.delete(slot));
+const draftMediaClear = () => draftStore('readwrite', s => s.clear());
+async function draftMediaLoad() {
+  // One cursor in one transaction — keys and values read separately could be
+  // paired wrongly if another tab writes between the reads.
+  const out = new Map();
+  await draftStore('readonly', s => {
+    const req = s.openCursor();
+    req.onsuccess = () => {
+      const cursor = req.result;
+      if (cursor) { out.set(cursor.key, cursor.value); cursor.continue(); }
+    };
+  });
+  return out;
+}
+
 // The exact types the storage bucket accepts — the file-picker `accept`
 // attribute is advisory and never applies to drag-and-drop, so both paths
 // check against these before attaching.
@@ -40,6 +84,7 @@ async function vetMedia(file, isVideo) {
 }
 let settings = null;
 let taxonomy = { brands: [], categories: [], conditions: [], colors: [] };
+let draftDone = false;   // set after a successful submit: stop auto-saving
 
 const CONDITION_BY_LABEL = {
   'New with tags': 'new_with_tags',
@@ -257,8 +302,8 @@ function disarmSwap() {
 
 function performSwap(a, b) {
   const fa = files.get(a), fb = files.get(b);
-  if (fa) files.set(b, fa); else files.delete(b);
-  if (fb) files.set(a, fb); else files.delete(a);
+  if (fa) { files.set(b, fa); draftMediaSave(b, fa); } else { files.delete(b); draftMediaDelete(b); }
+  if (fb) { files.set(a, fb); draftMediaSave(a, fb); } else { files.delete(a); draftMediaDelete(a); }
   disarmSwap();
   renderPreview(a);
   renderPreview(b);
@@ -266,6 +311,7 @@ function performSwap(a, b) {
 
 function attachPhoto(tile, spec, file) {
   files.set(spec.slot, file);
+  draftMediaSave(spec.slot, file);
   renderPreview(spec.slot);
 }
 
@@ -311,6 +357,7 @@ function renderPreview(slot) {
     e.stopPropagation();
     disarmSwap();
     files.delete(slot);
+    draftMediaDelete(slot);
     renderPreview(slot);
   });
 
@@ -410,7 +457,6 @@ function validate(data, { draft }) {
     if (!files.has('back')) problems.push('Add the back photo.');
     if (!files.has('detail')) problems.push('Add the detail photo.');
     if (!files.has('label')) problems.push('Add the label photo — buyers look for it first.');
-    if (!files.has('video')) problems.push('Add a short video — a slow pan in good light.');
   }
   return problems;
 }
@@ -424,9 +470,21 @@ function wireSubmit(form) {
   draft?.addEventListener('click', e => { e.preventDefault(); submit(form, draft, true); });
   form.addEventListener('submit', e => { e.preventDefault(); if (publish) submit(form, publish, false); });
 
-  // keep a local copy so a refresh doesn't lose the typing
-  form.addEventListener('input', () => {
+  // Keep a local copy so nothing is lost without pressing "Save as draft":
+  // every keystroke and choice is written through, and leaving the page in
+  // any way — refresh, back button, closed tab — flushes one last time.
+  // After a successful submit the flush must stand down, or the pagehide on
+  // the success modal's reload/navigation would re-save the just-published
+  // form and resurrect it as a phantom draft.
+  const saveDraft = () => {
+    if (draftDone) return;
     try { localStorage.setItem('sc_listing_draft', JSON.stringify(readForm(form))); } catch {}
+  };
+  form.addEventListener('input', saveDraft);
+  form.addEventListener('change', saveDraft);
+  addEventListener('pagehide', saveDraft);
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden') saveDraft();
   });
 }
 
@@ -495,7 +553,9 @@ async function submit(form, button, isDraft) {
       if (imgErr) throw imgErr;
     }
 
+    draftDone = true;
     localStorage.removeItem('sc_listing_draft');
+    draftMediaClear();
 
     await modal({
       title: isDraft ? 'Draft saved' : 'Listing submitted',
@@ -519,20 +579,41 @@ async function submit(form, button, isDraft) {
 }
 
 async function restoreDraft(form) {
+  let restored = false;
   try {
     const saved = JSON.parse(localStorage.getItem('sc_listing_draft') || 'null');
-    if (!saved?.title) return;
-    const set = (id, value) => { const el = form.querySelector('#' + id); if (el && value) el.value = value; };
-    set('title', saved.title); set('size', saved.size_label); set('colour', saved.color);
-    set('notes', saved.description); set('price', saved.price); set('retail', saved.original_retail);
-    // The brand field shows the name; older drafts stored only the id.
-    const brandName = saved.custom_brand
-      || taxonomy.brands.find(b => b.id === saved.brand_id)?.name || '';
-    set('brand', brandName); set('category', saved.category_id);
-    if (saved.condition_code) {
-      const radio = form.querySelector(`input[name=condition][value="${saved.condition_code}"]`);
-      if (radio) radio.checked = true;
+    // Anything at all counts — a draft abandoned before the title was typed
+    // still deserves to come back.
+    const hasText = saved && [saved.title, saved.size_label, saved.color, saved.description,
+      saved.price, saved.original_retail, saved.custom_brand, saved.brand_id,
+      saved.category_id, saved.condition_code].some(v => v);
+    if (hasText) {
+      restored = true;
+      const set = (id, value) => { const el = form.querySelector('#' + id); if (el && value) el.value = value; };
+      set('title', saved.title); set('size', saved.size_label); set('colour', saved.color);
+      set('notes', saved.description); set('price', saved.price); set('retail', saved.original_retail);
+      // The brand field shows the name; older drafts stored only the id.
+      const brandName = saved.custom_brand
+        || taxonomy.brands.find(b => b.id === saved.brand_id)?.name || '';
+      set('brand', brandName); set('category', saved.category_id);
+      if (saved.condition_code) {
+        const radio = form.querySelector(`input[name=condition][value="${saved.condition_code}"]`);
+        if (radio) radio.checked = true;
+      }
+      form.querySelector('#price')?.dispatchEvent(new Event('input'));
     }
-    form.querySelector('#price')?.dispatchEvent(new Event('input'));
   } catch {}
+
+  // Photos and video saved to IndexedDB come back into their boxes.
+  try {
+    const media = await draftMediaLoad();
+    for (const [slot, file] of media) {
+      if (!specBySlot.has(slot)) continue;
+      files.set(slot, file);
+      renderPreview(slot);
+      restored = true;
+    }
+  } catch {}
+
+  if (restored) toast('We restored your unfinished draft.');
 }
