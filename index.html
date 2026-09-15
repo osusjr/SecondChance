@@ -37,17 +37,15 @@
   /* The hero owns the first screen: it stretches to fill the viewport below
      the sticky header (measured into --sc-header-h by the script at the end
      of the page), so "Just listed" only appears once you scroll. */
-  .sc-hero-bg{position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:center;
+  .sc-hero-bg{position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;
     min-height:max(440px, calc(100svh - var(--sc-header-h,150px)));
     background:#f4ede5 url('hero.jpg') no-repeat left center/cover}
-  /* cream scrim rising to near-solid on the right, so the live headline sits on
-     calm ground while the photo (and its printed slogan) shows through on the left */
-  .sc-hero-bg::after{content:"";position:absolute;inset:0;pointer-events:none;background:
-    linear-gradient(90deg, rgba(250,246,241,0) 26%, rgba(250,246,241,.55) 44%,
-    rgba(250,246,241,.93) 58%, rgba(250,246,241,.97) 100%)}
+  /* the buttons anchor low so they clear the slogan printed in the photograph;
+     margin (not padding) keeps the scroll cue's clearance check honest */
+  .sc-hero-bg>div{margin-bottom:76px}
   @media (max-width:767px){
-    .sc-hero-bg{background-position:56% center}
-    .sc-hero-bg::after{background:rgba(250,246,241,.89)}
+    .sc-hero-bg{background-position:38% center}
+    .sc-hero-bg>div{margin-bottom:140px}
   }
   .sc-hero-scroll{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);z-index:1;
     display:grid;place-items:center;width:44px;height:44px;border-radius:999px;
@@ -144,23 +142,13 @@
 <main id="main">
 <section class="sc-hero-bg">
 <div class="mx-auto w-full max-w-[1440px] px-4 sm:px-6 lg:px-8">
-<div class="max-w-3xl pt-8 pb-10 text-center sm:pt-14 sm:pb-14" style="max-width:36rem;margin-left:auto">
-<div class=""><span class="inline-flex items-center gap-2 rounded-full bg-surface px-3.5 py-1.5 text-xs font-medium"><svg aria-hidden="true" class="lucide lucide-shield-check size-4 text-accent" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
-<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path>
-<path d="m9 12 2 2 4-4"></path>
-</svg>Now live in <!-- -->Jordan</span></div>
-<div class="">
-<h1 class="mt-5 text-[34px] leading-[1.05] sm:mt-6 sm:text-6xl sm:leading-[1.03] lg:text-[68px]">A Second Chance for pieces worth finding.</h1>
-</div>
-<div class="">
-<p class="mx-auto mt-4 max-w-[52ch] text-base text-muted sm:mt-5 sm:text-lg">Jordan’s buy-and-sell fashion marketplace.</p>
-</div>
-<div class="">
-<div class="mt-7 flex flex-col items-center justify-center gap-3 sm:mt-8 sm:flex-row"><a class="group inline-flex items-center justify-center gap-2 rounded-full font-medium whitespace-nowrap transition-[background-color,color,border-color,transform] duration-300 ease-(--ease-fluid) active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none bg-accent text-accent-contrast hover:bg-accent/88 h-12 px-6 text-base pr-2 w-full sm:w-auto" href="search.html">Shop the collective<span class="ml-1 inline-flex size-7 items-center justify-center rounded-full bg-current/12 transition-transform duration-300 ease-(--ease-fluid) group-hover:translate-x-0.5 group-hover:-translate-y-px"><svg aria-hidden="true" class="lucide lucide-arrow-right size-4" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<div class="mx-auto w-full max-w-3xl pt-8 pb-10 text-center sm:pt-14 sm:pb-14">
+<h1 class="sr-only">A Second Chance for pieces worth finding.</h1>
+<p class="sr-only">Jordan’s buy-and-sell fashion marketplace.</p>
+<div class="flex flex-col items-center justify-center gap-3 sm:flex-row"><a class="group inline-flex items-center justify-center gap-2 rounded-full font-medium whitespace-nowrap transition-[background-color,color,border-color,transform] duration-300 ease-(--ease-fluid) active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none bg-accent text-accent-contrast hover:bg-accent/88 h-12 px-6 text-base pr-2 w-full sm:w-auto" href="search.html">Shop the collective<span class="ml-1 inline-flex size-7 items-center justify-center rounded-full bg-current/12 transition-transform duration-300 ease-(--ease-fluid) group-hover:translate-x-0.5 group-hover:-translate-y-px"><svg aria-hidden="true" class="lucide lucide-arrow-right size-4" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
 <path d="M5 12h14"></path>
 <path d="m12 5 7 7-7 7"></path>
-</svg></span></a><a class="group inline-flex items-center justify-center gap-2 rounded-full font-medium whitespace-nowrap transition-[background-color,color,border-color,transform] duration-300 ease-(--ease-fluid) active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none border border-line text-ink hover:border-ink/40 hover:bg-surface h-12 px-6 text-base w-full sm:w-auto" href="sell.html">Sell now</a></div>
-</div>
+</svg></span></a><a class="group inline-flex items-center justify-center gap-2 rounded-full font-medium whitespace-nowrap transition-[background-color,color,border-color,transform] duration-300 ease-(--ease-fluid) active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none border border-line text-ink hover:border-ink/40 hover:bg-surface h-12 px-6 text-base w-full sm:w-auto" href="sell.html" style="background:rgba(255,255,255,.92)">Sell now</a></div>
 </div>
 </div>
 <a class="sc-hero-scroll" href="#just-listed" aria-label="Scroll down to just listed"><svg aria-hidden="true" fill="none" height="26" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="26" xmlns="http://www.w3.org/2000/svg">
