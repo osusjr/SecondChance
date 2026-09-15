@@ -133,7 +133,7 @@ function build() {
 
   drawer.innerHTML = `
     <div class="scm-top">
-      <a class="scm-mark" href="index.html">SecondChance collective<i>.</i></a>
+      <a class="scm-mark" href="index.html" aria-label="SecondChance Collective - home"><img src="logo.png" alt="" style="height:34px;width:auto;display:block"></a>
       <button class="scm-x" type="button" aria-label="Close menu">
         <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor"
           stroke-width="1.75" stroke-linecap="round" aria-hidden="true">
