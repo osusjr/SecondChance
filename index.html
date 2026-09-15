@@ -33,10 +33,27 @@
 <link href="styles.css" rel="stylesheet"/>
 <link href="sc-app.css" rel="stylesheet"/><link href="sc-rtl.css" rel="stylesheet"/>
 <style>
-  .sc-hero-bg{position:relative;overflow:hidden;background:
+  @media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+  /* The hero owns the first screen: it stretches to fill the viewport below
+     the sticky header (measured into --sc-header-h by the script at the end
+     of the page), so "Just listed" only appears once you scroll. */
+  .sc-hero-bg{position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:center;
+    min-height:max(440px, calc(100svh - var(--sc-header-h,150px)));background:
     radial-gradient(52rem 26rem at 85% -10%, rgba(135,34,34,.10), transparent 62%),
     radial-gradient(40rem 22rem at 6% 115%, rgba(135,34,34,.08), transparent 62%),
     linear-gradient(180deg,#fdf9f6 0%,#ffffff 92%);}
+  .sc-hero-scroll{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);z-index:1;
+    display:grid;place-items:center;width:44px;height:44px;border-radius:999px;
+    color:var(--color-muted,#62666f);transition:color .2s}
+  .sc-hero-scroll:hover{color:var(--color-ink,#101114)}
+  /* the mobile tab bar overlays the bottom of the screen — sit above it */
+  @media (max-width:767px){.sc-hero-scroll{bottom:80px}}
+  @media (prefers-reduced-motion:no-preference){
+    .sc-hero-scroll svg{animation:scHeroNudge 2.2s ease-in-out infinite}
+    @keyframes scHeroNudge{0%,100%{transform:translateY(0)}50%{transform:translateY(5px)}}
+  }
+  #just-listed{scroll-margin-top:calc(var(--sc-header-h,150px) + 4px)}
+  @media print{.sc-hero-bg{min-height:0}.sc-hero-scroll{display:none}}
   .sc-hero-bg::before{content:"SC.";position:absolute;top:50%;left:50%;transform:translate(-50%,-56%);
     font-family:var(--font-bricolage),Georgia,serif;font-weight:700;font-size:clamp(210px,44vw,560px);
     letter-spacing:-.05em;line-height:1;color:rgba(135,34,34,.05);pointer-events:none;user-select:none;z-index:0}
@@ -142,8 +159,11 @@
 </div>
 </div>
 </div>
+<a class="sc-hero-scroll" href="#just-listed" aria-label="Scroll down to just listed"><svg aria-hidden="true" fill="none" height="26" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="26" xmlns="http://www.w3.org/2000/svg">
+<path d="m6 9 6 6 6-6"></path>
+</svg></a>
 </section>
-<section class="pb-16 pt-2 lg:pb-20 lg:pt-4">
+<section class="pb-16 pt-10 lg:pb-20 lg:pt-12" id="just-listed">
 <div class="mx-auto w-full max-w-[1440px] px-4 sm:px-6 lg:px-8">
 <div class="mb-6 flex items-end justify-between gap-4">
 <div>
@@ -215,7 +235,7 @@
 <div class="lg:col-span-5">
 <div class="lg:sticky lg:top-32">
 <h2 class="text-3xl sm:text-4xl lg:text-[44px]">Protected from payment to handover.</h2>
-<p class="mt-5 max-w-[40ch] text-base text-muted">Buying pre-owned luxury from a stranger should not be a gamble. Here is exactly what happens between your payment and the handover.</p><a class="group inline-flex items-center justify-center gap-2 rounded-full font-medium whitespace-nowrap transition-[background-color,color,border-color,transform] duration-300 ease-(--ease-fluid) active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none border border-line text-ink hover:border-ink/40 hover:bg-surface h-11 px-5 text-sm pr-2 mt-8" href="help-buyer-protection.html">How Buyer Protection works<span class="ml-1 inline-flex size-7 items-center justify-center rounded-full bg-current/12 transition-transform duration-300 ease-(--ease-fluid) group-hover:translate-x-0.5 group-hover:-translate-y-px"><svg aria-hidden="true" class="lucide lucide-arrow-right size-4" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<p class="mt-5 max-w-[40ch] text-base text-muted">Buying pre-owned luxury from a stranger should not be a gamble. Buyer Protection is free — a courtesy from the platform to our members, on every order. Here is exactly what happens between your payment and the handover.</p><a class="group inline-flex items-center justify-center gap-2 rounded-full font-medium whitespace-nowrap transition-[background-color,color,border-color,transform] duration-300 ease-(--ease-fluid) active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none border border-line text-ink hover:border-ink/40 hover:bg-surface h-11 px-5 text-sm pr-2 mt-8" href="help-buyer-protection.html">How Buyer Protection works<span class="ml-1 inline-flex size-7 items-center justify-center rounded-full bg-current/12 transition-transform duration-300 ease-(--ease-fluid) group-hover:translate-x-0.5 group-hover:-translate-y-px"><svg aria-hidden="true" class="lucide lucide-arrow-right size-4" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
 <path d="M5 12h14"></path>
 <path d="m12 5 7 7-7 7"></path>
 </svg></span></a>
@@ -250,8 +270,8 @@
 <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
 <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
 </svg></span><span class="font-display text-sm font-semibold text-muted tnum">0<!-- -->3</span></div>
-<h3 class="mt-4 text-lg">Handover between you</h3>
-<p class="mt-2 max-w-[58ch] text-sm leading-relaxed text-muted">You and the seller agree a time and place that suits you both, anywhere in Jordan. Inspect the piece in person before you accept — that is the point of meeting.</p>
+<h3 class="mt-4 text-lg">Hand over on your terms</h3>
+<p class="mt-2 max-w-[58ch] text-sm leading-relaxed text-muted">You and the seller agree a time and place that suits you both, anywhere in Jordan. Until the deal is done, the payment stays held — it is only released once the buyer confirms the order.</p>
 </li>
 </div>
 <div class="">
@@ -604,6 +624,36 @@
 </nav><next-route-announcer style="position: absolute;"></next-route-announcer>
 <script>
     window.SC_NEW_ORDER = ["l010","l005","l001","l006","l020","l002","l011","l014","l016","l024","l027","l030","l034","l039","l042","l028","l012","l025","l003","l018","l032","l004","l035","l013","l021","l040","l015","l036","l026","l007","l019","l008","l022","l033","l038","l009","l031","l017","l023","l029","l037","l041"];
+  </script>
+<script>
+    // Feed the height of everything above the hero (the whole sticky header
+    // stack) to the CSS, so the hero sizes itself to fill the rest of the
+    // first screen (see the .sc-hero-bg styles). The scroll cue only shows
+    // when it has room: the hero must fit inside the first screen and there
+    // must be clear space between the CTAs and the hero's bottom edge —
+    // otherwise (short or landscape phones) it would cover the buttons or
+    // render below the fold.
+    (function () {
+      var hero = document.querySelector('.sc-hero-bg');
+      if (!hero) return;
+      var cue = hero.querySelector('.sc-hero-scroll');
+      var content = hero.querySelector(':scope > div');
+      var sync = function () {
+        var top = hero.getBoundingClientRect().top + window.scrollY;
+        document.documentElement.style.setProperty('--sc-header-h', Math.ceil(top) + 'px');
+        if (!cue || !content) return;
+        requestAnimationFrame(function () {
+          var heroRect = hero.getBoundingClientRect();
+          var heroBottomDoc = heroRect.bottom + window.scrollY;
+          var clearance = heroRect.bottom - content.getBoundingClientRect().bottom;
+          var band = matchMedia('(max-width:767px)').matches ? 132 : 66;
+          cue.style.display =
+            heroBottomDoc <= window.innerHeight + 1 && clearance >= band ? '' : 'none';
+        });
+      };
+      sync();
+      addEventListener('resize', sync);
+    })();
   </script>
 <script src="menus.js"></script>
 <script src="runtime.js"></script>

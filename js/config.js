@@ -55,7 +55,7 @@ export const PHOTO_SLOTS = [
 ];
 
 // One optional video per listing, shown last in the gallery.
-export const VIDEO_SLOT = { slot: 'video', label: 'Video', note: 'A slow pan in good light' };
+export const VIDEO_SLOT = { slot: 'video', label: 'Video', note: 'A slow pan in good light, optional' };
 export const MAX_VIDEO_MB = 50;
 
 // Every permission the admin panel understands, grouped for the roles screen.
